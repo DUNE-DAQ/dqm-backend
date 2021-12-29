@@ -1,0 +1,23 @@
+<nav class="navigation-default">
+  <div class="nav-wrapper">
+
+    <div class="left-nav">
+      <a href="{{ url_for('home_bp.home') }}">
+        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="logo"/>
+      </a>
+        <a href="{{ url_for('home_bp.home') }}">Home</a>
+        <a href="{{ url_for('home_bp.about') }}">Displays</a>
+        <a href="{{ url_for('home_bp.contact') }}">Sources</a>
+        <a href="{{ url_for('display_bp.display') }}">Displays</a>
+    </div>
+
+    <div class="right-nav">
+      {% if request.blueprint != 'profile_bp' %}
+        <a>My Account</a>
+      {% else %}
+        <a href="{{ url_for('home_bp.home') }}">Logout</a>
+      {% endif %}
+    </div>
+
+  </div>
+</nav>

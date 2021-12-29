@@ -1,0 +1,27 @@
+{% extends "layout.jinja2" %}
+
+{% block pagestyles %}
+  {% assets "display_style_bundle" %}
+    <link href="{{ ASSET_URL }}" rel="stylesheet" type="text/css">
+  {% endassets %}
+{% endblock %}
+
+{% block content %}
+  {% include "navigation.jinja2" %}
+
+  <div class="container">
+    <h1>{{ title }}</h1>
+    <h2>{{ subtitle }}</h2>
+
+    <div class="products">
+      {% for d in displays %}
+        <a href="/d/{{ loop.index - 1 }}/" class="product-preview">
+          <div class="name">{{ d }}</div>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+
+ {% include "blueprintinfo.jinja2" %}
+
+{% endblock %}
