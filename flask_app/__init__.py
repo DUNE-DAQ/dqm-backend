@@ -7,7 +7,7 @@ from config import Config
 
 if Config.FLASK_ENV == "production" and Config.DD_SERVICE:
     patch_all()
-from .display import dash1, dash2
+from .display import dash3
 
 
 def init_app():
@@ -40,8 +40,8 @@ def init_app():
         # Compile static assets
         compile_static_assets(assets)
 
-        app = dash1.Add_Dash(app)
-        app = dash2.Add_Dash(app)
-
+        # app = dash1.Add_Dash(app)
+        # app = dash2.Add_Dash(app)
+        app = dash3.Add_Dash(app)
 
         return app

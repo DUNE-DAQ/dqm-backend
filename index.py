@@ -28,7 +28,7 @@ def display_page(pathname):
         return app2.layout
     elif pathname == '/apps/sources':
         return sources.layout
-    elif pathname == '/apps/display':
+    elif pathname == '/displays':
         return display.layout
     elif 'display' in pathname:
         return display.get_layout(pathname)

@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 # from flask_login import current_user
-import dash_html_components as html
+from dash import html
 import pandas as pd
 import uuid
 import os
