@@ -47,7 +47,7 @@ def Add_Dash(server):
     @app.callback(Output('page-content', 'children'),
                 Input('url', 'pathname'))
     def get_layout(pathname):
-        print('Running get_layout')
+        print(f'Running get_layout with {pathname=}')
         if pathname in layout_dic:
             print(f'{pathname} in layout_dic')
             return layout_dic[pathname]
@@ -60,7 +60,7 @@ def Add_Dash(server):
         # print(ndf)
         # dat = data.get_data_direct(source_name, display_name)
 
-        displays = data.DataSource('testsource').get_displays()
+        displays = data.DataSource(pathname.replace('/dash/', '')).get_displays()
         print(displays)
         num_plots = len(displays)
 
@@ -91,7 +91,7 @@ def Add_Dash(server):
 
             if plottype == 'scatter':
                 @app.callback(
-                    Output(f'graph-{i}', 'figure'), 
+                    Output(f'{pathname}-graph-{i}', 'figure'),
                     Input(f'interm-{pathname}-{i}', 'value'))
                 def plot_scatter(dic):
                     if dic is None:
@@ -107,7 +107,7 @@ def Add_Dash(server):
                 plot_ls.append(plot_scatter)
             elif plottype == 'heatmap':
                 @app.callback(
-                    Output(f'graph-{i}', 'figure'), 
+                    Output(f'{pathname}-graph-{i}', 'figure'),
                     Input(f'interm-{pathname}-{i}', 'value'))
                 def plot_heatmap(dic):
                     if dic is None:
@@ -127,7 +127,7 @@ def Add_Dash(server):
             ] +
             [html.Div([
 
-                html.Div([dcc.Graph(id=f'graph-{i}',style={'width': '60vh', 'height': '40vh'})],
+                html.Div([dcc.Graph(id=f'{pathname}-graph-{i}',style={'width': '60vh', 'height': '40vh'})],
                         className='four columns')
                 for i in range(len(plot_ls))], className='row')
             ]
@@ -146,12 +146,6 @@ def Add_Dash(server):
 
     # app.layout = layout
 
-    @app.callback(
-            Output('target', 'children'),
-            [Input('input_text', 'value')])
-    def callback_fun(value):
-        return 'your input is {}'.format(value)
-    
     return app.server
 
 # def apply_layout_with_auth(app, layout):
