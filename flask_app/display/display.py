@@ -27,6 +27,3 @@ def display():
         displays=displaysls,
         # products=products,
     )
-
-
-
