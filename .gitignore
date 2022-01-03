@@ -1,3 +1,4 @@
 __pycache__/
 .projectile
 .webassets-cache/
+static/dist/css/
