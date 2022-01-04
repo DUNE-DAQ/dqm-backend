@@ -7,17 +7,28 @@
 {% endblock %}
 
 {% block content %}
-  {% include "navigation.jinja2" %}
+ {% include "navigation.jinja2" %}
 
   <div class="container">
     <h1>{{ title }}</h1>
     <h2>{{ subtitle }}</h2>
 
-    <div class="products">
+    <div class="displays">
       {% for d in displays %}
-        <a href="/displays/{{ d }}" class="product-preview">
-          <div class="name">{{ d }}</div>
+      <div style="white-space: nowrap;" class="display">
+        <a href="/displays/{{ d }}">
+          {{ d }}
         </a>
+        <a href="/displays/{{ d }}/edit" class="display-menu">
+          Edit
+        </a>
+        <a href="/displays/{{ d }}/delete" class="display-menu">
+          Delete
+        </a>
+        <a href="/displays/{{ d }}/details" class="display-menu">
+          Details
+        </a>
+        </div>
       {% endfor %}
     </div>
   </div>
