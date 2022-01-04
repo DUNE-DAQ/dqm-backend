@@ -21,8 +21,6 @@ def display():
     # products = fetch_products(app)
     return render_template(
         "index_display.jinja2",
-        title="DUNE-DAQ DQM Web Platform",
-        subtitle="Demonstration of Flask blueprints in action.",
         template="display-template",
         displays=displaysls,
         # products=products,
