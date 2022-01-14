@@ -89,7 +89,6 @@ def create_display():
         title="Create displays",
         subtitle="This is an example about page.",
         template="home-template page",
-        ls=ls,
         form=form_streams,
         # form_streams=form_streams,
     )

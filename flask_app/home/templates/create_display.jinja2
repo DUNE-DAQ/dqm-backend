@@ -1,0 +1,46 @@
+{% extends "layout.jinja2" %}
+
+{% block pagestyles %}
+  {% assets "home_style_bundle" %}
+    <link href="{{ ASSET_URL }}" rel="stylesheet" type="text/css">
+  {% endassets %}
+{% endblock %}
+
+{% block content %}
+  {% include "navigation.jinja2" %}
+
+  <div class="container">
+    <h1>{{ title }}</h1>
+    <h2>{{ subtitle }}</h2>
+
+    <div class="content-section">
+        <form method="POST" action="">
+            {{ form.name }}
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Select data sources</legend>
+                {% if form.choices.errors %}
+                <div class="invalid-feedback">
+                    {% for error in form.choices.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% for choice in form.choices %}
+                    <div class="form-check">
+                        {{ choice(class="form-check-input") }}
+                        {{ choice.label(class="form-check-label") }}
+                    </div>
+                {% endfor %}
+            </fieldset>
+            <div class="form-group">
+                {{ form.submit(class="btn btn-outline-info") }}
+            </div>
+        </form>
+    </div>
+
+</form>
+
+  </div>
+
+{% endblock %}
