@@ -1,7 +1,7 @@
 from . import blueprint
 from flask import render_template
 from flask_login import login_required
-from ..display import dash3
+from ..display import dash_display
 
 @blueprint.route('/<pathname>')
 # @login_required

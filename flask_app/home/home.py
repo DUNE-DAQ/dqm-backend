@@ -93,7 +93,6 @@ def create_display():
     )
 
 
-
 @home_bp.route("/contact", methods=["GET"])
 def contact():
     """Contact page."""
