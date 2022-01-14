@@ -25,9 +25,6 @@ def init_app():
         # from .products import products
         # from .profile import profile
 
-        from .display.dashboard import init_dashboard
-        app = init_dashboard(app)
-
         # Register Blueprints
         # app.register_blueprint(profile.profile_bp)
         app.register_blueprint(home.home_bp)
