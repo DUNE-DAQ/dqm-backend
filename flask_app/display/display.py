@@ -5,7 +5,6 @@ from flask import render_template
 
 from Platform import data
 
-# from flask_blueprint_tutorial.api import fetch_products
 
 # Blueprint Configuration
 display_bp = Blueprint(
