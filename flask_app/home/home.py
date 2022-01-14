@@ -87,7 +87,6 @@ def create_display():
     return render_template(
         "create_display.jinja2",
         title="Create displays",
-        subtitle="This is an example about page.",
         template="home-template page",
         form=form_streams,
         # form_streams=form_streams,
