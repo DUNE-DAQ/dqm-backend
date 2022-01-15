@@ -23,27 +23,6 @@ def Add_Dash(server):
         html.Div(id='page-content')
     ])
 
-    # @app.callback(Output('page-content', 'children'),
-    #             Input('url', 'pathname'))
-    # def display_page(pathname):
-    #     layout = html.Div([
-    #         html.Div(f'This is dash appppppp3, path={pathname}'), html.Br(),
-    #         dcc.Input(id = 'input_text'), html.Br(), html.Br(),
-    #         html.Div(id = 'target')
-    #     ])
-    #     if pathname == '/dash/app1/':
-    #         return layout
-    #     elif pathname == '/apps/app2':
-    #         return app2.layout
-    #     elif pathname == '/apps/sources':
-    #         return sources.layout
-    #     elif pathname == '/displays':
-    #         return display.layout
-    #     elif 'display' in pathname:
-    #         return display.get_layout(pathname)
-    #     else:
-    #         return layout
-
     @app.callback(Output('page-content', 'children'),
                 Input('url', 'pathname'))
     def get_layout(pathname):
@@ -98,9 +77,7 @@ def Add_Dash(server):
                         return px.scatter()
                     print('Calling plot_scatter')
                     ndf = pd.DataFrame(dic['data'])
-                    # print('Ndf in plot_scatter', np.array(ndf.columns, dtype=np.float), np.array(ndf.values, dtype=np.float))
                     fig = px.scatter(x=np.array(ndf.columns, dtype=np.float), y=np.array(ndf.values, dtype=np.float)[0])
-                    # fig = px.scatter(x=np.arange(100), y=np.random.random(100))
                     fig.update_layout(xaxis_title='Channel number', yaxis_title='RMS')
                     return fig
                 plot_ls.append(plot_scatter)
