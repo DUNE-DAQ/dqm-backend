@@ -83,7 +83,6 @@ def Add_Dash(server):
                 if ndf is None:
                     return None
                 ret = {}
-                # ret['data'] = '1 2 3'
                 ret['data'] = ndf.to_dict()
                 # print(ret['data'])
                 return ret
@@ -102,7 +101,7 @@ def Add_Dash(server):
                     # print('Ndf in plot_scatter', np.array(ndf.columns, dtype=np.float), np.array(ndf.values, dtype=np.float))
                     fig = px.scatter(x=np.array(ndf.columns, dtype=np.float), y=np.array(ndf.values, dtype=np.float)[0])
                     # fig = px.scatter(x=np.arange(100), y=np.random.random(100))
-                    # fig.update_layout(xaxis_title='Channel number', yaxis_title='RMS')
+                    fig.update_layout(xaxis_title='Channel number', yaxis_title='RMS')
                     return fig
                 plot_ls.append(plot_scatter)
             elif plottype == 'heatmap':
@@ -115,10 +114,8 @@ def Add_Dash(server):
                         return px.scatter()
                     print('Calling plot_heatmap')
                     ndf = pd.DataFrame(dic['data'])
-                    # print('Ndf in plot_scatter', np.array(ndf.columns, dtype=np.float), np.array(ndf.values, dtype=np.float))
                     fig = px.imshow(ndf)
-                    # fig = px.scatter(x=np.arange(100), y=np.random.random(100))
-                    # fig.update_layout(xaxis_title='Channel number', yaxis_title='RMS')
+                    fig.update_layout(xaxis_title='Channel number', yaxis_title='Time ticks')
                     return fig
                 plot_ls.append(plot_heatmap)
             del i
