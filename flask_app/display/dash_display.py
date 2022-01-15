@@ -84,8 +84,8 @@ def Add_Dash(server):
                                        'title': 'Induction plane',
                                        'plot_bgcolor': 'rgba(0, 0, 0, 0)'})
 
-                    fig.update_xaxes(showgrid=False)
-                    fig.update_yaxes(showgrid=True)
+                    fig.update_xaxes(showgrid=False, zeroline=False)
+                    fig.update_yaxes(showgrid=True, zeroline=False, gridwidth=1, gridcolor='black')
                     return fig
                 plot_ls.append(plot_scatter)
             elif plottype == 'heatmap':
@@ -101,9 +101,11 @@ def Add_Dash(server):
                     # aspect=100 makes it a square, the default option 'equal' uses as much spacing as elements
                     # has each axis (i.e. a 200x100 array is plotted as a 200x100 rectangle in arbritrary units)
                     fig = px.imshow(ndf, aspect=100, origin='lower', labels={'x': 'Channel number', 'y': 'Time tick', 'color': 'ADC'})
-                    fig.update_layout(xaxis_title='Channel number', yaxis_title='Time ticks')
-                    fig.update_xaxes(showgrid=False)
-                    fig.update_yaxes(showgrid=False)
+                    fig.update_layout({'xaxis_title': 'Channel number', 'yaxis_title': 'Time ticks',
+                                       'title': 'Induction plane',
+                                       'plot_bgcolor': 'rgba(0, 0, 0, 0)'})
+                    fig.update_xaxes(showgrid=False, zeroline=False)
+                    fig.update_yaxes(showgrid=False, zeroline=False)
                     return fig
                 plot_ls.append(plot_heatmap)
             del i
