@@ -114,7 +114,9 @@ def Add_Dash(server):
                         return px.scatter()
                     print('Calling plot_heatmap')
                     ndf = pd.DataFrame(dic['data'])
-                    fig = px.imshow(ndf)
+                    # aspect=100 makes it a square, the default option 'equal' uses as much spacing as elements
+                    # has each axis (i.e. a 200x100 array is plotted as a 200x100 rectangle in arbritrary units)
+                    fig = px.imshow(ndf, aspect=100, origin='lower')
                     fig.update_layout(xaxis_title='Channel number', yaxis_title='Time ticks')
                     return fig
                 plot_ls.append(plot_heatmap)
