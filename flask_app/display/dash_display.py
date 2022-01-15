@@ -123,24 +123,20 @@ def Add_Dash(server):
                 plot_ls.append(plot_heatmap)
             del i
 
-        layout = html.Div(children=[
-            ] +
-            [html.Div([
-
-                html.Div([dcc.Graph(id=f'{pathname}-graph-{i}',style={'width': '60vh', 'height': '40vh'})],
-                        className='four columns')
-                for i in range(len(plot_ls))], className='row')
-            ]
-            +
-            [html.Div(id=f'interm-{pathname}-{i}', style={'display': 'none'}) for i in range(num_plots)]
+        layout = html.Div(
+            [html.Div([dcc.Graph(id=f'{pathname}-graph-{i}')],
+                            className='col-4') for i in range(num_plots)]
             +
             [dcc.Interval(
-                id='interval-component',
-                interval=10*1000, # in milliseconds
-                n_intervals=0
-            )]
+                            id='interval-component',
+                            interval=10*1000, # in milliseconds
+                            n_intervals=0),
+            ]
+            +
+            [html.Div([html.Div(id=f'interm-{pathname}-{i}', style={'display': 'none'}) for i in range(num_plots)],)
 
-        )
+            ],className='row')
+
         layout_dic[pathname] = layout
         return layout
 
