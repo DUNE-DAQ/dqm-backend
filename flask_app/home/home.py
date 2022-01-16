@@ -93,12 +93,12 @@ def create_display():
     )
 
 
-@home_bp.route("/contact", methods=["GET"])
-def contact():
-    """Contact page."""
+@home_bp.route("/sources", methods=["GET"])
+def sources():
+    """Sources"""
     return render_template(
         "index.jinja2",
-        title="Contact",
-        subtitle="This is an example contact page.",
+        title="Sources",
+        # subtitle="This is an example contact page.",
         template="home-template page",
     )
