@@ -55,7 +55,7 @@ def home():
     return render_template(
         "index.jinja2",
         title="DUNE-DAQ DQM Web Platform",
-        subtitle="Demonstration of Flask blueprints in action.",
+        # subtitle="Demonstration of Flask blueprints in action.",
         template="home-template",
         # products=products,
     )
