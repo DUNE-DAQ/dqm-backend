@@ -16,6 +16,36 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
 
+    <script>
+    $(document).ready(function() {
+        $("select").select2({});
+
+        $('#foodkind').change(function() {
+
+        var foodkind = $('#foodkind').val();
+
+        // Make Ajax Request and expect JSON-encoded data
+        $.getJSON(
+          '/create-display/get-streams' + '/' + foodkind,
+          function(data) {
+
+            // Remove old options
+            // $('#food').find('option').remove();
+            $('#form').find('.form-check').remove();
+
+            // Add new items
+            $.each(data, function(key, val) {
+              //var option_item = '<option value="' + val + '">' + val + '</option>'
+              var option_item = '<div class="form-check"> <input class="form-check-input" id="choices-0" name="choices" type="checkbox" value="raw_display2"> <label class="form-check-label" for="choices-0">' + val + '</label> </div>'
+              $('#form').append(option_item);
+            });
+          }
+        );
+        });
+
+    });
+    </script>
+
   <div class="container">
     <h1>{{ title }}</h1>
     <h2>{{ subtitle }}</h2>
@@ -26,11 +56,13 @@
             {{ form.name }}
             {{ form.hidden_tag() }}
 
-            Select source
             <div>
-                {{ form.newname }}
+            Select source
             </div>
-            <fieldset class="form-group">
+            <div>
+                {{ form.foodkind }}
+            </div>
+            <fieldset class="form-group" id="form">
                 <legend class="border-bottom mb-4">Select data sources</legend>
                 {% if form.choices.errors %}
                 <div class="invalid-feedback">
@@ -52,14 +84,8 @@
         </form>
     </div>
 
-    <form method="POST">
-    </form>
 
-    <script>
-    $(document).ready(function() {
-        $("select").select2({});
-    });
-    </script>
+
 
   </div>
 

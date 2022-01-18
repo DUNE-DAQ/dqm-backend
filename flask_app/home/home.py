@@ -3,9 +3,11 @@ from flask import Blueprint
 from flask import current_app as app
 from flask import render_template
 from flask import request
-from wtforms import Form, StringField, SelectField, SelectMultipleField, SubmitField
+from wtforms import Form, StringField, SelectField, SelectMultipleField, SubmitField, validators
 from flask_wtf import FlaskForm
 from wtforms import RadioField, widgets
+import wtforms
+from flask import jsonify
 
 from Platform import data
 
@@ -41,11 +43,27 @@ class MultiCheckboxField(SelectMultipleField):
     widget = widgets.ListWidget(prefix_label=False)
     option_widget = widgets.CheckboxInput()
 
+# possible_names = {'0': 'fruit', '1': 'vegetables', '3': 'meat', '4':
+# 'thisisatest'} # options should be str so that empty choice option is valid
+possible_names = data.get_streams()
+print(possible_names)
 
 class ExampleForm(FlaskForm):
     name = StringField()
     choices = MultiCheckboxField([['a', 'Routes', 'b']], coerce=str)
     submit = SubmitField('Create display')
+    search = wtforms.fields.SearchField()
+
+    # food = SelectField("Enter a Name",
+    #                 choices=[("", "")] + [(uuid, name) for uuid, name in possible_names.items()],  # [("", "")] is needed for a placeholder
+    #                 validators=[validators.InputRequired()])
+    food = MultiCheckboxField(
+                    choices=[],
+                    validators=[validators.InputRequired()])
+
+    foodkind = SelectField("Enter a Name",
+                           choices=[''] + list(possible_names.keys()),
+                    validators=[validators.InputRequired()])
 
 
 @home_bp.route("/", methods=["GET"])
@@ -91,6 +109,17 @@ def create_display():
         form=form_streams,
         # form_streams=form_streams,
     )
+
+@home_bp.route('/create-display/get-streams/<foodkind>')
+def get_streams(foodkind):
+    streams = data.get_streams()
+    print(f'{foodkind=}')
+    import json
+    if foodkind not in streams:
+        return jsonify([])
+    else:
+        return jsonify(streams[foodkind])
+
 
 
 @home_bp.route("/sources", methods=["GET"])
