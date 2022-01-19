@@ -11,20 +11,10 @@ from flask import jsonify
 
 from Platform import data
 
-# from flask_blueprint_tutorial.api import fetch_products
-
 # Blueprint Configuration
 home_bp = Blueprint(
     "home_bp", __name__, template_folder="templates", static_folder="static"
 )
-
-class musicsearchform(Form):
-    choices = [('artist', 'artist'),
-               ('album', 'album'),
-               ('publisher', 'publisher')]
-    select = SelectField('search for music:', choices=choices)
-    search = StringField('')
-
 
 class SimpleForm(FlaskForm):
     sources = data.get_sources()
@@ -43,20 +33,13 @@ class MultiCheckboxField(SelectMultipleField):
     widget = widgets.ListWidget(prefix_label=False)
     option_widget = widgets.CheckboxInput()
 
-# possible_names = {'0': 'fruit', '1': 'vegetables', '3': 'meat', '4':
-# 'thisisatest'} # options should be str so that empty choice option is valid
 possible_names = data.get_streams()
-print(possible_names)
 
 class ExampleForm(FlaskForm):
     name = StringField()
     choices = MultiCheckboxField([['a', 'Routes', 'b']], coerce=str)
     submit = SubmitField('Create display')
-    search = wtforms.fields.SearchField()
 
-    # food = SelectField("Enter a Name",
-    #                 choices=[("", "")] + [(uuid, name) for uuid, name in possible_names.items()],  # [("", "")] is needed for a placeholder
-    #                 validators=[validators.InputRequired()])
     food = MultiCheckboxField(
                     choices=[],
                     validators=[validators.InputRequired()])
@@ -65,31 +48,26 @@ class ExampleForm(FlaskForm):
                            choices=[''] + list(possible_names.keys()),
                     validators=[validators.InputRequired()])
 
-
 @home_bp.route("/", methods=["GET"])
 def home():
     """Homepage."""
-    # products = fetch_products(app)
     return render_template(
         "index.jinja2",
         title="DUNE-DAQ DQM Web Platform",
         # subtitle="Demonstration of Flask blueprints in action.",
         template="home-template",
-        # products=products,
     )
-
 
 @home_bp.route("/create-display", methods=["GET", 'POST'])
 def create_display():
     ls = ['A', 'B', 'C', 'D']
-    search = musicsearchform(request.form)
     form = SimpleForm()
     print(f'{form.example.data=}')
     form_streams = ExampleForm()
     streams = data.get_streams()
     streamsls = []
-    for key in streams:
-        streamsls.extend(list(streams[key]))
+    # for key in streams:
+    #     streamsls.extend(list(streams[key]))
     form_streams.choices.choices = [(elem, elem) for i, elem in enumerate (streamsls)]
     print(f'{form_streams.choices.data=}')
     # print(f'{form_streams.example.data=}')
@@ -107,19 +85,16 @@ def create_display():
         title="Create displays",
         template="home-template page",
         form=form_streams,
-        # form_streams=form_streams,
     )
 
-@home_bp.route('/create-display/get-streams/<foodkind>')
-def get_streams(foodkind):
+@home_bp.route('/create-display/get-streams/<streamname>')
+def get_streams(streamname):
     streams = data.get_streams()
-    print(f'{foodkind=}')
     import json
-    if foodkind not in streams:
+    if streamname not in streams:
         return jsonify([])
     else:
-        return jsonify(streams[foodkind])
-
+        return jsonify(streams[streamname])
 
 
 @home_bp.route("/sources", methods=["GET"])
