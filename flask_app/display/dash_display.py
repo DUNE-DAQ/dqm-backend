@@ -1,6 +1,6 @@
 from dash import Dash
 from dash.dependencies import Input, State, Output
-from .Dash_fun import apply_layout_with_auth, load_object, save_object
+# from .Dash_fun import apply_layout_with_auth, load_object, save_object
 from dash import dcc
 from dash import html
 from flask import request
@@ -25,18 +25,12 @@ def Add_Dash(server):
     @app.callback(Output('page-content', 'children'),
                 Input('url', 'pathname'))
     def get_layout(pathname):
+        if not pathname:
+            return ''
         print(f'Running get_layout with {pathname=}')
         if pathname in layout_dic:
             print(f'{pathname} in layout_dic')
             return layout_dic[pathname]
-        # comp = pathname.split('-')
-        # source_name = comp[1]
-        # display_name = comp[2]
-
-        # ds = data.DataStream('rmsm_display', data.DataSource('testsource'))
-        # ndf = ds.get_data()
-        # print(ndf)
-        # dat = data.get_data_direct(source_name, display_name)
 
         displays = data.DataSource(pathname.replace('/dash/', '')).get_displays()
         print(displays)
@@ -127,18 +121,3 @@ def Add_Dash(server):
         return layout
 
     return app.server
-
-# def apply_layout_with_auth(app, layout):
-#     def serve_layout():
-#         # if current_user and current_user.is_authenticated:
-#         if True:
-#             session_id = str(uuid.uuid4())
-#             # clean_Dir_Store()
-#             return html.Div([
-#                 html.Div(session_id, id='session_id', style={'display': 'none'}),
-#                 layout
-#             ])
-#         return html.Div('403 Access Denied')
-    
-#     app.config.suppress_callback_exceptions = True
-#     app.layout = serve_layout
