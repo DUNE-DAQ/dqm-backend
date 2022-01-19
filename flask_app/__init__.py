@@ -34,8 +34,6 @@ def init_app():
         # Compile static assets
         compile_static_assets(assets)
 
-        # app = dash1.Add_Dash(app)
-        # app = dash2.Add_Dash(app)
         app = dash_display.Add_Dash(app)
 
         return app
