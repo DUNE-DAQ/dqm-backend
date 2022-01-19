@@ -10,7 +10,6 @@ import pandas as pd
 import plotly.express as px
 import numpy as np
 
-
 layout_dic = {}
 
 def Add_Dash(server):
@@ -41,74 +40,74 @@ def Add_Dash(server):
 
         displays = data.DataSource(pathname.replace('/dash/', '')).get_displays()
         print(displays)
-        num_plots = len(displays)
+        num_plots = sum([len(displays[s]) for s in displays])
 
         data_funcs = []
         plot_ls = []
 
-        for i, key in enumerate(displays):
-            plottype = displays[key]
+        i = -1
+        for source in displays:
+            for key in displays[source]:
+                i += 1
+                plottype = displays[source][key]
 
-            # ds = data.DataStream(f'rmsm_display{i}', data.DataSource('testsource'))
-            # data_streams_dic[f'rmsm_display{i}'] = ds
-            @app.callback(
-                Output(f'interm-{pathname}-{i}', 'value'), 
-                Input(f'interval-component', 'n_intervals'))
-            def get_data(_, name=f'{key}'):
-                print('Getting data')
-                ds = data.DataStream(name, data.DataSource('testsource'))
-                # ds = data_stream_dics
-                ndf = ds.get_data()
-                if ndf is None:
-                    return None
-                ret = {}
-                ret['data'] = ndf.to_dict()
-                # print(ret['data'])
-                return ret
-            data_funcs.append(get_data)
-
-            if plottype == 'scatter':
                 @app.callback(
-                    Output(f'{pathname}-graph-{i}', 'figure'),
-                    Input(f'interm-{pathname}-{i}', 'value'))
-                def plot_scatter(dic):
-                    if dic is None:
-                        print('NONE')
-                        return px.scatter()
-                    print('Calling plot_scatter')
-                    ndf = pd.DataFrame(dic['data'])
-                    fig = px.scatter(x=np.array(ndf.columns, dtype=np.float), y=np.array(ndf.values, dtype=np.float)[0],
-                                     labels={'x': 'Channel number', 'y': 'RMS'})
+                    Output(f'interm-{pathname}-{i}', 'value'), 
+                    Input(f'interval-component', 'n_intervals'))
+                def get_data(_, name=f'{key}', source=source):
+                    print('Getting data', name, source)
+                    ds = data.DataStream(name, data.DataSource(source))
+                    # ds = data_stream_dics
+                    ndf = ds.get_data()
+                    if ndf is None:
+                        return None
+                    ret = {}
+                    ret['data'] = ndf.to_dict()
+                    # print(ret['data'])
+                    return ret
+                data_funcs.append(get_data)
 
-                    fig.update_layout({'xaxis_title': 'Channel number', 'yaxis_title': 'RMS',
-                                       'title': 'Induction plane',
-                                       'plot_bgcolor': 'rgba(0, 0, 0, 0)'})
+                if plottype == 'scatter':
+                    @app.callback(
+                        Output(f'{pathname}-graph-{i}', 'figure'),
+                        Input(f'interm-{pathname}-{i}', 'value'))
+                    def plot_scatter(dic):
+                        if dic is None:
+                            print('NONE')
+                            return px.scatter()
+                        print('Calling plot_scatter')
+                        ndf = pd.DataFrame(dic['data'])
+                        fig = px.scatter(x=np.array(ndf.columns, dtype=np.float), y=np.array(ndf.values, dtype=np.float)[0],
+                                        labels={'x': 'Channel number', 'y': 'RMS'})
 
-                    fig.update_xaxes(showgrid=False, zeroline=False)
-                    fig.update_yaxes(showgrid=True, zeroline=False, gridwidth=1, gridcolor='black')
-                    return fig
-                plot_ls.append(plot_scatter)
-            elif plottype == 'heatmap':
-                @app.callback(
-                    Output(f'{pathname}-graph-{i}', 'figure'),
-                    Input(f'interm-{pathname}-{i}', 'value'))
-                def plot_heatmap(dic):
-                    if dic is None:
-                        print('NONE')
-                        return px.scatter()
-                    print('Calling plot_heatmap')
-                    ndf = pd.DataFrame(dic['data'])
-                    # aspect=100 makes it a square, the default option 'equal' uses as much spacing as elements
-                    # has each axis (i.e. a 200x100 array is plotted as a 200x100 rectangle in arbritrary units)
-                    fig = px.imshow(ndf, aspect=100, origin='lower', labels={'x': 'Channel number', 'y': 'Time tick', 'color': 'ADC'})
-                    fig.update_layout({'xaxis_title': 'Channel number', 'yaxis_title': 'Time ticks',
-                                       'title': 'Induction plane',
-                                       'plot_bgcolor': 'rgba(0, 0, 0, 0)'})
-                    fig.update_xaxes(showgrid=False, zeroline=False)
-                    fig.update_yaxes(showgrid=False, zeroline=False)
-                    return fig
-                plot_ls.append(plot_heatmap)
-            del i
+                        fig.update_layout({'xaxis_title': 'Channel number', 'yaxis_title': 'RMS',
+                                        'title': 'Induction plane',
+                                        'plot_bgcolor': 'rgba(0, 0, 0, 0)'})
+
+                        fig.update_xaxes(showgrid=False, zeroline=False)
+                        fig.update_yaxes(showgrid=True, zeroline=False, gridwidth=1, gridcolor='black')
+                        return fig
+                    plot_ls.append(plot_scatter)
+                elif plottype == 'heatmap':
+                    @app.callback(
+                        Output(f'{pathname}-graph-{i}', 'figure'),
+                        Input(f'interm-{pathname}-{i}', 'value'))
+                    def plot_heatmap(dic):
+                        if dic is None:
+                            print('NONE')
+                            return px.scatter()
+                        print('Calling plot_heatmap')
+                        ndf = pd.DataFrame(dic['data'])
+                        # aspect=100 makes it a square, the default option 'equal' uses as much spacing as elements
+                        # has each axis (i.e. a 200x100 array is plotted as a 200x100 rectangle in arbritrary units)
+                        fig = px.imshow(ndf, aspect=100, origin='lower', labels={'x': 'Channel number', 'y': 'Time tick', 'color': 'ADC'})
+                        fig.update_layout({'xaxis_title': 'Channel number', 'yaxis_title': 'Time ticks',
+                                        'title': 'Induction plane',
+                                        'plot_bgcolor': 'rgba(0, 0, 0, 0)'})
+                        fig.update_xaxes(showgrid=False, zeroline=False)
+                        fig.update_yaxes(showgrid=False, zeroline=False)
+                        return fig
+                    plot_ls.append(plot_heatmap)
 
         layout = html.Div(
             [html.Div([dcc.Graph(id=f'{pathname}-graph-{i}')],
