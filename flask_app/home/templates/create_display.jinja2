@@ -36,7 +36,7 @@
             // Add new items
             $.each(data, function(key, val) {
               //var option_item = '<option value="' + val + '">' + val + '</option>'
-              var option_item = '<div class="form-check"> <input class="form-check-input" id="choices-0" name="choices" type="checkbox" value="raw_display2"> <label class="form-check-label" for="choices-0">' + val + '</label> </div>'
+              var option_item = '<div class="form-check"> <input class="form-check-input" id="choices-0" name="choices" type="checkbox" value="' + val + '"> <label class="form-check-label" for="choices-0">' + val + '</label> </div>'
               $('#form').append(option_item);
             });
           }
