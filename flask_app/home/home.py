@@ -8,6 +8,7 @@ from flask_wtf import FlaskForm
 from wtforms import RadioField, widgets
 import wtforms
 from flask import jsonify
+from flask_table import Table, Col
 
 from Platform import data
 
@@ -27,7 +28,6 @@ class SimpleForm2(FlaskForm):
         streamsls.extend(list(streams[key]))
 
     example = SelectMultipleField('Label', choices=[(i,s) for i,s in enumerate(streamsls)], default=-1, coerce=int)
-
 
 class MultiCheckboxField(SelectMultipleField):
     widget = widgets.ListWidget(prefix_label=False)
@@ -60,9 +60,6 @@ def home():
 
 @home_bp.route("/create-display", methods=["GET", 'POST'])
 def create_display():
-    ls = ['A', 'B', 'C', 'D']
-    form = SimpleForm()
-    print(f'{form.example.data=}')
     form_streams = ExampleForm()
     streams = data.get_streams()
     streamsls = []
@@ -96,13 +93,33 @@ def get_streams(streamname):
     else:
         return jsonify(streams[streamname])
 
+class ItemTable(Table):
+    name = Col('Name',
+            column_html_attrs={
+            'class': 'col-10'},
+               )
+    description = Col('Description')
+    menu = Col('Menu')
+
+class Item(object):
+    def __init__(self, name, description):
+        self.name = name
+        self.description = description
+        self.menu = ''
+
 
 @home_bp.route("/sources", methods=["GET"])
 def sources():
     """Sources"""
+
+    sources = data.get_sources()
+    items = [Item(s, '',) for s in sources]
+    table = ItemTable(items, classes=['table', 'table-striped', 'table-hover'], thead_classes=['col-6', 'col-6'])
+    print(table.__html__())
+
     return render_template(
-        "index.jinja2",
+        "sources.jinja2",
         title="Sources",
         # subtitle="This is an example contact page.",
-        template="home-template page",
+        table=table.__html__()
     )

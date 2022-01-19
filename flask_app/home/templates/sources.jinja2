@@ -1,0 +1,16 @@
+{% extends "layout.jinja2" %}
+
+{% block pagestyles %}
+  {% assets "home_style_bundle" %}
+    <link href="{{ ASSET_URL }}" rel="stylesheet" type="text/css">
+  {% endassets %}
+    <link rel="stylesheet" type="text/css" href="static/dist/css/002_bootstrap-4.4.1.css">
+{% endblock %}
+
+{% block content %}
+  {% include "navigation.jinja2" %}
+
+    {{ table }}
+
+
+{% endblock %}
