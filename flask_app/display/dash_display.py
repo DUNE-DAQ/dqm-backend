@@ -14,8 +14,7 @@ layout_dic = {}
 
 def add_dash(server):
     
-    external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
-    app = Dash(server=server, url_base_pathname='/dash/', external_stylesheets=external_stylesheets)
+    app = Dash(server=server, url_base_pathname='/dash/')
 
     app.layout = html.Div([
         dcc.Location(id='url', refresh=False),
@@ -23,10 +22,10 @@ def add_dash(server):
     ])
 
     @app.callback(Output('page-content', 'children'),
-                Input('url', 'pathname'))
+                  Input('url', 'pathname'), prevent_inital_call=True)
     def get_layout(pathname):
         if not pathname:
-            return ''
+            return html.Div()
         print(f'Running get_layout with {pathname=}')
         if pathname in layout_dic:
             print(f'{pathname} in layout_dic')
@@ -109,13 +108,12 @@ def add_dash(server):
             +
             [dcc.Interval(
                             id='interval-component',
-                            interval=10*1000, # in milliseconds
-                            n_intervals=0),
+                            interval=5*1000, # in milliseconds
+                            ),
             ]
             +
-            [html.Div([html.Div(id=f'interm-{pathname}-{i}', style={'display': 'none'}) for i in range(num_plots)],)
-
-            ],className='row')
+            [html.Div(id=f'interm-{pathname}-{i}') for i in range(num_plots)]
+            ,className='row')
 
         layout_dic[pathname] = layout
         return layout

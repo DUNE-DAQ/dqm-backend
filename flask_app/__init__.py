@@ -20,7 +20,6 @@ def init_app():
 
     with app.app_context():
 
-        app = dash_display.add_dash(app)
         # Import parts of our application
         from .assets import compile_static_assets
         from .home import home
@@ -36,5 +35,6 @@ def init_app():
         # Compile static assets
         compile_static_assets(assets)
 
+        app = dash_display.add_dash(app)
 
         return app
