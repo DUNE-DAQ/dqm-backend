@@ -12,7 +12,7 @@ import numpy as np
 
 layout_dic = {}
 
-def Add_Dash(server):
+def add_dash(server):
     
     external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
     app = Dash(server=server, url_base_pathname='/dash/', external_stylesheets=external_stylesheets)
