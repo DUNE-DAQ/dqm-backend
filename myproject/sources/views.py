@@ -11,10 +11,6 @@ def sources(request):
 
     sources = data.get_sources()
 
-    # data = [
-    #     {"name": "Bradley"},
-    #     {"name": "Stevie"},
-    # ]
     ls = []
     for s in sources:
         ls.append({'name': s, 'description': ' ', 'menu': ' '})
