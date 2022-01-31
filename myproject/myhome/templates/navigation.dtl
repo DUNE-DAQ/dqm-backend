@@ -1,0 +1,13 @@
+<nav class="navigation-default">
+  <div class="nav-wrapper">
+
+    <div class="left-nav">
+
+        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'display' %}">Display</a>
+        <a href="{% url 'sources' %}">Sources</a>
+        <a href="{% url 'create display' %}">Create Display</a>
+    </div>
+
+  </div>
+</nav>
