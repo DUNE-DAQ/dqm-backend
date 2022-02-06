@@ -14,12 +14,20 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 # from myapp.views import hello
 from myhome.views import index
+
+from sources.views import sources
+from display.views import display, create_display, show_display
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     # path('hello/', hello, name='home'),
     path('', index, name='home'),
+    path('display/', display, name='display'),
+    path('sources/', sources, name='sources'),
+    path('create-display/', create_display, name='create display'),
+    path('displays/<displayname>', show_display, name='show display'),
+    path('django_plotly_dash/', include('django_plotly_dash.urls')),
 ]
