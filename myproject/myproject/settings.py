@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'myhome',
     'sources',
     'display',
+    'test',
     'django_extensions',
 ]
 
