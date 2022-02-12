@@ -1,0 +1,70 @@
+{% extends "layout.dtl" %}
+
+{% load static %}
+
+{% block pagestyles %}
+    <link rel="stylesheet" type="text/css" href="{% static 'dist/css/002_bootstrap-4.4.1.css' %}"/>
+{% endblock %}
+
+
+{% block content %}
+  {% include "navigation.dtl" %}
+
+
+<script
+  src="https://code.jquery.com/jquery-3.4.1.min.js"
+  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+  crossorigin="anonymous"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
+
+    <script>
+    $(document).ready(function() {
+        $("select").select2({});
+
+        $('#foodkind').change(function() {
+
+        var foodkind = $('#foodkind').val();
+
+        // Make Ajax Request and expect JSON-encoded data
+        $.getJSON(
+          '/create-display/get-streams' + '/' + foodkind,
+          function(data) {
+
+            // Remove old options
+            // $('#food').find('option').remove();
+            $('#form').find('.form-check').remove();
+
+            // Add new items
+            $.each(data, function(key, val) {
+              //var option_item = '<option value="' + val + '">' + val + '</option>'
+              var option_item = '<div class="form-check"> <input class="form-check-input" id="choices-0" name="choices" type="checkbox" value="' + val + '"> <label class="form-check-label" for="choices-0">' + val + '</label> </div>'
+              $('#form').append(option_item);
+            });
+          }
+        );
+        });
+
+    });
+    </script>
+
+  <div class="container">
+    <h1>{{ title }}</h1>
+    <h2>{{ subtitle }}</h2>
+
+    <div class="content-section">
+        <form method="POST" action="">
+            {{ form }}
+
+            <div>
+            Select source
+            </div>
+        </form>
+    </div>
+
+
+
+
+  </div>
+
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "layout.dtl" %}
+{% load static %}
+{%load plotly_dash%}
+
+{% block pagestyles %}
+    <link rel="stylesheet" type="text/css" href="{% static 'dist/css/002_bootstrap-4.4.1.css' %}">
+{% endblock %}
+
+{% block title %} Dashboard {{ pathname }} {% endblock title %}
+
+{% block content %}
+  {% include "navigation.dtl" %}
+     {% plotly_direct name=displayname %}
+{% endblock content %}
