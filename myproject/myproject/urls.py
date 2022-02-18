@@ -22,6 +22,20 @@ from sources.views import sources
 from display.views import display, create_display, show_display
 from test.views import PersonView
 
+import json
+from django.http import JsonResponse
+
+
+from Platform import data
+def ajax_view(request, choice):
+    streams = data.get_streams()
+    if choice in streams:
+        return JsonResponse(streams[choice], safe=False)
+    else:
+        return JsonResponse({})
+
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     # path('hello/', hello, name='home'),
@@ -32,6 +46,7 @@ urlpatterns = [
     path('displays/<displayname>', show_display, name='show display'),
     path('django_plotly_dash/', include('django_plotly_dash.urls')),
     path('test/', PersonView.as_view()),
+    path('ajax/<choice>', ajax_view, name='ajax'),
 ]
 
 # @home_bp.route("/create-display", methods=["GET", 'POST'])
