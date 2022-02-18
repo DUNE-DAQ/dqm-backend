@@ -66,7 +66,6 @@ def create_display():
     # for key in streams:
     #     streamsls.extend(list(streams[key]))
     form_streams.choices.choices = [(elem, elem) for i, elem in enumerate (streamsls)]
-    print(f'{form_streams.choices.data=}')
     # print(f'{form_streams.example.data=}')
     # if form_streams.example.data == 1:
     #     print('Creating new display')
@@ -75,7 +74,13 @@ def create_display():
     if form_streams.choices.name:
         print('Creating new display')
         print(f'{form_streams.choices.data=}')
-        data.create_display(form_streams.name.data, 'testsource', form_streams.choices.data)
+
+        # source = form_streams.choices.food
+        source = form_streams.foodkind.data
+        displaystreams = {}
+        displaystreams[source] = form_streams.choices.data
+        print('STREAMS', displaystreams)
+        data.create_display(form_streams.name.data, displaystreams)
 
     return render_template(
         "create_display.jinja2",
