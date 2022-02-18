@@ -3,3 +3,4 @@ __pycache__/
 .webassets-cache/
 static/dist/css/
 migrations/
+db.sqlite3
