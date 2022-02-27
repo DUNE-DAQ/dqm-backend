@@ -41,6 +41,7 @@
     </div>
 
      {% render_table table %}
+     {% render_table table2 %}
   </div>
 
 {% endblock %}

@@ -12,6 +12,8 @@ class NameTable(tables.Table):
     class Meta:
         attrs = {'class': 'table table-striped table-hover'}
 
+from .models import Display
+
 
 # Create your views here.
 def display(request):
@@ -23,7 +25,17 @@ def display(request):
 
     table = NameTable(ls)
 
-    return render(request, 'index_display.dtl', context={'displays': displaysls, 'table': table})
+    # newnames = Display.objects.create(name='this is a test model', description='this is a description')
+    # obj = Display.objects.filter(name='this is a test model')
+    # obj.delete()
+    newnames = Display.objects.all()
+    ls = []
+    for s in newnames:
+        ls.append({'name': s.name, 'description': s.description, 'menu': ' '})
+
+    table2 = NameTable(ls)
+
+    return render(request, 'index_display.dtl', context={'displays': displaysls, 'table': table, 'table2': table2})
 
 
 
