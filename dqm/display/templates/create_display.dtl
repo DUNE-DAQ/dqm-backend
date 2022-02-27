@@ -2,13 +2,13 @@
 
 {% load static %}
 
-{% block pagestyles %}
-    <link rel="stylesheet" type="text/css" href="{% static 'dist/css/002_bootstrap-4.4.1.css' %}"/>
-{% endblock %}
+{% load crispy_forms_tags %}
+
 
 
 {% block content %}
   {% include "navigation.dtl" %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
 
 <script
@@ -20,26 +20,27 @@
 
     <script>
     $(document).ready(function() {
-        $("select").select2({});
+        // $("select").select2({});
 
-        $('#foodkind').change(function() {
+        $('#id_source').change(function() {
 
-        var foodkind = $('#foodkind').val();
+        var foodkind = $('#id_source').val();
 
         // Make Ajax Request and expect JSON-encoded data
         $.getJSON(
-          '/create-display/get-streams' + '/' + foodkind,
+          '/ajax/' + foodkind,
           function(data) {
+          console.log(data)
 
             // Remove old options
-            // $('#food').find('option').remove();
-            $('#form').find('.form-check').remove();
+            $('#id_choices').find('option').remove();
+            $('#id_choices').find('.form-check').remove();
 
             // Add new items
             $.each(data, function(key, val) {
-              //var option_item = '<option value="' + val + '">' + val + '</option>'
-              var option_item = '<div class="form-check"> <input class="form-check-input" id="choices-0" name="choices" type="checkbox" value="' + val + '"> <label class="form-check-label" for="choices-0">' + val + '</label> </div>'
-              $('#form').append(option_item);
+              var option_item = '<option value="' + val + '">' + val + '</option>'
+              // var option_item = '<div class="form-check"> <input class="form-check-input" id="choices-0" name="choices" type="checkbox" value="' + val + '"> <label class="form-check-label" for="choices-0">' + val + '</label> </div>'
+              $('#id_choices').append(option_item);
             });
           }
         );
@@ -48,18 +49,13 @@
     });
     </script>
 
+
   <div class="container">
     <h1>{{ title }}</h1>
     <h2>{{ subtitle }}</h2>
 
     <div class="content-section">
-        <form method="POST" action="">
-            {{ form }}
-
-            <div>
-            Select source
-            </div>
-        </form>
+        {% crispy form %}
     </div>
 
 

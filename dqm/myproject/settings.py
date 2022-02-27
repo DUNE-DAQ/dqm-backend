@@ -47,6 +47,9 @@ INSTALLED_APPS = [
     'display',
     'test',
     'django_extensions',
+    'plots',
+    'crispy_forms',
+    'crispy_bootstrap5',
 ]
 
 CHANNEL_LAYERS = {
@@ -157,3 +160,7 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'
+
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = 'bootstrap5'
