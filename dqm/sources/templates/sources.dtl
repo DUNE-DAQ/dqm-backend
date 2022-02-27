@@ -3,10 +3,6 @@
 
 {% include "navigation.dtl" %}
 
-{% block pagestyles %}
-    <link rel="stylesheet" type="text/css" href="{% static 'dist/css/002_bootstrap-4.4.1.css' %}">
-{% endblock %}
-
 {% block content %}
      {% render_table table %}
 

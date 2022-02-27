@@ -3,11 +3,27 @@ from django.shortcuts import render
 from Platform import data
 from .dash_display import create_display as new_display
 
+import django_tables2 as tables
+
+class NameTable(tables.Table):
+    name = tables.Column(attrs={'td': {'class': 'col-6'}})
+    description = tables.Column()
+    menu = tables.Column()
+    class Meta:
+        attrs = {'class': 'table table-striped table-hover'}
+
+
 # Create your views here.
 def display(request):
     displaysls = data.get_displays()
 
-    return render(request, 'index_display.dtl', context={'displays': displaysls})
+    ls = []
+    for s in displaysls:
+        ls.append({'name': s, 'description': ' ', 'menu': ' '})
+
+    table = NameTable(ls)
+
+    return render(request, 'index_display.dtl', context={'displays': displaysls, 'table': table})
 
 
 
