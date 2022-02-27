@@ -47,7 +47,7 @@ INSTALLED_APPS = [
     'display',
     'test',
     'django_extensions',
-    'plots',
+    # 'plots',
     'crispy_forms',
     'crispy_bootstrap5',
 ]
