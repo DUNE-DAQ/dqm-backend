@@ -1,8 +1,21 @@
 {% extends "layout.dtl" %}
 {% load render_table from django_tables2 %}
 
+
 {% block content %}
  {% include "navigation.dtl" %}
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+  <link href="http://codegena.com/assets/css/image-preview-for-link.css" rel="stylesheet">     
+  <script type="text/javascript">
+    $(function() {
+                $('#p1 a').miniPreview({ prefetch: 'pageload' });
+                $('#p2 a').miniPreview({ prefetch: 'parenthover' });
+                $('#p3 a').miniPreview({ prefetch: 'none' });
+            });
+  </script> <script src="http://codegena.com/assets/js/image-preview-for-link.js"></script>
+
+
 
   <div class="container">
     <h1>{{ title }}</h1>
@@ -10,7 +23,7 @@
 
     <div class="displays">
       {% for d in displays %}
-      <div class="display">
+      <div class="display" id="p3">
         <a href="/displays/{{ d }}">
           {{ d }}
         </a>
