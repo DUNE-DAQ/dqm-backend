@@ -4,7 +4,5 @@
 {% include "navigation.dtl" %}
 
 {% block content %}
-     {% render_table table %}
-
-
+    {% render_table table %}
 {% endblock %}
