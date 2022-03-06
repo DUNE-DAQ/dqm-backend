@@ -13,13 +13,6 @@ class NameTable(tables.Table):
 
 # Create your views here.
 def display(request):
-    # displaysls = data.get_displays()
-
-    ls = []
-    # for s in displaysls:
-    #     ls.append({'name': s, 'description': ' ', 'menu': ' '})
-
-    # table = NameTable(ls)
 
     # newnames = Display.objects.create(name='roland', description='this is a description')
     # obj = Display.objects.filter(name='this is a test')
@@ -30,9 +23,9 @@ def display(request):
     for s in newnames:
         ls.append(s)
 
-    table2 = NameTable(ls)
+    table = NameTable(ls)
 
-    return render(request, 'index_display.dtl', context={'table2': table2})
+    return render(request, 'index_display.dtl', context={'table': table})
 
 
 displays = {}

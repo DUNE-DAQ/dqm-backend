@@ -22,7 +22,7 @@
     <h2>{{ subtitle }}</h2>
 
 
-     {% render_table table2 %}
+     {% render_table table %}
   </div>
 
 {% endblock %}
