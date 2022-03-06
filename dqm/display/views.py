@@ -7,6 +7,12 @@ import django_tables2 as tables
 
 from .models import Display
 
+from django import forms
+from .models import Text
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit
+from crispy_forms.layout import Layout, Fieldset
+
 class NameTable(tables.Table):
     name = tables.Column(attrs={'td': {'class': 'col-6'}}, linkify=True)
     description = tables.Column()
@@ -36,28 +42,24 @@ def show_display(request, displayname):
     return render(request, 'display.dtl', context={'displayname': displayname})
     
 
-from django import forms
-from .models import Text
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit
-from crispy_forms.layout import Layout, Fieldset
-
-# Text.objects.create(name='testttt')
-
-
 possible_names = data.get_streams()
+# This is a hack to find all the available streams and pass them as possible choices
+# otherwise the form will complain that an invalid choice was chosen
+tmp = []
+for val in possible_names.values():
+    tmp.extend(val)
+tmp = list(set(tmp))
 
 class ExampleForm(forms.Form):
-
-
     name = forms.CharField(label='Name of the display')
     description = forms.CharField(label='Short description')
     template = forms.CharField(label='Use the same template as')
 
-    # source = forms.ModelChoiceField(label='Source', choices=['src1', 'src2'], queryset)
-    source = forms.MultipleChoiceField(label='Source', choices= [(list(possible_names.keys())[i], list(possible_names.keys())[i]) for i in range(len(possible_names))] )
-    choices = forms.MultipleChoiceField(choices=(['raw_display2', 'raw_display2'], [2, 'Test choice 2']), required=False)
-    
+    source = forms.MultipleChoiceField(label='Source', choices= [(list(possible_names.keys())[i], list(possible_names.keys())[i]) for i in range(len(possible_names))])
+
+    default_choices = [[tmp[i], tmp[i]] for i in range(len(tmp))]
+    choices = forms.MultipleChoiceField(choices=(default_choices), required=False)
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
@@ -75,11 +77,8 @@ class ExampleForm(forms.Form):
                 'template',
                 'source',
                 'choices',
-            
             )
             )
-
-    #     self.fields['foodkind'].queryset = ['a', 'b', 'c']
 
 def create_display(request):
     print('CALLING create_display')
