@@ -13,7 +13,7 @@ class NameTable(tables.Table):
 
 # Create your views here.
 def display(request):
-    displaysls = data.get_displays()
+    # displaysls = data.get_displays()
 
     ls = []
     # for s in displaysls:
@@ -32,7 +32,7 @@ def display(request):
 
     table2 = NameTable(ls)
 
-    return render(request, 'index_display.dtl', context={'displays': displaysls, 'table2': table2})
+    return render(request, 'index_display.dtl', context={'table2': table2})
 
 
 displays = {}
