@@ -5,38 +5,34 @@ from .dash_display import create_display as new_display
 
 import django_tables2 as tables
 
-class NameTable(tables.Table):
-    name = tables.Column(attrs={'td': {'class': 'col-6'}})
-    description = tables.Column()
-    menu = tables.Column()
-    class Meta:
-        attrs = {'class': 'table table-striped table-hover'}
-
 from .models import Display
 
+class NameTable(tables.Table):
+    name = tables.Column(attrs={'td': {'class': 'col-6'}}, linkify=True)
+    description = tables.Column()
 
 # Create your views here.
 def display(request):
     displaysls = data.get_displays()
 
     ls = []
-    for s in displaysls:
-        ls.append({'name': s, 'description': ' ', 'menu': ' '})
+    # for s in displaysls:
+    #     ls.append({'name': s, 'description': ' ', 'menu': ' '})
 
-    table = NameTable(ls)
+    # table = NameTable(ls)
 
-    # newnames = Display.objects.create(name='this is a test model', description='this is a description')
-    # obj = Display.objects.filter(name='this is a test model')
+    # newnames = Display.objects.create(name='roland', description='this is a description')
+    # obj = Display.objects.filter(name='this is a test')
     # obj.delete()
     newnames = Display.objects.all()
+    # print(newnames[0].get_absolute_url)
     ls = []
     for s in newnames:
-        ls.append({'name': s.name, 'description': s.description, 'menu': ' '})
+        ls.append(s)
 
     table2 = NameTable(ls)
 
-    return render(request, 'index_display.dtl', context={'displays': displaysls, 'table': table, 'table2': table2})
-
+    return render(request, 'index_display.dtl', context={'displays': displaysls, 'table2': table2})
 
 
 displays = {}
@@ -105,9 +101,27 @@ def create_display(request):
             # process the data in form.cleaned_data as required
             # ...
             # redirect to a new URL:
-            print('Creating form with name {form.name}')
+            print(f'Creating form with name {form.cleaned_data["name"]}')
             print(form.cleaned_data['name'])
-            data.create_display(form.cleaned_data['name'], {form.cleaned_data['source'][0] : form.cleaned_data['choices']})
+            # data.create_display(form.cleaned_data['name'], {form.cleaned_data['source'][0] : form.cleaned_data['choices']})
+            obj = Display.objects.filter(name=form.cleaned_data['name'])
+            if not obj:
+                print(form.cleaned_data['source'])
+                print(form.cleaned_data['choices'])
+                displays = {}
+                for d in form.cleaned_data['choices']:
+                    if 'raw_display' in d:
+                        displays[d] = 'heatmap'
+                    else:
+                        displays[d] = 'scatter'
+                data = {form.cleaned_data['source'][0]: displays}
+                Display.objects.create(name=form.cleaned_data['name'],
+                                       description=form.cleaned_data['description'],
+                                       data=data
+                                       )
+            else:
+                print(f'Panel with name {form.cleaned_data["name"]} already exists')
+
             # return HttpResponseRedirect('/thanks/')
         else:
             print('Form is not valid')

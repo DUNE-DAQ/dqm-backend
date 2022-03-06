@@ -1,5 +1,5 @@
 {% extends "layout.dtl" %}
-{% load render_table from django_tables2 %}
+{% load django_tables2 %}
 
 
 {% block content %}
@@ -21,26 +21,7 @@
     <h1>{{ title }}</h1>
     <h2>{{ subtitle }}</h2>
 
-    <div class="displays">
-      {% for d in displays %}
-      <div class="display" id="p3">
-        <a href="/displays/{{ d }}">
-          {{ d }}
-        </a>
-        <a href="/displays/{{ d }}/edit" class="display-menu">
-          Edit
-        </a>
-        <a href="/displays/{{ d }}/delete" class="display-menu">
-          Delete
-        </a>
-        <a href="/displays/{{ d }}/details" class="display-menu">
-          Details
-        </a>
-        </div>
-      {% endfor %}
-    </div>
 
-     {% render_table table %}
      {% render_table table2 %}
   </div>
 

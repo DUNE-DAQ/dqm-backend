@@ -9,7 +9,11 @@ class Text(models.Model):
 
 
 class Display(models.Model):
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, unique=True)
     description = models.CharField(max_length=200)
+    data = models.JSONField()
     # data = models.
+
+    def get_absolute_url(self):
+        return f'/displays/{self.name}'
 

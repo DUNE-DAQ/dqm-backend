@@ -6,6 +6,8 @@ import dash_core_components as dcc
 import dash_html_components as html
 # from dash import html
 
+from .models import Display
+
 from Platform import data
 import pandas as pd
 import plotly.express as px
@@ -33,15 +35,14 @@ def create_display(name):
         print(f'Running get_layout with {pathname=}')
         if '/' in pathname:
             pathname = pathname.split('/')[-1]
-        print(f'Final {pathname=}')
         if not pathname:
             return html.Div()
         if pathname in layout_dic:
             print(f'{pathname} in layout_dic')
             return layout_dic[pathname]
 
-        displays = data.DataSource(pathname.replace('/dash/', '')).get_displays()
-        print(displays)
+        # displays = data.DataSource(pathname.replace('/dash/', '')).get_displays()
+        displays = Display.objects.filter(name=pathname.replace('/dash/', ''))[0].data
         num_plots = sum([len(displays[s]) for s in displays])
 
         data_funcs = []
