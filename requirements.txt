@@ -1,0 +1,7 @@
+django
+django_extensions
+django_tables2
+django_plotly_dash
+django-crispy-forms
+crispy-bootstrap5
+channels
