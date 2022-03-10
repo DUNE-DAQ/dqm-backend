@@ -3,6 +3,7 @@ django_extensions
 django_tables2
 django_plotly_dash
 django-crispy-forms
+django-environ
 crispy-bootstrap5
 pandas
 channels
