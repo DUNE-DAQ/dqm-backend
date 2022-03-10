@@ -5,3 +5,4 @@ static/dist/css/
 migrations/
 db.sqlite3
 *.ipynb
+.env
