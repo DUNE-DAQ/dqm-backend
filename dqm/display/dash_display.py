@@ -89,6 +89,9 @@ def create_display(name):
 
                         fig.update_xaxes(showgrid=False, zeroline=False)
                         fig.update_yaxes(showgrid=True, zeroline=False, gridwidth=1, gridcolor='black')
+                        fig.add_annotation(xref='paper', yref='paper', x=.9, y=1.15,
+                                           text=f'Last updated at {datetime.now().strftime("%H:%M:%S %d/%m/%Y")}',
+                                           showarrow=False)
                         return fig
                     plot_ls.append(plot_scatter)
                 elif plottype == 'heatmap':
@@ -109,6 +112,9 @@ def create_display(name):
                                         'plot_bgcolor': 'rgba(0, 0, 0, 0)'})
                         fig.update_xaxes(showgrid=False, zeroline=False)
                         fig.update_yaxes(showgrid=False, zeroline=False)
+                        fig.add_annotation(xref='paper', yref='paper', x=.9, y=1.15,
+                                           text=f'Last updated at {datetime.now().strftime("%H:%M:%S %d/%m/%Y")}',
+                                           showarrow=False)
                         return fig
                     plot_ls.append(plot_heatmap)
 
