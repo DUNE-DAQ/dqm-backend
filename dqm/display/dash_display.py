@@ -117,6 +117,31 @@ def create_display(name):
                                            showarrow=False)
                         return fig
                     plot_ls.append(plot_heatmap)
+                elif plottype == 'line':
+                    @app.callback(
+                        Output(f'{pathname}-graph-{i}', 'figure'),
+                        Input(f'interm-{pathname}-{i}', 'value'))
+                    def plot_line(dic):
+                        if dic is None:
+                            print('NONE')
+                            return px.scatter()
+                        print('Calling plot_scatter')
+                        ndf = pd.DataFrame(dic['data'])
+                        fig = px.plot(x=np.array(ndf.columns, dtype=np.float), y=np.array(ndf.values, dtype=np.float)[0],
+                                        labels={'x': 'Frequency [Hz]', 'y': 'abs(fft(ADC))'})
+
+                        fig.update_layout({'xaxis_title': 'Frequency [Hz]', 'yaxis_title': 'abs(fft(ADC))',
+                                           'title': 'Induction plane',
+                                           'plot_bgcolor': 'rgba(0, 0, 0, 0)',
+                                           })
+
+                        fig.update_xaxes(showgrid=False, zeroline=False)
+                        fig.update_yaxes(showgrid=True, zeroline=False, gridwidth=1, gridcolor='black')
+                        fig.add_annotation(xref='paper', yref='paper', x=.9, y=1.15,
+                                           text=f'Last updated at {datetime.now().strftime("%H:%M:%S %d/%m/%Y")}',
+                                           showarrow=False)
+                        return fig
+                    plot_ls.append(plot_scatter)
 
         layout = html.Div(
             [html.Div([dcc.Graph(id=f'{pathname}-graph-{i}')],
