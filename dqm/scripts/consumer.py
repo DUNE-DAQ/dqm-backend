@@ -55,10 +55,11 @@ for message in consumer:
         m = message[-1].split('\\n')
         freq = np.fromstring(m[0], sep=' ')
         val = np.fromstring(m[-2], sep=' ')
-        write_database({'value': val, 'channels': freq},
+        # At f = 0 Hz there will be a huge value that doesn't let
+        # us see the rest of the points
+        write_database({'value': val[1:], 'channels': freq[1:]},
                         source, 'fft_sums_display',
                         run_number, plane)
-        # print(freq, val)
 
     if 'raw_display' in message[1]:
         m = message[-1].split('\\n')
