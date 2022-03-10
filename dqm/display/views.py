@@ -110,7 +110,7 @@ def create_display(request):
                         displays[d] = 'heatmap'
                     else:
                         displays[d] = 'scatter'
-                dataa = {form.cleaned_data['source'][0]: displays}
+                dataa = {form.cleaned_data['source']: displays}
                 Display.objects.create(name=form.cleaned_data['name'],
                                        description=form.cleaned_data['description'],
                                        data=dataa
