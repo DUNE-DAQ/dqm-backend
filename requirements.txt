@@ -5,5 +5,8 @@ django_plotly_dash
 django-crispy-forms
 django-environ
 crispy-bootstrap5
-pandas
 channels
+
+kafka-python
+pandas
+tables
