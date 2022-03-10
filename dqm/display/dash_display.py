@@ -127,7 +127,7 @@ def create_display(name):
                             return px.scatter()
                         print('Calling plot_scatter')
                         ndf = pd.DataFrame(dic['data'])
-                        fig = px.plot(x=np.array(ndf.columns, dtype=np.float), y=np.array(ndf.values, dtype=np.float)[0],
+                        fig = px.line(x=np.array(ndf.columns, dtype=np.float), y=np.array(ndf.values, dtype=np.float)[0],
                                         labels={'x': 'Frequency [Hz]', 'y': 'abs(fft(ADC))'})
 
                         fig.update_layout({'xaxis_title': 'Frequency [Hz]', 'yaxis_title': 'abs(fft(ADC))',
@@ -141,7 +141,7 @@ def create_display(name):
                                            text=f'Last updated at {datetime.now().strftime("%H:%M:%S %d/%m/%Y")}',
                                            showarrow=False)
                         return fig
-                    plot_ls.append(plot_scatter)
+                    plot_ls.append(plot_line)
 
         layout = html.Div(
             [html.Div([dcc.Graph(id=f'{pathname}-graph-{i}')],
