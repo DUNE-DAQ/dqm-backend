@@ -108,8 +108,10 @@ def create_display(request):
                 for d in form.cleaned_data['choices']:
                     if 'raw_display' in d:
                         displays[d] = 'heatmap'
-                    else:
+                    elif 'rmsm_display' in d:
                         displays[d] = 'scatter'
+                    elif 'fft_sums_display' in d:
+                        displays[d] = 'line'
                 dataa = {form.cleaned_data['source']: displays}
                 Display.objects.create(name=form.cleaned_data['name'],
                                        description=form.cleaned_data['description'],
