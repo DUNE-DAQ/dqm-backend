@@ -42,52 +42,56 @@ def show_display(request, displayname):
     return render(request, 'display.dtl', context={'displayname': displayname})
     
 
-possible_names = data.get_streams()
-# This is a hack to find all the available streams and pass them as possible choices
-# otherwise the form will complain that an invalid choice was chosen
-tmp = []
-for val in possible_names.values():
-    tmp.extend(val)
-tmp = list(set(tmp))
 
-class ExampleForm(forms.Form):
-    name = forms.CharField(label='Name of the display')
-    description = forms.CharField(label='Short description')
-    template = forms.CharField(label='Use the same template as')
-
-    source = forms.MultipleChoiceField(label='Source', choices= [(list(possible_names.keys())[i], list(possible_names.keys())[i]) for i in range(len(possible_names))])
-
-    default_choices = [[tmp[i], tmp[i]] for i in range(len(tmp))]
-    choices = forms.MultipleChoiceField(choices=(default_choices), required=False)
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.form_id = 'id-exampleForm'
-        # self.helper.form_class = 'blueForms'
-        self.helper.form_method = 'post'
-        self.helper.form_action = ''
-
-        self.helper.add_input(Submit('', 'Create display'))
-        self.helper.layout = Layout(
-                    Fieldset(
-                'first arg is the legend of the fieldset',
-                'name',
-                'description',
-                'template',
-                'source',
-                'choices',
-            )
-            )
 
 def create_display(request):
-    print('CALLING create_display')
-    print(f'{request.method=}')
+
+    def get_form():
+
+        possible_names = data.get_streams()
+        # This is a hack to find all the available streams and pass them as possible choices
+        # otherwise the form will complain that an invalid choice was chosen
+        tmp = []
+        for val in possible_names.values():
+            tmp.extend(val)
+        tmp = list(set(tmp))
+
+        class ExampleForm(forms.Form):
+            name = forms.CharField(label='Name of the display')
+            description = forms.CharField(label='Short description')
+            template = forms.CharField(label='Use the same template as')
+
+            source = forms.ChoiceField(label='Source', choices= [(list(possible_names.keys())[i], list(possible_names.keys())[i]) for i in range(len(possible_names))])
+
+            default_choices = [[tmp[i], tmp[i]] for i in range(len(tmp))]
+            choices = forms.MultipleChoiceField(choices=(default_choices), required=False)
+
+            def __init__(self, *args, **kwargs):
+                super().__init__(*args, **kwargs)
+                self.helper = FormHelper()
+                self.helper.form_id = 'id-exampleForm'
+                # self.helper.form_class = 'blueForms'
+                self.helper.form_method = 'post'
+                self.helper.form_action = ''
+
+                self.helper.add_input(Submit('', 'Create display'))
+                self.helper.layout = Layout(
+                            Fieldset(
+                        'first arg is the legend of the fieldset',
+                        'name',
+                        'description',
+                        'template',
+                        'source',
+                        'choices',
+                    )
+                    )
+        return ExampleForm
+
+    Form = get_form();
 
     if request.method == 'POST':
-        print('Request method is POST')
         # create a form instance and populate it with data from the request:
-        form = ExampleForm(request.POST)
+        form = Form(request.POST)
         # check whether it's valid:
         if form.is_valid():
             # process the data in form.cleaned_data as required
@@ -106,10 +110,10 @@ def create_display(request):
                         displays[d] = 'heatmap'
                     else:
                         displays[d] = 'scatter'
-                data = {form.cleaned_data['source'][0]: displays}
+                dataa = {form.cleaned_data['source'][0]: displays}
                 Display.objects.create(name=form.cleaned_data['name'],
                                        description=form.cleaned_data['description'],
-                                       data=data
+                                       data=dataa
                                        )
             else:
                 print(f'Panel with name {form.cleaned_data["name"]} already exists')
@@ -118,5 +122,5 @@ def create_display(request):
         else:
             print('Form is not valid')
     else:
-        form = ExampleForm()
+        form = Form()
     return render(request, 'create_display.dtl', context={'form': form})
