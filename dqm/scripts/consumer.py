@@ -55,9 +55,9 @@ for message in consumer:
         m = message[-1].split('\\n')
         freq = np.fromstring(m[0], sep=' ')
         val = np.fromstring(m[-2], sep=' ')
-        # write_database({'value': val, 'channels': freq},
-        #                'rmsm_display',
-        #                run_number, plane)
+        write_database({'value': val, 'channels': freq},
+                        source, 'fft_sums_display',
+                        run_number, plane)
         # print(freq, val)
 
     if 'raw_display' in message[1]:
