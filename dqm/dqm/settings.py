@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     'django_tables2',
     'django_plotly_dash.apps.DjangoPlotlyDashConfig',
     'channels',
-    'myapp',
     'myhome',
     'sources',
     'display',
