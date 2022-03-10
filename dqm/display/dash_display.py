@@ -88,7 +88,7 @@ def create_display(name):
                                         'plot_bgcolor': 'rgba(0, 0, 0, 0)'})
 
                         fig.update_xaxes(showgrid=False, zeroline=False)
-                        fig.update_yaxes(showgrid=True, zeroline=False, gridwidth=1, gridcolor='black')
+                        fig.update_yaxes(showgrid=True, zeroline=False, gridwidth=.05, gridcolor='lightgrey')
                         fig.add_annotation(xref='paper', yref='paper', x=.9, y=1.15,
                                            text=f'Last updated at {datetime.now().strftime("%H:%M:%S %d/%m/%Y")}',
                                            showarrow=False)
@@ -136,7 +136,7 @@ def create_display(name):
                                            })
 
                         fig.update_xaxes(showgrid=False, zeroline=False)
-                        fig.update_yaxes(showgrid=True, zeroline=False, gridwidth=1, gridcolor='black')
+                        fig.update_yaxes(showgrid=True, zeroline=False, gridwidth=.05, gridcolor='lightgrey')
                         fig.add_annotation(xref='paper', yref='paper', x=.9, y=1.15,
                                            text=f'Last updated at {datetime.now().strftime("%H:%M:%S %d/%m/%Y")}',
                                            showarrow=False)
