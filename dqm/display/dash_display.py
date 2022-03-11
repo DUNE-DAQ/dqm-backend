@@ -1,10 +1,8 @@
 from dash import Dash
 from dash.dependencies import Input, State, Output
-# from .Dash_fun import apply_layout_with_auth, load_object, save_object
 import dash_core_components as dcc
-# from dash import dcc
 import dash_html_components as html
-# from dash import html
+import dpd_components as dpd
 
 from .models import Display
 
@@ -159,4 +157,3 @@ def create_display(name):
         layout_dic[pathname] = layout
         return layout
     return app
-
