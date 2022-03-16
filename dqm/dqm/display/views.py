@@ -40,9 +40,6 @@ def show_display(request, displayname):
         app = new_display(displayname)
         displays[displayname] = app
     return render(request, 'display.dtl', context={'displayname': displayname})
-    
-
-
 
 def create_display(request):
 

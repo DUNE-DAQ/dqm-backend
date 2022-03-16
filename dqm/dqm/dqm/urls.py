@@ -1,4 +1,4 @@
-"""myproject URL Configuration
+"""dqm URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/3.2/topics/http/urls/
@@ -13,9 +13,20 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
+from django.contrib import admin
+from django.urls import include, path
+from django.conf.urls import url
+
+from django.views.generic import TemplateView
+
+from django.conf import settings
+from django.conf.urls.static import static
+
+from django_plotly_dash.views import add_to_session
+
 from django.contrib import admin
 from django.urls import path, include
-# from myapp.views import hello
 from myhome.views import index
 
 from sources.views import sources
@@ -25,7 +36,6 @@ from test.views import PersonView
 import json
 from django.http import JsonResponse
 
-
 from Platform import data
 def ajax_view(request, choice):
     streams = data.get_streams()
@@ -34,9 +44,14 @@ def ajax_view(request, choice):
     else:
         return JsonResponse({})
 
-
+# from dash_static.views import show_display_static
 
 urlpatterns = [
+    path('django_plotly_dash/', include('django_plotly_dash.urls')),
+
+    path('demo-session-var', add_to_session, name="session-variable-example"),
+    path('dash_static/', TemplateView.as_view(template_name='display_static.html'), name='dash-static'),
+
     path('admin/', admin.site.urls),
     # path('hello/', hello, name='home'),
     path('', index, name='home'),
@@ -47,44 +62,11 @@ urlpatterns = [
     path('django_plotly_dash/', include('django_plotly_dash.urls')),
     path('test/', PersonView.as_view()),
     path('ajax/<choice>', ajax_view, name='ajax'),
+    # path('dash_static/', show_display_static, name='static display')
+
 ]
 
-# @home_bp.route("/create-display", methods=["GET", 'POST'])
-# def create_display():
-#     form_streams = ExampleForm()
-#     streams = data.get_streams()
-#     streamsls = []
-#     # for key in streams:
-#     #     streamsls.extend(list(streams[key]))
-#     form_streams.choices.choices = [(elem, elem) for i, elem in enumerate (streamsls)]
-#     # print(f'{form_streams.example.data=}')
-#     # if form_streams.example.data == 1:
-#     #     print('Creating new display')
-#     #     # data.create_display(
-#     """About page."""
-#     if form_streams.choices.name:
-#         print('Creating new display')
-#         print(f'{form_streams.choices.data=}')
+# Add in static routes so daphne can serve files; these should
+# be masked eg with nginx for production use
 
-#         # source = form_streams.choices.food
-#         source = form_streams.foodkind.data
-#         displaystreams = {}
-#         displaystreams[source] = form_streams.choices.data
-#         print('STREAMS', displaystreams)
-#         data.create_display(form_streams.name.data, displaystreams)
-
-#     return render_template(
-#         "create_display.jinja2",
-#         title="Create displays",
-#         template="home-template page",
-#         form=form_streams,
-#     )
-
-# @home_bp.route('/create-display/get-streams/<streamname>')
-# def get_streams(streamname):
-#     streams = data.get_streams()
-#     import json
-#     if streamname not in streams:
-#         return jsonify([])
-#     else:
-#         return jsonify(streams[streamname])
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

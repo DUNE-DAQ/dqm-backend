@@ -1,14 +1,16 @@
 {% extends "layout.dtl" %}
 {% load static %}
 {%load plotly_dash%}
+{% csrf_token %}
+{%block post_body%}{%plotly_message_pipe%}{%endblock%}
 
 {% block pagestyles %}
-    <link rel="stylesheet" type="text/css" href="{% static 'dist/css/002_bootstrap-4.4.1.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'demo/002_bootstrap-4.4.1.css' %}">
 {% endblock %}
 
 {% block title %} Dashboard {{ pathname }} {% endblock title %}
 
 {% block content %}
-  {% include "navigation.dtl" %}
+     {% include "navigation.dtl" %}
      {% plotly_direct name=displayname %}
 {% endblock content %}

@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+#
+source env/bin/activate
+cd dqm
+./manage.py migrate
+./manage.py shell < configdb.py # Add a superuser if needed
+./manage.py collectstatic -i "*.py" -i "*.pyc" --noinput --link
+#
+# Run debug server. Use the nostatic flag to enable the use of whitenose rather than the standard Django debug handling
+#
+./manage.py runserver --nostatic

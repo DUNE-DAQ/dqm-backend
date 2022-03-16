@@ -1,0 +1,11 @@
+{% load static %}
+{%load plotly_dash%}
+{% csrf_token %}
+
+{%block post_body%}{%plotly_message_pipe%}{%endblock%}
+
+{% block title %} Dashboard {{ pathname }} {% endblock title %}
+
+{% block content %}
+     {% plotly_app name="static" %}
+{% endblock content %}

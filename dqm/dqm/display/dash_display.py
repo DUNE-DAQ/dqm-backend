@@ -4,7 +4,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 import dpd_components as dpd
 
-from .models import Display
+from display.models import Display
 
 from Platform import data
 import pandas as pd
@@ -12,9 +12,10 @@ import plotly.express as px
 import numpy as np
 
 from django_plotly_dash import DjangoDash
+from django_plotly_dash.consumers import send_to_pipe_channel
+from datetime import datetime
 
 layout_dic = {}
-
 
 def create_display(name):
 
@@ -54,7 +55,8 @@ def create_display(name):
 
                 @app.callback(
                     Output(f'interm-{pathname}-{i}', 'value'), 
-                    Input(f'interval-component', 'n_intervals'))
+                    Input(f'pipe-id', 'value'))
+                    # Input(f'interval-component', 'n_intervals'))
                 def get_data(_, name=f'{key}', source=source):
                     print('Getting data', name, source)
                     ds = data.DataStream(name, data.DataSource(source))
@@ -83,7 +85,8 @@ def create_display(name):
 
                         fig.update_layout({'xaxis_title': 'Channel number', 'yaxis_title': 'RMS',
                                         'title': 'Induction plane',
-                                        'plot_bgcolor': 'rgba(0, 0, 0, 0)'})
+                                           'plot_bgcolor': 'rgba(0, 0, 0, 0)',
+                                           })
 
                         fig.update_xaxes(showgrid=False, zeroline=False)
                         fig.update_yaxes(showgrid=True, zeroline=False, gridwidth=.05, gridcolor='lightgrey')
@@ -149,6 +152,13 @@ def create_display(name):
                             id='interval-component',
                             interval=5*1000, # in milliseconds
                             ),
+            ]
+            +
+            [
+            dpd.Pipe(id="pipe-id",
+                     value='a',
+                     label="named_counts",
+                     channel_name="test-channel"),
             ]
             +
             [html.Div(id=f'interm-{pathname}-{i}') for i in range(num_plots)]
