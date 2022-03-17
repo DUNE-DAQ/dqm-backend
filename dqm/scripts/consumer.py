@@ -4,10 +4,13 @@ import pandas as pd
 from django.conf import settings
 import os
 
+from django_plotly_dash.consumers import send_to_pipe_channel
+from datetime import datetime
+
 PATH_DATABASE = settings.PATH_DATABASE
 
 def write_database(data, source, stream_name, run_number, plane):
-    print('Writing to database', stream_name)
+    print('Writing to database', source, stream_name, plane)
     database_path = PATH_DATABASE
     values = data['value']
     if len(values.shape) == 1:
@@ -61,6 +64,12 @@ for message in consumer:
                         source, 'fft_sums_display',
                         run_number, plane)
 
+
+        timestamp = datetime.now().strftime('%Y/%m/%d %H:%M:%S')
+        send_to_pipe_channel(channel_name=f'{source}-fft_sums_display{plane}',
+                             label=f'{source}-fft_sums_display{plane}',
+                             value=timestamp)
+
     if 'raw_display' in message[1]:
         m = message[-1].split('\\n')
         channels = np.fromstring(m[0].split(',')[-1], sep=' ')
@@ -71,6 +80,11 @@ for message in consumer:
         write_database({'value': val, 'channels': channels, 'timestamps': timestamps},
                        source, 'raw_display', 
                        run_number, plane)
+
+        timestamp = datetime.now().strftime('%Y/%m/%d %H:%M:%S')
+        send_to_pipe_channel(channel_name=f'{source}-raw_display{plane}',
+                             label=f'{source}-raw_display{plane}',
+                             value=timestamp)
                        
     if 'rmsm_display' in message[1]:
         m = message[-1].split('\\n')
@@ -82,3 +96,8 @@ for message in consumer:
         write_database({'value': val, 'channels': channels},
                        source, 'rmsm_display', 
                        run_number, plane)
+
+        timestamp = datetime.now().strftime('%Y/%m/%d %H:%M:%S')
+        send_to_pipe_channel(channel_name=f'{source}-rmsm_display{plane}',
+                             label=f'{source}-rmsm_display{plane}',
+                             value=timestamp)
