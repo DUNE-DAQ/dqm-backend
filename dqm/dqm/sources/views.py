@@ -2,14 +2,11 @@ from django.shortcuts import render
 
 # Create your views here.
 
-from Platform import data
-
 import django_tables2 as tables
-
 
 def sources(request):
 
-    sources = data.get_sources()
+    sources = ['source1', 'source2']
 
     ls = []
     for s in sources:
