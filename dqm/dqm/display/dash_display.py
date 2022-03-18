@@ -90,7 +90,7 @@ def create_display(name):
                                         labels={'x': 'Channel number', 'y': 'RMS'})
 
                         fig.update_layout({'xaxis_title': 'Channel number', 'yaxis_title': 'RMS',
-                                        'title': 'Induction plane',
+                                           'title': f'Induction plane {int(stream[-1]) + 1}' if int(stream[-1]) < 2 else 'Collection plane',
                                            'plot_bgcolor': 'rgba(0, 0, 0, 0)',
                                            })
 
@@ -113,7 +113,7 @@ def create_display(name):
                     @app.callback(
                         Output(f'{pathname}-graph-{i}', 'figure'),
                         Input(f'interm-{pathname}-{i}', 'value'))
-                    def plot_heatmap(dic):
+                    def plot_heatmap(dic={}, source=source, stream=key):
                         if dic is None:
                             print('NONE')
                             return px.scatter()
@@ -123,7 +123,7 @@ def create_display(name):
                         # has each axis (i.e. a 200x100 array is plotted as a 200x100 rectangle in arbritrary units)
                         fig = px.imshow(ndf, aspect=100, origin='lower', labels={'x': 'Channel number', 'y': 'Time tick', 'color': 'ADC'})
                         fig.update_layout({'xaxis_title': 'Channel number', 'yaxis_title': 'Time ticks',
-                                        'title': 'Induction plane',
+                                           'title': f'Induction plane {int(stream[-1]) + 1}' if int(stream[-1]) < 2 else 'Collection plane',
                                         'plot_bgcolor': 'rgba(0, 0, 0, 0)'})
                         fig.update_xaxes(showgrid=False, zeroline=False)
                         fig.update_yaxes(showgrid=False, zeroline=False)
@@ -136,7 +136,7 @@ def create_display(name):
                     @app.callback(
                         Output(f'{pathname}-graph-{i}', 'figure'),
                         Input(f'interm-{pathname}-{i}', 'value'))
-                    def plot_line(dic):
+                    def plot_line(dic={}, source=source, stream=key):
                         if dic is None:
                             print('NONE')
                             return px.scatter()
@@ -146,7 +146,7 @@ def create_display(name):
                                         labels={'x': 'Frequency [Hz]', 'y': 'abs(fft(ADC))'})
 
                         fig.update_layout({'xaxis_title': 'Frequency [Hz]', 'yaxis_title': 'abs(fft(ADC))',
-                                           'title': 'Induction plane',
+                                           'title': f'Induction plane {int(stream[-1]) + 1}' if int(stream[-1]) < 2 else 'Collection plane',
                                            'plot_bgcolor': 'rgba(0, 0, 0, 0)',
                                            })
 
