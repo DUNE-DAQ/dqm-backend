@@ -55,7 +55,7 @@ def create_display(name):
 
                 @app.callback(
                     Output(f'interm-{pathname}-{i}', 'value'), 
-                    Input(f'pipe-id', 'value'))
+                    Input(f'pipe-{source}-{key}', 'value'))
                     # Input(f'interval-component', 'n_intervals'))
                 def get_data(_, name=f'{key}', source=source):
                     print('Getting data', name, source)
@@ -144,6 +144,18 @@ def create_display(name):
                         return fig
                     plot_ls.append(plot_line)
 
+
+        pipe_ls = []
+        i = -1
+        for source in displays:
+            for key in displays[source]:
+                i += 1
+                pipe_ls.append(dpd.Pipe(id=f'pipe-{source}-{key}',
+                                        value='',
+                                        label=f'{source}-{key}',
+                                        channel_name=f'{source}-{key}'),)
+
+
         layout = html.Div(
             [html.Div([dcc.Graph(id=f'{pathname}-graph-{i}')],
                             className='col-4') for i in range(num_plots)]
@@ -154,12 +166,7 @@ def create_display(name):
                             ),
             ]
             +
-            [
-            dpd.Pipe(id="pipe-id",
-                     value='a',
-                     label="named_counts",
-                     channel_name="test-channel"),
-            ]
+            pipe_ls
             +
             [html.Div(id=f'interm-{pathname}-{i}') for i in range(num_plots)]
             ,className='row')
