@@ -77,8 +77,6 @@ for message in consumer:
         timestamps = np.array(m[1:-1:2], dtype=int)
         val = np.fromstring(' '.join(m[2::2]), sep=' ', dtype=np.int).reshape(( len(timestamps), len(channels) ))
 
-        print(channels, val)
-
         write_database({'value': val, 'channels': channels, 'timestamps': timestamps},
                        source, 'raw_display', 
                        run_number, plane)
