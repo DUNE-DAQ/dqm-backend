@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'sources',
     'display',
     'test',
+    'Platform',
     # 'dash_static',
 
     'django_tables2',
