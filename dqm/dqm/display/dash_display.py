@@ -6,7 +6,7 @@ import dpd_components as dpd
 
 from display.models import Display
 
-from Platform import data
+from Platform import utils
 import pandas as pd
 import plotly.express as px
 import numpy as np
@@ -40,7 +40,7 @@ def create_display(name):
             print(f'{pathname} in layout_dic')
             return layout_dic[pathname]
 
-        # displays = data.DataSource(pathname.replace('/dash/', '')).get_displays()
+        # displays = utils.DataSource(pathname.replace('/dash/', '')).get_displays()
         displays = Display.objects.filter(name=pathname.replace('/dash/', ''))[0].data
         num_plots = sum([len(displays[s]) for s in displays])
 
@@ -58,8 +58,8 @@ def create_display(name):
                     Input(f'pipe-{source}-{key}', 'value'))
                     # Input(f'interval-component', 'n_intervals'))
                 def get_data(_, name=f'{key}', source=source):
-                    print('Getting data', name, source)
-                    ds = data.DataStream(name, data.DataSource(source))
+                    print('Getting utils', name, source)
+                    ds = utils.DataStream(name, utils.DataSource(source))
                     # ds = data_stream_dics
                     ndf = ds.get_data()
                     if ndf is None:

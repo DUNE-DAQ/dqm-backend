@@ -36,9 +36,9 @@ from test.views import PersonView
 import json
 from django.http import JsonResponse
 
-from Platform import data
+from Platform import utils
 def ajax_view(request, choice):
-    streams = data.get_streams()
+    streams = utils.get_streams()
     if choice in streams:
         return JsonResponse(streams[choice], safe=False)
     else:

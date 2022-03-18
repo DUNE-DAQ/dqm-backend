@@ -1,6 +1,6 @@
 from django.shortcuts import render
 
-from Platform import data
+from Platform import utils
 from .dash_display import create_display as new_display
 
 import django_tables2 as tables
@@ -45,7 +45,7 @@ def create_display(request):
 
     def get_form():
 
-        possible_names = data.get_streams()
+        possible_names = utils.get_streams()
         # This is a hack to find all the available streams and pass them as possible choices
         # otherwise the form will complain that an invalid choice was chosen
         tmp = []
