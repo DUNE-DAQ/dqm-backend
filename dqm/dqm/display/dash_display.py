@@ -78,7 +78,7 @@ def create_display(name):
                         Output(f'{pathname}-graph-{i}', 'figure'),
                        [Input(f'interm-{pathname}-{i}', 'value'),
                         Input(f'run-dropdown', 'value')])
-                    def plot_scatter(dic, args):
+                    def plot_scatter(dic={}, args=None, source=source, stream=key):
                         reference_run = args
                         print('PLOT SCATTER', reference_run)
                         if dic is None:
@@ -100,7 +100,8 @@ def create_display(name):
                                            text=f'Last updated at {datetime.now().strftime("%H:%M:%S %d/%m/%Y")}',
                                            showarrow=False)
                         if reference_run is not None:
-                            ndf = pd.DataFrame(dic['data'])
+                            ds = utils.DataStream(stream, utils.DataSource(source))
+                            ndf = pd.DataFrame(ds.get_data(reference_run))
                             fig.add_trace(go.Scatter(x=np.array(ndf.columns, dtype=np.float),
                                                      y=np.array(ndf.values, dtype=np.float)[0]-10,
                                                      mode='markers',
