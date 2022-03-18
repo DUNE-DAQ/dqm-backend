@@ -66,7 +66,6 @@ def create_display(name):
                         return None
                     ret = {}
                     ret['data'] = ndf.to_dict()
-                    # print(ret['data'])
                     return ret
                 data_funcs.append(get_data)
 
