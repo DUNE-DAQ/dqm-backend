@@ -4,7 +4,10 @@ import dash_core_components as dcc
 import dash_html_components as html
 import dpd_components as dpd
 
+import plotly.graph_objects as go
+
 from display.models import Display
+
 
 from Platform import utils
 import pandas as pd
@@ -14,6 +17,7 @@ import numpy as np
 from django_plotly_dash import DjangoDash
 from django_plotly_dash.consumers import send_to_pipe_channel
 from datetime import datetime
+
 
 layout_dic = {}
 
@@ -72,8 +76,11 @@ def create_display(name):
                 if plottype == 'scatter':
                     @app.callback(
                         Output(f'{pathname}-graph-{i}', 'figure'),
-                        Input(f'interm-{pathname}-{i}', 'value'))
-                    def plot_scatter(dic):
+                       [Input(f'interm-{pathname}-{i}', 'value'),
+                        Input(f'run-dropdown', 'value')])
+                    def plot_scatter(dic, args):
+                        reference_run = args
+                        print('PLOT SCATTER', reference_run)
                         if dic is None:
                             print('NONE')
                             return px.scatter()
@@ -92,6 +99,13 @@ def create_display(name):
                         fig.add_annotation(xref='paper', yref='paper', x=.9, y=1.15,
                                            text=f'Last updated at {datetime.now().strftime("%H:%M:%S %d/%m/%Y")}',
                                            showarrow=False)
+                        if reference_run is not None:
+                            ndf = pd.DataFrame(dic['data'])
+                            fig.add_trace(go.Scatter(x=np.array(ndf.columns, dtype=np.float),
+                                                     y=np.array(ndf.values, dtype=np.float)[0]-10,
+                                                     mode='markers',
+                                                     name=f'Run {reference_run}'))
+
                         return fig
                     plot_ls.append(plot_scatter)
                 elif plottype == 'heatmap':
@@ -154,6 +168,7 @@ def create_display(name):
                                         label=f'{source}-{key}',
                                         channel_name=f'{source}-{key}'),)
 
+        run_numbers = utils.get_runs(list(displays.keys())[0])
 
         layout = html.Div(
             [html.Div([dcc.Graph(id=f'{pathname}-graph-{i}')],
@@ -168,6 +183,15 @@ def create_display(name):
             pipe_ls
             +
             [html.Div(id=f'interm-{pathname}-{i}') for i in range(num_plots)]
+            +
+            [dcc.Dropdown(
+                id='run-dropdown',
+                options=[{'label': f'Run {n}', 'value': n}
+                         for n in run_numbers],
+                value=None,
+                className='col-4'
+                )
+             ]
             ,className='row')
 
         layout_dic[pathname] = layout
