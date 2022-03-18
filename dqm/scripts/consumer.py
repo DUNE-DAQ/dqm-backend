@@ -73,9 +73,11 @@ for message in consumer:
 
     if 'raw_display' in message[1]:
         m = message[-1].split('\\n')
-        channels = np.fromstring(m[0].split(',')[-1], sep=' ')
+        channels = np.fromstring(m[0].split(',')[-1], sep=' ', dtype=np.int)
         timestamps = np.array(m[1:-1:2], dtype=int)
-        val = np.fromstring(' '.join(m[2::2]), sep=' ').reshape(( len(timestamps), len(channels) ))
+        val = np.fromstring(' '.join(m[2::2]), sep=' ', dtype=np.int).reshape(( len(timestamps), len(channels) ))
+
+        print(channels, val)
 
         write_database({'value': val, 'channels': channels, 'timestamps': timestamps},
                        source, 'raw_display', 
@@ -88,7 +90,7 @@ for message in consumer:
                        
     if 'rmsm_display' in message[1]:
         m = message[-1].split('\\n')
-        channels = np.fromstring(m[0].split(',')[-1], sep=' ')
+        channels = np.fromstring(m[0].split(',')[-1], sep=' ', dtype=np.int)
         val = np.fromstring(m[-2], sep=' ')
         # Random noise to see the plots updating
         val += np.random.random(val.shape[0]) * 20
