@@ -103,7 +103,7 @@ def create_display(name):
                             ds = utils.DataStream(stream, utils.DataSource(source))
                             ndf = pd.DataFrame(ds.get_data(reference_run))
                             fig.add_trace(go.Scatter(x=np.array(ndf.columns, dtype=np.float),
-                                                     y=np.array(ndf.values, dtype=np.float)[0]-10,
+                                                     y=np.array(ndf.values, dtype=np.float)[0],
                                                      mode='markers',
                                                      name=f'Run {reference_run}'))
 
