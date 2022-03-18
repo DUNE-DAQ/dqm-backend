@@ -24,7 +24,7 @@ def write_database(data, source, stream_name, run_number, plane):
     from datetime import datetime
     now = datetime.now().strftime('%y%m%d-%H%M%S')
     filename = f'{stream_name}-{plane}-{now}'
-    if not os.path.exists(f'{PATH_DATABASE}/{source}')
+    if not os.path.exists(f'{PATH_DATABASE}/{source}'):
         print(f'Creating directory at {PATH_DATABASE}/{source}')
         os.mkdir(f'{PATH_DATABASE}/{source}')
     if not os.path.exists(f'{PATH_DATABASE}/{source}/{run_number}'):
