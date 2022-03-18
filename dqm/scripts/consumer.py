@@ -23,14 +23,14 @@ def write_database(data, source, stream_name, run_number, plane):
         # print(df.columns)
     from datetime import datetime
     now = datetime.now().strftime('%y%m%d-%H%M%S')
-    filename = f'{stream_name}-{plane}-{run_number}-{now}'
-    try:
-        os.listdir(f'{PATH_DATABASE}/{source}')
-    except OSError:
-        print('EXCEPTION')
+    filename = f'{stream_name}-{plane}-{now}'
+    if not os.path.exists(f'{PATH_DATABASE}/{source}')
         print(f'Creating directory at {PATH_DATABASE}/{source}')
         os.mkdir(f'{PATH_DATABASE}/{source}')
-    df.to_hdf(f'{PATH_DATABASE}/{source}/{filename}.hdf5', 'data')
+    if not os.path.exists(f'{PATH_DATABASE}/{source}/{run_number}'):
+        print(f'Creating directory at {PATH_DATABASE}/{source}/{run_number}')
+        os.mkdir(f'{PATH_DATABASE}/{source}/{run_number}')
+    df.to_hdf(f'{PATH_DATABASE}/{source}/{run_number}/{filename}.hdf5', 'data')
 
 consumer = KafkaConsumer('testdunedqm',
                          bootstrap_servers='monkafka:30092',
