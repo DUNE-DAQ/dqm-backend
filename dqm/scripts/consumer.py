@@ -52,6 +52,7 @@ for message in consumer:
     # dataPath = message[2]
     # encoding = message[3]
     # originalDataName = message[4]
+    run_number = message[2]
     plane = message[10]
 
     if 'fft_sums_display' in message[1]:
@@ -75,7 +76,6 @@ for message in consumer:
         channels = np.fromstring(m[0].split(',')[-1], sep=' ')
         timestamps = np.array(m[1:-1:2], dtype=int)
         val = np.fromstring(' '.join(m[2::2]), sep=' ').reshape(( len(timestamps), len(channels) ))
-        run_number = 1
 
         write_database({'value': val, 'channels': channels, 'timestamps': timestamps},
                        source, 'raw_display', 
