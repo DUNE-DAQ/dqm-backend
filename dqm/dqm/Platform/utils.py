@@ -64,6 +64,6 @@ def get_partitions():
 def get_apps_for_partition(partition):
     apps = []
     for source in os.listdir(DATABASE_PATH):
-        if source[:source.find('dqm')] == partition:
+        if source[:source.find('_dqm')] == partition:
             apps.append(source[source.find('dqm'):])
     return apps
