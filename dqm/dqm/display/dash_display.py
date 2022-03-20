@@ -48,14 +48,17 @@ def create_display(name):
         displays = Display.objects.filter(name=pathname.replace('/dash/', ''))[0].data
         num_plots = sum([len(displays[s]) for s in displays])
 
+
         data_funcs = []
         plot_ls = []
 
         i = -1
         for source in displays:
-            for key in displays[source]:
+            pos_keys = sorted([(val['pos'] if 'pos' in val else i, key) for key,val in displays[source].items()])
+            for pos, key in pos_keys:
+                print(pos, key)
                 i += 1
-                plottype = displays[source][key]
+                plottype = displays[source][key]['plot_type']
 
                 @app.callback(
                     Output(f'interm-{pathname}-{i}', 'value'), 
@@ -77,8 +80,9 @@ def create_display(name):
                     @app.callback(
                         Output(f'{pathname}-graph-{i}', 'figure'),
                        [Input(f'interm-{pathname}-{i}', 'value'),
-                        Input(f'run-dropdown', 'value')])
-                    def plot_scatter(dic={}, args=None, source=source, stream=key):
+                        Input('run-dropdown', 'value'),
+                        Input('rewind-dropdown', 'value')])
+                    def plot_scatter(dic={}, args=None, rewind_run=None, source=source, stream=key):
                         reference_run = args
                         print('PLOT SCATTER', reference_run)
                         if dic is None:
@@ -112,8 +116,9 @@ def create_display(name):
                 elif plottype == 'heatmap':
                     @app.callback(
                         Output(f'{pathname}-graph-{i}', 'figure'),
-                        Input(f'interm-{pathname}-{i}', 'value'))
-                    def plot_heatmap(dic={}, source=source, stream=key):
+                        [Input(f'interm-{pathname}-{i}', 'value'),
+                         Input('rewind-dropdown', 'value')])
+                    def plot_heatmap(dic={}, rewind_run=None, source=source, stream=key):
                         if dic is None:
                             print('NONE')
                             return px.scatter()
@@ -135,8 +140,9 @@ def create_display(name):
                 elif plottype == 'line':
                     @app.callback(
                         Output(f'{pathname}-graph-{i}', 'figure'),
-                        Input(f'interm-{pathname}-{i}', 'value'))
-                    def plot_line(dic={}, source=source, stream=key):
+                        [Input(f'interm-{pathname}-{i}', 'value'),
+                         Input('rewind-dropdown', 'value')])
+                    def plot_line(dic={}, rewind_run=None, source=source, stream=key):
                         if dic is None:
                             print('NONE')
                             return px.scatter()
@@ -187,6 +193,15 @@ def create_display(name):
             +
             [dcc.Dropdown(
                 id='run-dropdown',
+                options=[{'label': f'Run {n}', 'value': n}
+                         for n in run_numbers],
+                value=None,
+                className='col-4'
+                )
+             ]
+            +
+            [dcc.Dropdown(
+                id='rewind-dropdown',
                 options=[{'label': f'Run {n}', 'value': n}
                          for n in run_numbers],
                 value=None,
