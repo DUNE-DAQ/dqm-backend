@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'display',
     'test',
     'Platform',
+    'templates',
     # 'dash_static',
 
     'django_tables2',
