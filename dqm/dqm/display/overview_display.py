@@ -67,7 +67,7 @@ def create_overview_display(name):
 
             return fig
 
-        apps = ['app1', 'app2']
+        apps = utils.get_apps_for_partition(pathname)
 
         layout = html.Div(
             [html.Div(children=f'Overview for partition {name}', className='h1')]
