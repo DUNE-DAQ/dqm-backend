@@ -26,18 +26,21 @@ MAX_POINTS = 1000
 
 class TimeSeries:
     def __init__(self):
-        self.data = pd.Series(np.zeros(MAX_POINTS))
+        self.data = [0] * MAX_POINTS
+        self.time = [0] * MAX_POINTS
         self.index = 0
+        self.max_index = 0
     def add(self, date, value):
-        print(date)
-        new_index = list(self.data.index)
-        new_index[self.index] = pd.to_datetime(date)
-        self.data.index = new_index
-        self.data.iloc[self.index] = value
+        # new_index = list(self.data.index)
+        # new_index[self.index] = pd.to_datetime(date)
+        # self.data.index = new_index
+        # self.data.iloc[self.index] = value
+        self.data[self.index] = value
+        self.time[self.index] = date
         self.index += 1
+        self.max_index = max(self.max_index, self.index)
         if self.index >= MAX_POINTS:
             self.index = 0
-        print(self.data)
 
 def write_database(data, source, stream_name, run_number, plane):
     print('Writing to database', source, stream_name, plane)
@@ -135,11 +138,12 @@ for message in consumer:
             if plane == '0':
                 if source not in time_series:
                     time_series[source] = TimeSeries()
-                print(channels, val)
-                time_series[source].add(timestamp, val[0])
+                time_series[source].add(int(datetime.now().timestamp()), val[0])
             send_to_pipe_channel(channel_name=f'time_evol',
                                 label=f'time_evol',
-                                 value=list(time_series[source].data.values))
+                                 value={'data': time_series[source].data[:time_series[source].max_index],
+                                        'timestamp': time_series[source].time[:time_series[source].max_index]}
+                                 )
     except Exception:
         tb = traceback.format_exc()
         logging.error(' error in consumer with traceback: ' + tb + '\nAnd the message is ' + str(message))
