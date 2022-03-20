@@ -26,6 +26,13 @@ def get_runs(source):
     runs = os.listdir(DATABASE_PATH + source)
     return runs
 
+def get_all_runs(partition):
+    s = set()
+    for d in [x for x in os.listdir(DATABASE_PATH) if x.startswith(partition)]:
+        for run in os.listdir(DATABASE_PATH + '/' + d):
+            s.add(run)
+    return s
+
 class DataSource:
     def __init__(self, name):
         self.name = name
@@ -67,3 +74,4 @@ def get_apps_for_partition(partition):
         if source[:source.find('_dqm')] == partition:
             apps.append(source[source.find('dqm'):])
     return apps
+
