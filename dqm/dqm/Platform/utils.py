@@ -54,3 +54,16 @@ class DataStream:
         else:
             print('No data available')
             return None
+
+def get_partitions():
+    s = set()
+    for source in os.listdir(DATABASE_PATH):
+        s.add(source[:source.find('dqm')])
+    return list(s)
+
+def get_apps_for_partition(partition):
+    apps = []
+    for source in os.listdir(DATABASE_PATH):
+        if source[:source.find('dqm')] == partition:
+            apps.append(source[source.find('dqm'):])
+    return apps
