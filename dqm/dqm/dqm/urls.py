@@ -30,7 +30,7 @@ from django.urls import path, include
 from myhome.views import index
 
 from sources.views import sources
-from display.views import display, create_display, show_display
+from display.views import display, create_display, show_display, show_overview_display
 from test.views import PersonView
 
 import json
@@ -59,6 +59,7 @@ urlpatterns = [
     path('sources/', sources, name='sources'),
     path('create-display/', create_display, name='create display'),
     path('displays/<displayname>', show_display, name='show display'),
+    path('overview/<partition>', show_overview_display, name='show display'),
     path('django_plotly_dash/', include('django_plotly_dash.urls')),
     path('test/', PersonView.as_view()),
     path('ajax/<choice>', ajax_view, name='ajax'),
