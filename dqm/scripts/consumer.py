@@ -9,10 +9,35 @@ from django_plotly_dash.consumers import send_to_pipe_channel
 from datetime import datetime
 import logging
 
+# from .time_evolution import TimeSeries
+
+time_series = {}
+
 PATH_DATABASE = settings.PATH_DATABASE
 
 logging.basicConfig(filename='consumer.log',
                     level=logging.ERROR, format='%(asctime)s %(message)s')
+
+import numpy as np
+import pandas as pd
+from django_plotly_dash.consumers import send_to_pipe_channel
+
+MAX_POINTS = 1000
+
+class TimeSeries:
+    def __init__(self):
+        self.data = pd.Series(np.zeros(MAX_POINTS))
+        self.index = 0
+    def add(self, date, value):
+        print(date)
+        new_index = list(self.data.index)
+        new_index[self.index] = pd.to_datetime(date)
+        self.data.index = new_index
+        self.data.iloc[self.index] = value
+        self.index += 1
+        if self.index >= MAX_POINTS:
+            self.index = 0
+        print(self.data)
 
 def write_database(data, source, stream_name, run_number, plane):
     print('Writing to database', source, stream_name, plane)
@@ -42,7 +67,7 @@ consumer = KafkaConsumer('testdunedqm',
                          client_id='test')
 
 for message in consumer:
-    # print(message)
+    # print(str(message))
 
     message = str(message.value).split(';')
     # print(message)
@@ -106,8 +131,17 @@ for message in consumer:
             send_to_pipe_channel(channel_name=f'{source}-rmsm_display{plane}',
                                 label=f'{source}-rmsm_display{plane}',
                                 value=timestamp)
+
+            if plane == '0':
+                if source not in time_series:
+                    time_series[source] = TimeSeries()
+                print(channels, val)
+                time_series[source].add(timestamp, val[0])
+            send_to_pipe_channel(channel_name=f'time_evol',
+                                label=f'time_evol',
+                                 value=list(time_series[source].data.values))
     except Exception:
         tb = traceback.format_exc()
-        logging.error(' error in consumer with traceback: ' + tb)
+        logging.error(' error in consumer with traceback: ' + tb + '\nAnd the message is ' + str(message))
         print('EXCEPTION')
         continue
