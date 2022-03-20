@@ -47,12 +47,12 @@ def create_overview_display(name):
 
         @app.callback(
             Output(f'{pathname}-graph-{0}', 'figure'),
-            [Input(f'pipe-{0}', 'value')])
+            [Input(f'pipe-partition-{pathname}-{0}', 'value')])
         def plot_scatter(dic={}):
             print(dic)
             # ndf = pd.DataFrame(dic['data'])
-            fig = px.scatter(y=np.array(dic),
-                            labels={'x': 'Channel number', 'y': 'RMS'})
+            fig = px.scatter(x=pd.to_datetime(dic['timestamp'], unit='s'), y=dic['data'],
+                            labels={'x': 'Time', 'y': 'RMS'})
 
             # fig.update_layout({'xaxis_title': 'Channel number', 'yaxis_title': 'RMS',
             #                     'title': f'Induction plane {int(stream[-1]) + 1}' if int(stream[-1]) < 2 else 'Collection plane',
@@ -67,24 +67,30 @@ def create_overview_display(name):
 
             return fig
 
+
         apps = utils.get_apps_for_partition(pathname)
+
+        runs = utils.get_all_runs(pathname)
+        current_run = max(runs)
 
         layout = html.Div(
             [html.Div(children=f'Overview for partition {name}', className='h1')]
             +
-            [html.Div(children=f'The current run number is {name}', className='h1')]
+            [html.Div(children=f'The current run number is {current_run}', className='h1')]
             +
-            [html.Div(children=f'Receiving data from the following apps', className='h1')]
+            [html.Details(children=
+            [html.Summary(children=f'Receiving data from the following apps', className='h1')]
             +
             # [html.Div(children='<ul class="list-group">' + ''.join([f'<li class="list-group-item">{app}</li>' for apps in apps]) + '</ul>')]
             # [html.Ul(children=['<li class="list-group-item">{app}</li>' for apps in apps])]
-            [html.Div(children=[html.A(f'{app}', href=f'/display/{app}', className="list-group-item list-group-item-action") for app in apps], className="list-group")]
+            [html.Div(children=[html.A(f'{app}', href=f'/displays/{pathname}_{app}', className="list-group-item list-group-item-action") for app in apps], className="list-group")]
+                          )]
             +
-            [html.Div(children=f'This is a interesting plot', className='h1')]
+            [html.Div(children=f'This is an interesting plot', className='h1')]
             +
             [dcc.Graph(id=f'{pathname}-graph-{0}')]
             +
-            [dpd.Pipe(id=f'pipe-{0}',
+            [dpd.Pipe(id=f'pipe-partition-{pathname}-{0}',
                         value={'data': []},
                         label=f'time_evol',
                         channel_name=f'time_evol'),
