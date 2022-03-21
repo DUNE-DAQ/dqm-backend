@@ -1,0 +1,10 @@
+{% load render_table from django_tables2 %}
+
+{% include "navigation.dtl" %}
+
+{% block content %}
+  <div class="container">
+    {% render_table overview_templates_table %}
+    {% render_table system_templates_table %}
+  </div>
+{% endblock %}
