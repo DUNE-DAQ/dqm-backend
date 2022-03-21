@@ -33,6 +33,8 @@ from sources.views import sources
 from display.views import display, create_display, show_display, show_overview_display
 from test.views import PersonView
 
+from templates.views import show_templates
+
 import json
 from django.http import JsonResponse
 
@@ -63,6 +65,7 @@ urlpatterns = [
     path('django_plotly_dash/', include('django_plotly_dash.urls')),
     path('test/', PersonView.as_view()),
     path('ajax/<choice>', ajax_view, name='ajax'),
+    path('templates', show_templates, name='templates'),
     # path('dash_static/', show_display_static, name='static display')
 
 ]
