@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
+
 <head>
   <meta charset="utf-8"/>
   <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
@@ -30,6 +31,8 @@
   {% block extra_header%}{% endblock%}
 
   {% plotly_header%}
+
+
 </head>
 
 <body class="{{ template }}">

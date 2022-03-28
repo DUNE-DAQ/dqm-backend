@@ -11,6 +11,6 @@
 {% block title %} Dashboard {{ pathname }} {% endblock title %}
 
 {% block content %}
-     {% include "navigation.dtl" %}
+     {% include "navigation.html" %}
      {% plotly_direct name=displayname %}
 {% endblock content %}

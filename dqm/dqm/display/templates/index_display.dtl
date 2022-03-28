@@ -3,7 +3,7 @@
 
 
 {% block content %}
- {% include "navigation.dtl" %}
+ {% include "navigation.html" %}
 
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
   <link href="http://codegena.com/assets/css/image-preview-for-link.css" rel="stylesheet">     
