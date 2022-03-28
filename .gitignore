@@ -2,7 +2,6 @@ __pycache__/
 .projectile
 .webassets-cache/
 static/dist/css/
-migrations/
 db.sqlite3
 *.ipynb
 .env
