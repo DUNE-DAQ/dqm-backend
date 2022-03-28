@@ -6,8 +6,8 @@ from .overview_display import create_overview_display
 
 import django_tables2 as tables
 
-from .models import Display
-from templates.models import DisplayTemplate
+from .models import OverviewDisplay, SystemDisplay
+from templates.models import OverviewTemplate, SystemTemplate
 
 from django import forms
 from .models import Text
@@ -20,13 +20,24 @@ class NameTable(tables.Table):
     description = tables.Column()
 
 # Create your views here.
-def display(request):
+def system_display_index(request):
 
     # newnames = Display.objects.create(name='roland', description='this is a description')
     # obj = Display.objects.filter(name='this is a test')
     # obj.delete()
-    newnames = Display.objects.all()
+    newnames = SystemDisplay.objects.all()
     # print(newnames[0].get_absolute_url)
+    ls = []
+    for s in newnames:
+        ls.append(s)
+
+    table = NameTable(ls)
+
+    return render(request, 'index_display.dtl', context={'table': table})
+
+def overview_display_index(request):
+
+    newnames = OverviewDisplay.objects.all()
     ls = []
     for s in newnames:
         ls.append(s)
@@ -37,10 +48,10 @@ def display(request):
 
 
 displays = {}
-def show_display(request, displayname):
-    if displayname not in displays:
-        app = new_display(displayname)
-        displays[displayname] = app
+def show_display(request, partition, displayname):
+    if (partition, displayname) not in displays:
+        app = new_display(partition, displayname)
+        displays[(partition, displayname)] = app
     return render(request, 'display.dtl', context={'displayname': displayname})
 
 overview_displays = {}
@@ -56,12 +67,17 @@ def create_display(request):
 
     def get_form():
 
-        display_templates = DisplayTemplate.objects.all()
+        overview_templates = OverviewTemplate.objects.all()
+        system_templates = SystemTemplate.objects.all()
 
-        # Create one template if there is not any
+        # Create templates if there isn't any in the database
+        if not OverviewTemplate.objects.all():
+            OverviewTemplate.objects.create(name='TPC Charge Template',
+                                            description='test',
+                                            display={})
 
-        if not DisplayTemplate.objects.all():
-            DisplayTemplate.objects.create(name='TPC Charge Template',
+        if not SystemTemplate.objects.all():
+            SystemTemplate.objects.create(name='TPC Charge Template',
                                            display={'rmsm_display0': {'plot_type': 'scatter', 'pos': 1},
                                                     'rmsm_display1': {'plot_type': 'scatter', 'pos': 0},
                                                     'rmsm_display2': {'plot_type': 'scatter', 'pos': 2},
@@ -70,8 +86,7 @@ def create_display(request):
                                                     'raw_display2':  {'plot_type': 'heatmap', 'pos': 5}
                                                    })
 
-        print('display_templates', display_templates[0].display)
-        # print('display_templates', display_templates[0].delete())
+        partitions = utils.get_partitions()
         possible_names = utils.get_streams()
         # This is a hack to find all the available streams and pass them as possible choices
         # otherwise the form will complain that an invalid choice was chosen
@@ -83,9 +98,10 @@ def create_display(request):
         class ExampleForm(forms.Form):
             name = forms.CharField(label='Name of the display')
             description = forms.CharField(label='Short description')
-            template = forms.ChoiceField(label='Template', choices= [(None, None)] + [(display_templates[i].name, display_templates[i].name) for i in range(len(display_templates))])
+            overview_template = forms.ChoiceField(label='Overview Template', choices= [(None, None)] + [(overview_templates[i].name, overview_templates[i].name) for i in range(len(overview_templates))])
+            system_template = forms.ChoiceField(label='Template', choices= [(None, None)] + [(system_templates[i].name, system_templates[i].name) for i in range(len(system_templates))])
 
-            source = forms.ChoiceField(label='Source', choices= [(list(possible_names.keys())[i], list(possible_names.keys())[i]) for i in range(len(possible_names))])
+            source = forms.ChoiceField(label='Source', choices= [(elem, elem) for elem in partitions])
 
             default_choices = [[tmp[i], tmp[i]] for i in range(len(tmp))]
             choices = forms.MultipleChoiceField(choices=(default_choices), required=False)
@@ -101,17 +117,18 @@ def create_display(request):
                 self.helper.add_input(Submit('', 'Create display'))
                 self.helper.layout = Layout(
                             Fieldset(
-                        'first arg is the legend of the fieldset',
+                        'Create a data display',
                         'name',
                         'description',
-                        'template',
+                        'overview_template',
+                        'system_template',
                         'source',
-                        'choices',
+                        # 'choices',
                     )
                     )
         return ExampleForm
 
-    Form = get_form();
+    Form = get_form()
 
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
@@ -119,17 +136,14 @@ def create_display(request):
         # check whether it's valid:
         if form.is_valid():
             print(f'Creating form with name {form.cleaned_data["name"]}')
-            print(form.cleaned_data['name'])
             # data.create_display(form.cleaned_data['name'], {form.cleaned_data['source'][0] : form.cleaned_data['choices']})
-            obj = Display.objects.filter(name=form.cleaned_data['name'])
+            obj = OverviewDisplay.objects.filter(name=form.cleaned_data['name'])
             if not obj:
-                print(form.cleaned_data['source'])
-                print(form.cleaned_data['choices'])
-                print(f'{form.cleaned_data["template"]=}', type(form.cleaned_data['template']))
                 displays = {}
-                if form.cleaned_data['template'] is not None:
-                    displays = DisplayTemplate.objects.filter(name=form.cleaned_data['template'])[0].display
-                    print(displays)
+                if form.cleaned_data['overview_template'] is not None:
+                    _ = OverviewTemplate.objects.filter(name=form.cleaned_data['overview_template'])[0].display
+                if form.cleaned_data['system_template'] is not None:
+                    displays = SystemTemplate.objects.filter(name=form.cleaned_data['system_template'])[0].display
                 else:
                     for d in form.cleaned_data['choices']:
                         if 'raw_display' in d:
@@ -139,10 +153,11 @@ def create_display(request):
                         elif 'fft_sums_display' in d:
                             displays[d] = 'line'
                 dataa = {form.cleaned_data['source']: displays}
-                Display.objects.create(name=form.cleaned_data['name'],
-                                       description=form.cleaned_data['description'],
-                                       data=dataa
-                                       )
+                OverviewDisplay.objects.create(name=form.cleaned_data['name'],
+                                               description=form.cleaned_data['description'],
+                                               data=dataa,
+                                               source=form.cleaned_data['source']
+                                               )
             else:
                 print(f'Panel with name {form.cleaned_data["name"]} already exists')
 

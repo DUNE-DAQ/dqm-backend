@@ -27,6 +27,7 @@ def get_runs(source):
     return runs
 
 def get_all_runs(partition):
+    print(f'Calling get_all_runs with {partition=}')
     s = set()
     for d in [x for x in os.listdir(DATABASE_PATH) if x.startswith(partition)]:
         for run in os.listdir(DATABASE_PATH + '/' + d):
@@ -65,7 +66,7 @@ class DataStream:
 def get_partitions():
     s = set()
     for source in os.listdir(DATABASE_PATH):
-        s.add(source[:source.find('dqm')])
+        s.add(source[:source.find('_dqm')])
     return list(s)
 
 def get_apps_for_partition(partition):

@@ -6,7 +6,7 @@ import dpd_components as dpd
 
 import plotly.graph_objects as go
 
-from display.models import Display
+from display.models import SystemDisplay, OverviewDisplay
 
 
 from Platform import utils
@@ -18,12 +18,13 @@ from django_plotly_dash import DjangoDash
 from django_plotly_dash.consumers import send_to_pipe_channel
 from datetime import datetime
 
+from templates.models import SystemTemplate
+
 
 layout_dic = {}
 
-def create_display(name):
+def create_display(partition, name):
 
-    # app = Dash(server=server, url_base_pathname='/dash/')
     print(f'Creating app with {name=}')
     app = DjangoDash(name)
 
@@ -37,17 +38,25 @@ def create_display(name):
     def get_layout(pathname):
         print(f'Running get_layout with {pathname=}')
         if '/' in pathname:
-            pathname = pathname.split('/')[-1]
+            _, _, overview_name, app_name = pathname.split('/')
+            print(f'overview_name set to {overview_name} and app_name set to {app_name}')
+            # pathname = pathname.split('/')[-1]
         if not pathname:
             return html.Div()
-        if pathname in layout_dic:
-            print(f'{pathname} in layout_dic')
-            return layout_dic[pathname]
+        if (overview_name, app_name) in layout_dic:
+            print(f'{(overview_name, app_name)} in layout_dic')
+            return layout_dic[(overview_name, app_name)]
+
+        obj = OverviewDisplay.objects.filter(name=overview_name)[0]
+        partition = obj.source
+
 
         # displays = utils.DataSource(pathname.replace('/dash/', '')).get_displays()
-        displays = Display.objects.filter(name=pathname.replace('/dash/', ''))[0].data
-        num_plots = sum([len(displays[s]) for s in displays])
+        # displays = SystemDisplay.objects.filter(name=pathname.replace('/dash/', ''))[0].data
+        displays = SystemTemplate.objects.filter()[0].display
+        displays = {f'{partition}_{app_name}': displays}
 
+        num_plots = sum([len(displays[s]) for s in displays])
 
         data_funcs = []
         plot_ls = []
@@ -56,7 +65,6 @@ def create_display(name):
         for source in displays:
             pos_keys = sorted([(val['pos'] if 'pos' in val else i, key) for key,val in displays[source].items()])
             for pos, key in pos_keys:
-                print(pos, key)
                 i += 1
                 plottype = displays[source][key]['plot_type']
 
@@ -210,6 +218,6 @@ def create_display(name):
              ]
             ,className='row')
 
-        layout_dic[pathname] = layout
+        layout_dic[(overview_name, app_name)] = layout
         return layout
     return app

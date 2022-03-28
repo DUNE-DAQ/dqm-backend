@@ -7,12 +7,19 @@ class Text(models.Model):
     def __str__(self):
         return self.name
 
-
-class Display(models.Model):
+class OverviewDisplay(models.Model):
     name = models.CharField(max_length=50, unique=True)
     description = models.CharField(max_length=200)
     data = models.JSONField()
-    # data = models.
+    source = models.CharField(max_length=30)
+
+    def get_absolute_url(self):
+        return f'/overview/{self.name}'
+
+class SystemDisplay(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+    description = models.CharField(max_length=200)
+    data = models.JSONField()
 
     def get_absolute_url(self):
         return f'/displays/{self.name}'

@@ -7,7 +7,7 @@ import dpd_components as dpd
 
 import plotly.graph_objects as go
 
-from display.models import Display
+# from display.models import Display
 
 
 from Platform import utils
@@ -19,6 +19,7 @@ from django_plotly_dash import DjangoDash
 from django_plotly_dash.consumers import send_to_pipe_channel
 from datetime import datetime
 
+from display.models import OverviewDisplay
 
 layout_dic = {}
 
@@ -68,13 +69,17 @@ def create_overview_display(name):
             return fig
 
 
-        apps = utils.get_apps_for_partition(pathname)
 
-        runs = utils.get_all_runs(pathname)
+        display = OverviewDisplay.objects.filter(name=pathname)[0]
+        partition = display.source
+
+        runs = utils.get_all_runs(partition)
         current_run = max(runs)
 
+        apps = utils.get_apps_for_partition(partition)
+
         layout = html.Div(
-            [html.Div(children=f'Overview for partition {name}', className='h1')]
+            [html.Div(children=f'Overview for partition {partition}', className='h1')]
             +
             [html.Div(children=f'The current run number is {current_run}', className='h1')]
             +
@@ -83,7 +88,7 @@ def create_overview_display(name):
             +
             # [html.Div(children='<ul class="list-group">' + ''.join([f'<li class="list-group-item">{app}</li>' for apps in apps]) + '</ul>')]
             # [html.Ul(children=['<li class="list-group-item">{app}</li>' for apps in apps])]
-            [html.Div(children=[html.A(f'{app}', href=f'/displays/{pathname}_{app}', className="list-group-item list-group-item-action") for app in apps], className="list-group")]
+            [html.Div(children=[html.A(f'{app}', href=f'/overview/{pathname}/{app}', className="list-group-item list-group-item-action") for app in apps], className="list-group")]
                           )]
             +
             [html.Div(children=f'This is an interesting plot', className='h1')]

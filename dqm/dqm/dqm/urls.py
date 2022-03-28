@@ -30,7 +30,7 @@ from django.urls import path, include
 from myhome.views import index
 
 from sources.views import sources
-from display.views import display, create_display, show_display, show_overview_display
+from display.views import system_display_index, overview_display_index, create_display, show_display, show_overview_display
 from test.views import PersonView
 
 from templates.views import show_templates
@@ -57,10 +57,12 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # path('hello/', hello, name='home'),
     path('', index, name='home'),
-    path('display/', display, name='display'),
+    path('display/', system_display_index, name='display'),
+    path('overview/', overview_display_index, name='overview'),
     path('sources/', sources, name='sources'),
     path('create-display/', create_display, name='create display'),
-    path('displays/<displayname>', show_display, name='show display'),
+    # path('displays/<displayname>', show_display, name='show display'),
+    path('overview/<partition>/<displayname>', show_display, name='show display'),
     path('overview/<partition>', show_overview_display, name='show display'),
     path('django_plotly_dash/', include('django_plotly_dash.urls')),
     path('test/', PersonView.as_view()),
