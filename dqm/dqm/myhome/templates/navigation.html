@@ -2,33 +2,38 @@
 
 <style type="text/css" media="screen">
 
-.nav-text {
-  padding: 10px;
-}
-.nav-text:hover {
-  background: #ffffff;
-  border-radius: 32px;
-  transition: all 500ms ease; 
-}
+  .nav-text {
+      padding: 10px;
+  }
+  .nav-text:hover {
+      background: #ffffff;
+      border-radius: 32px;
+      transition: all 500ms ease;
+  }
 </style>
 
 <nav class="navbar sticky-top navbar-expand navbar-light" style="background-color: #e3f2fd;">
   <div class="container fluid">
-        <a class="nav-link" href="{% url 'home' %}">
-          <div class="nav-text">Home</div>
-        </a>
-        <a class="nav-link" href="{% url 'overview' %}">
-          <div class="nav-text">Displays</div>
-        </a>
-        <a class="nav-link" href="{% url 'create display' %}">
-          <div class="nav-text">Create Display</div>
-        </a>
-        <a class="nav-link" href="{% url 'sources' %}">
-          <div class="nav-text">Sources</div>
-        </a>
-      <form class="d-flex">
-        <input class="form-control mx-3" type="search" placeholder="Not working yet" aria-label="Search">
-        <button class="btn btn-outline-success" type="submit">Search</button>
-      </form>
+    <a class="nav-link" href="{% url 'home' %}">
+      <div class="nav-text">Home
+      </div>
+    </a>
+    <a class="nav-link" href="{% url 'overview' %}">
+      <div class="nav-text">Displays
+      </div>
+    </a>
+    <a class="nav-link" href="{% url 'create display' %}">
+      <div class="nav-text">Create Display
+      </div>
+    </a>
+    <a class="nav-link" href="{% url 'sources' %}">
+      <div class="nav-text">Sources
+      </div>
+    </a>
+    <form class="d-flex">
+      <input class="form-control mx-3" type="search" placeholder="Not working yet" aria-label="Search">
+      <button class="btn btn-outline-success" type="submit">Search
+      </button>
+    </form>
   </div>
 </nav>
