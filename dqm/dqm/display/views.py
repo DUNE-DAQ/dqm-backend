@@ -15,9 +15,20 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from crispy_forms.layout import Layout, Fieldset
 
+from django.utils.html import format_html
+
 class NameTable(tables.Table):
     name = tables.Column(attrs={'td': {'class': 'col-6'}}, linkify=True)
     description = tables.Column()
+
+class OverviewTable(tables.Table):
+    name = tables.Column(attrs={'td': {'class': 'col-4'}}, linkify=lambda record: record['object'].get_absolute_url())
+    description = tables.Column(attrs={'td': {'class': 'col-4'}})
+    template = tables.Column(attrs={'td': {'class': 'col-4'}})
+    options = tables.Column(attrs={'td': {'class': 'col-4'}},)
+
+    def render_options(self, record):
+        return format_html(f'<a href={record["object"].get_edit_url()}>Edit</a> <a href={record["object"].get_delete_url()}>Delete</a>')
 
 # Create your views here.
 def system_display_index(request):
@@ -29,20 +40,26 @@ def system_display_index(request):
     # print(newnames[0].get_absolute_url)
     ls = []
     for s in newnames:
-        ls.append(s)
+        ls.append({'name': s.name, 'description': s.description, 'object': s, 'options': '_'})
 
     table = NameTable(ls)
 
     return render(request, 'index_display.html', context={'table': table})
 
 def overview_display_index(request):
+    """
+    Renders the page with the list of displays
+    """
 
-    newnames = OverviewDisplay.objects.all()
+    displays = OverviewDisplay.objects.all()
     ls = []
-    for s in newnames:
-        ls.append(s)
 
-    table = NameTable(ls)
+    for d in displays:
+        # The options field is needed for it to be rendered
+        ls.append({'name': d.name, 'description': d.description, 'object': d,
+                   'template': 'test', 'options': '_'})
+
+    table = OverviewTable(ls)
 
     return render(request, 'index_display.html', context={'table': table})
 
