@@ -64,6 +64,13 @@ def overview_display_index(request):
     return render(request, 'index_display.html', context={'table': table})
 
 
+def edit_overview_display(request, name):
+    obj = OverviewDisplay.objects.all().filter(name=name)[0]
+
+def delete_overview_display(request, name):
+    OverviewDisplay.objects.all().filter(name=name).delete()
+    return overview_display_index(request)
+
 displays = {}
 def show_display(request, partition, displayname):
     if (partition, displayname) not in displays:
@@ -77,7 +84,6 @@ def show_overview_display(request, partition):
         app = create_overview_display(partition)
         overview_displays[partition] = app
     return render(request, 'overview.dtl', context={'displayname': partition})
-
 
 
 def create_display(request):
