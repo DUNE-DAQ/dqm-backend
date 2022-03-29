@@ -30,7 +30,7 @@ from django.urls import path, include
 from myhome.views import index
 
 from sources.views import sources
-from display.views import system_display_index, overview_display_index, create_display, show_display, show_overview_display
+from display.views import system_display_index, overview_display_index, create_display, show_display, show_overview_display, delete_overview_display
 from test.views import PersonView
 
 from templates.views import show_templates
@@ -59,6 +59,8 @@ urlpatterns = [
     path('', index, name='home'),
     path('display/', system_display_index, name='display'),
     path('overview/', overview_display_index, name='overview'),
+    path('overview/<name>/delete', delete_overview_display, name='overview'),
+    path('overview/<name>/edit', delete_overview_display, name='overview'),
     path('sources/', sources, name='sources'),
     path('create-display/', create_display, name='create display'),
     # path('displays/<displayname>', show_display, name='show display'),
