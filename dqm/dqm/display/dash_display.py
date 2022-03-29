@@ -73,7 +73,7 @@ def create_display(partition, name):
                     Input(f'pipe-{source}-{key}', 'value'))
                     # Input(f'interval-component', 'n_intervals'))
                 def get_data(_, name=f'{key}', source=source):
-                    print('Getting utils', name, source)
+                    print('Getting data', name, source)
                     ds = utils.DataStream(name, utils.DataSource(source))
                     # ds = data_stream_dics
                     ndf = ds.get_data()

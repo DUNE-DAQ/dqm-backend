@@ -50,7 +50,7 @@ def create_overview_display(name):
             Output(f'{pathname}-graph-{0}', 'figure'),
             [Input(f'pipe-partition-{pathname}-{0}', 'value')])
         def plot_scatter(dic={}):
-            print(dic)
+            # print(dic)
             # ndf = pd.DataFrame(dic['data'])
             fig = px.scatter(x=pd.to_datetime(dic['timestamp'], unit='s'), y=dic['data'],
                             labels={'x': 'Time', 'y': 'RMS'})
@@ -74,7 +74,7 @@ def create_overview_display(name):
         partition = display.source
 
         runs = utils.get_all_runs(partition)
-        current_run = max(runs)
+        current_run = utils.get_current_run(partition)
 
         apps = utils.get_apps_for_partition(partition)
 
