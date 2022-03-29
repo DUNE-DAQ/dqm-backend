@@ -23,13 +23,31 @@ def get_streams():
     return ret
 
 def get_runs(source):
+    """
+    Get a list of all the runs in the database
+    """
     runs = os.listdir(DATABASE_PATH + source)
     return runs
+
+def get_current_run(partition):
+    """
+    Get the current run based on the modification date
+    """
+
+    files = [x for x in os.listdir(DATABASE_PATH) if x.startswith(partition + '_dqm')]
+    times = [os.path.getmtime(DATABASE_PATH + x) for x in files]
+    most_recent_source = max(zip(times, files))[1]
+    print(f'{most_recent_source=}')
+    runs = [x for x in os.listdir(DATABASE_PATH + most_recent_source)]
+    times = [os.path.getmtime(DATABASE_PATH + most_recent_source + '/' + x) for x in runs]
+    print(runs, times)
+    return max(zip(times, runs))[1]
+
 
 def get_all_runs(partition):
     print(f'Calling get_all_runs with {partition=}')
     s = set()
-    for d in [x for x in os.listdir(DATABASE_PATH) if x.startswith(partition)]:
+    for d in [x for x in os.listdir(DATABASE_PATH) if x.startswith(partition + '_dqm')]:
         for run in os.listdir(DATABASE_PATH + '/' + d):
             s.add(run)
     return s
