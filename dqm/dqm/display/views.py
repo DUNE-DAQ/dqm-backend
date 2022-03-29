@@ -33,7 +33,7 @@ def system_display_index(request):
 
     table = NameTable(ls)
 
-    return render(request, 'index_display.dtl', context={'table': table})
+    return render(request, 'index_display.html', context={'table': table})
 
 def overview_display_index(request):
 
@@ -44,7 +44,7 @@ def overview_display_index(request):
 
     table = NameTable(ls)
 
-    return render(request, 'index_display.dtl', context={'table': table})
+    return render(request, 'index_display.html', context={'table': table})
 
 
 displays = {}
