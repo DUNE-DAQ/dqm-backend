@@ -15,6 +15,10 @@ class OverviewDisplay(models.Model):
 
     def get_absolute_url(self):
         return f'/overview/{self.name}'
+    def get_edit_url(self):
+        return f'/overview/{self.name}/edit'
+    def get_delete_url(self):
+        return f'/overview/{self.name}/delete'
 
 class SystemDisplay(models.Model):
     name = models.CharField(max_length=50, unique=True)
