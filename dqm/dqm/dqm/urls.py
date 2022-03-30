@@ -38,6 +38,8 @@ from templates.views import show_templates
 import json
 from django.http import JsonResponse
 
+from display.models import OverviewDisplay
+
 from Platform import utils
 def ajax_view(request, choice):
     streams = utils.get_streams()
@@ -46,6 +48,19 @@ def ajax_view(request, choice):
     else:
         return JsonResponse({})
 
+def search_results(request, text):
+    """
+    Return the results for the live search
+    It checks the name and description of the available displays
+    """
+    print(f'ajax_list {text=}')
+    obj = OverviewDisplay.objects.all()
+    showls = [False] * len(obj)
+    for i in range(len(obj)):
+        if text in obj[i].name or text in obj[i].description:
+            showls[i] = True
+    ret = [elem.name for elem, show in zip(obj, showls) if show]
+    return JsonResponse(ret, safe=False)
 # from dash_static.views import show_display_static
 
 urlpatterns = [
@@ -69,6 +84,7 @@ urlpatterns = [
     path('django_plotly_dash/', include('django_plotly_dash.urls')),
     path('test/', PersonView.as_view()),
     path('ajax/<choice>', ajax_view, name='ajax'),
+    path('aj/<text>', search_results, name='ajax_search'),
     path('templates', show_templates, name='templates'),
     # path('dash_static/', show_display_static, name='static display')
 
