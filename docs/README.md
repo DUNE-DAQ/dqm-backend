@@ -37,7 +37,7 @@ source env/bin/activate
 ```
 There are two parts running, the first one is the script that receives the data from kafka, saves it and is used to trigger the updates in the web display. Run:
 ```
-python dqm/manage.py shell < scripts/consumer.python
+python dqm/manage.py shell < scripts/consumer.py
 ```
 and leave the terminal open (for example using a tmux session). The second part is the web display itself. Run:
 ```
