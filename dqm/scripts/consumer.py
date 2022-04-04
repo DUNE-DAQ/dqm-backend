@@ -135,12 +135,11 @@ for message in consumer:
             dindex = (source, plane_index)
             if dindex not in time_series:
                 time_series[dindex] = TimeSeries()
-            time_series[dindex].add(int(datetime.now().timestamp()), val[0])
+            # time_series[dindex].add(int(datetime.now().timestamp()), val[0])
             send_to_pipe_channel(channel_name=f'time_evol_{plane_index}',
                                 label=f'time_evol_{plane_index}',
-                                value={'data': val[0],
-                                        'timestamp': int(datetime.now().timestamp())}
-                                    )
+                                value={'data': val.mean(),
+                                       'timestamp': int(datetime.now().timestamp())})
     except Exception:
         tb = traceback.format_exc()
         logging.error(' error in consumer with traceback: ' + tb + '\nAnd the message is ' + str(message))
