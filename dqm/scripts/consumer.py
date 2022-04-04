@@ -122,8 +122,6 @@ for message in consumer:
             m = message[-1].split('\\n')
             channels = np.fromstring(m[0].split(',')[-1], sep=' ', dtype=np.int)
             val = np.fromstring(m[-2], sep=' ')
-            # Random noise to see the plots updating
-            val += np.random.random(val.shape[0]) * 20
             write_database({'value': val, 'channels': channels},
                         source, 'rmsm_display',
                         run_number, plane)
