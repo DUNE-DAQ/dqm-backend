@@ -9,8 +9,6 @@ from django_plotly_dash.consumers import send_to_pipe_channel
 from datetime import datetime
 import logging
 
-# from .time_evolution import TimeSeries
-
 time_series = {}
 
 PATH_DATABASE = settings.PATH_DATABASE
@@ -135,15 +133,16 @@ for message in consumer:
                                 label=f'{source}-rmsm_display{plane}',
                                 value=timestamp)
 
-            if plane == '0':
-                if source not in time_series:
-                    time_series[source] = TimeSeries()
-                time_series[source].add(int(datetime.now().timestamp()), val[0])
-            send_to_pipe_channel(channel_name=f'time_evol',
-                                label=f'time_evol',
-                                 value={'data': time_series[source].data[:time_series[source].max_index],
-                                        'timestamp': time_series[source].time[:time_series[source].max_index]}
-                                 )
+            plane_index = int(plane)
+            dindex = (source, plane_index)
+            if dindex not in time_series:
+                time_series[dindex] = TimeSeries()
+            time_series[dindex].add(int(datetime.now().timestamp()), val[0])
+            send_to_pipe_channel(channel_name=f'time_evol_{plane_index}',
+                                label=f'time_evol_{plane_index}',
+                                value={'data': time_series[dindex].data[:time_series[dindex].max_index],
+                                        'timestamp': time_series[dindex].time[:time_series[dindex].max_index]}
+                                    )
     except Exception:
         tb = traceback.format_exc()
         logging.error(' error in consumer with traceback: ' + tb + '\nAnd the message is ' + str(message))
