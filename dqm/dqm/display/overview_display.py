@@ -46,27 +46,63 @@ def create_overview_display(name):
             print(f'{pathname} in layout_dic')
             return layout_dic[pathname]
 
+        # @app.callback(
+        #     Output(f'{pathname}-graph-{0}', 'extendData'),
+        #     [Input(f'pipe-partition-{pathname}-{i}', 'value') for i in range(3)])
+        # def plot_scatter(dic_0={}, dic_1={}, dic_2={}):
+        #     print('Calling plot_scatter')
+        #     # print(dic)
+        #     # ndf = pd.DataFrame(dic['data'])
+        #     fig = px.scatter(x=pd.to_datetime(dic_0['timestamp'], unit='s'), y=dic_0['data'],
+        #                      labels={'x': 'Time', 'y': 'RMS'})
+        #     fig['data'][0]['showlegend'] = True
+        #     fig['data'][0]['name'] = 'Plane 0'
+
+        #     fig.add_trace(go.Scatter(x=pd.to_datetime(dic_1['timestamp'], unit='s'),
+        #                                 y=dic_1['data'],
+        #                                 mode='markers',
+        #                                 name=f'Plane {1}'))
+
+        #     fig.add_trace(go.Scatter(x=pd.to_datetime(dic_2['timestamp'], unit='s'),
+        #                                 y=dic_2['data'],
+        #                                 mode='markers',
+        #                                 name=f'Plane {2}'))
+
+        #     # fig.update_layout({'xaxis_title': 'Channel number', 'yaxis_title': 'RMS',
+        #     #                     'title': f'Induction plane {int(stream[-1]) + 1}' if int(stream[-1]) < 2 else 'Collection plane',
+        #     #                     'plot_bgcolor': 'rgba(0, 0, 0, 0)',
+        #     #                     })
+
+        #     # fig.update_xaxes(showgrid=False, zeroline=False)
+        #     # fig.update_yaxes(showgrid=True, zeroline=False, gridwidth=.05, gridcolor='lightgrey')
+        #     # fig.add_annotation(xref='paper', yref='paper', x=.9, y=1.15,
+        #     #                     text=f'Last updated at {datetime.now().strftime("%H:%M:%S %d/%m/%Y")}',
+        #     #                     showarrow=False)
+
+        #     return fig
+
         @app.callback(
-            Output(f'{pathname}-graph-{0}', 'figure'),
-            [Input(f'pipe-partition-{pathname}-{i}', 'value') for i in range(3)])
-        def plot_scatter(dic_0={}, dic_1={}, dic_2={}):
+            Output(f'{pathname}-graph-{0}', 'extendData'),
+            [Input(f'pipe-partition-{pathname}-{i}', 'value') for i in range(3)],
+            [State(f'{pathname}-graph-{0}', 'figure')])
+        def plot_scatter(dic_0={}, dic_1={}, dic_2={}, existing={}):
             print('Calling plot_scatter')
             # print(dic)
             # ndf = pd.DataFrame(dic['data'])
-            fig = px.scatter(x=pd.to_datetime(dic_0['timestamp'], unit='s'), y=dic_0['data'],
-                             labels={'x': 'Time', 'y': 'RMS'})
-            fig['data'][0]['showlegend'] = True
-            fig['data'][0]['name'] = 'Plane 0'
+            # fig = px.scatter(x=pd.to_datetime(dic_0['timestamp'], unit='s'), y=dic_0['data'],
+            #                  labels={'x': 'Time', 'y': 'RMS'})
+            # fig['data'][0]['showlegend'] = True
+            # fig['data'][0]['name'] = 'Plane 0'
 
-            fig.add_trace(go.Scatter(x=pd.to_datetime(dic_1['timestamp'], unit='s'),
-                                        y=dic_1['data'],
-                                        mode='markers',
-                                        name=f'Plane {1}'))
+            # fig.add_trace(go.Scatter(x=pd.to_datetime(dic_1['timestamp'], unit='s'),
+            #                             y=dic_1['data'],
+            #                             mode='markers',
+            #                             name=f'Plane {1}'))
 
-            fig.add_trace(go.Scatter(x=pd.to_datetime(dic_2['timestamp'], unit='s'),
-                                        y=dic_2['data'],
-                                        mode='markers',
-                                        name=f'Plane {2}'))
+            # fig.add_trace(go.Scatter(x=pd.to_datetime(dic_2['timestamp'], unit='s'),
+            #                             y=dic_2['data'],
+            #                             mode='markers',
+            #                             name=f'Plane {2}'))
 
             # fig.update_layout({'xaxis_title': 'Channel number', 'yaxis_title': 'RMS',
             #                     'title': f'Induction plane {int(stream[-1]) + 1}' if int(stream[-1]) < 2 else 'Collection plane',
@@ -79,7 +115,22 @@ def create_overview_display(name):
             #                     text=f'Last updated at {datetime.now().strftime("%H:%M:%S %d/%m/%Y")}',
             #                     showarrow=False)
 
+            return (dict(x=[
+                [pd.to_datetime(dic_0['timestamp'], unit='s')],
+                [pd.to_datetime(dic_1['timestamp'], unit='s')],
+                [pd.to_datetime(dic_2['timestamp'], unit='s')],
+            ],
+                y=[
+                [dic_0['data']],
+                [dic_1['data']],
+                [dic_2['data']]
+            ]),
+                [0, 1, 2]
+            )
+
             return fig
+
+
 
 
 
@@ -106,7 +157,29 @@ def create_overview_display(name):
             +
             [html.Div(children=f'This is an interesting plot', className='h1')]
             +
-            [dcc.Graph(id=f'{pathname}-graph-{0}')]
+            [    dcc.Graph(
+                    id=f'{pathname}-graph-{0}',
+                    figure=dict(
+                        data=[{'x': [],
+                               'y': [],
+                               'mode':'markers',
+                               'name': 'Induction plane 1',
+                               },
+                              {'x': [],
+                               'y': [],
+                               'mode': 'markers',
+                               'name': 'Induction plane 2',
+                               },
+                              {'x': [],
+                               'y': [],
+                               'mode': 'markers',
+                               'name': 'Collection plane',
+                            }],
+                        layout={'xaxis': {'title': 'Date'},
+                                'yaxis': {'title': 'Mean RMS'}}
+                    )
+                ),
+            ]
             +
             [dpd.Pipe(id=f'pipe-partition-{pathname}-{i}',
                         value={'data': []},

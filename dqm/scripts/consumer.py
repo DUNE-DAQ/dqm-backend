@@ -140,8 +140,8 @@ for message in consumer:
             time_series[dindex].add(int(datetime.now().timestamp()), val[0])
             send_to_pipe_channel(channel_name=f'time_evol_{plane_index}',
                                 label=f'time_evol_{plane_index}',
-                                value={'data': time_series[dindex].data[:time_series[dindex].max_index],
-                                        'timestamp': time_series[dindex].time[:time_series[dindex].max_index]}
+                                value={'data': val[0],
+                                        'timestamp': int(datetime.now().timestamp())}
                                     )
     except Exception:
         tb = traceback.format_exc()
