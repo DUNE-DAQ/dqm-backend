@@ -48,12 +48,25 @@ def create_overview_display(name):
 
         @app.callback(
             Output(f'{pathname}-graph-{0}', 'figure'),
-            [Input(f'pipe-partition-{pathname}-{0}', 'value')])
-        def plot_scatter(dic={}):
+            [Input(f'pipe-partition-{pathname}-{i}', 'value') for i in range(3)])
+        def plot_scatter(dic_0={}, dic_1={}, dic_2={}):
+            print('Calling plot_scatter')
             # print(dic)
             # ndf = pd.DataFrame(dic['data'])
-            fig = px.scatter(x=pd.to_datetime(dic['timestamp'], unit='s'), y=dic['data'],
-                            labels={'x': 'Time', 'y': 'RMS'})
+            fig = px.scatter(x=pd.to_datetime(dic_0['timestamp'], unit='s'), y=dic_0['data'],
+                             labels={'x': 'Time', 'y': 'RMS'})
+            fig['data'][0]['showlegend'] = True
+            fig['data'][0]['name'] = 'Plane 0'
+
+            fig.add_trace(go.Scatter(x=pd.to_datetime(dic_1['timestamp'], unit='s'),
+                                        y=dic_1['data'],
+                                        mode='markers',
+                                        name=f'Plane {1}'))
+
+            fig.add_trace(go.Scatter(x=pd.to_datetime(dic_2['timestamp'], unit='s'),
+                                        y=dic_2['data'],
+                                        mode='markers',
+                                        name=f'Plane {2}'))
 
             # fig.update_layout({'xaxis_title': 'Channel number', 'yaxis_title': 'RMS',
             #                     'title': f'Induction plane {int(stream[-1]) + 1}' if int(stream[-1]) < 2 else 'Collection plane',
@@ -95,11 +108,11 @@ def create_overview_display(name):
             +
             [dcc.Graph(id=f'{pathname}-graph-{0}')]
             +
-            [dpd.Pipe(id=f'pipe-partition-{pathname}-{0}',
+            [dpd.Pipe(id=f'pipe-partition-{pathname}-{i}',
                         value={'data': []},
-                        label=f'time_evol',
-                        channel_name=f'time_evol'),
-                        ]
+                        label=f'time_evol_{i}',
+                        channel_name=f'time_evol_{i}')
+                        for i in range(3)]
             
             )
 
