@@ -26,6 +26,8 @@ class OverviewTable(tables.Table):
     description = tables.Column(attrs={'td': {'class': 'col-4'}})
     template = tables.Column(attrs={'td': {'class': 'col-4'}})
     options = tables.Column(attrs={'td': {'class': 'col-4'}},)
+    class Meta:
+        attrs = {'class': 'table table-striped table-hover'}
 
     def render_options(self, record):
         return format_html(f'<a href={record["object"].get_edit_url()}>Edit</a> <a href={record["object"].get_delete_url()}>Delete</a>')
