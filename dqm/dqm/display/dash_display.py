@@ -48,7 +48,7 @@ def create_display(partition, name):
             return layout_dic[(overview_name, app_name)]
 
         obj = OverviewDisplay.objects.filter(name=overview_name)[0]
-        partition = obj.source
+        partition = obj.partition
 
 
         # displays = utils.DataSource(pathname.replace('/dash/', '')).get_displays()

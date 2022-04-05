@@ -11,7 +11,8 @@ class OverviewDisplay(models.Model):
     name = models.CharField(max_length=50, unique=True)
     description = models.CharField(max_length=200)
     data = models.JSONField()
-    source = models.CharField(max_length=30)
+    partition = models.CharField(max_length=30)
+    default = models.BooleanField()
 
     def get_absolute_url(self):
         return f'/overview/{self.name}'
