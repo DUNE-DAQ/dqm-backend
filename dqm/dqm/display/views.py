@@ -1,7 +1,7 @@
 from django.shortcuts import render
 
 from Platform import utils
-from .dash_display import create_display as new_display
+from .system_display import create_display as new_display
 from .overview_display import create_overview_display
 
 import django_tables2 as tables
