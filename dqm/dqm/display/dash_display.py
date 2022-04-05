@@ -162,8 +162,14 @@ def create_display(overview_name, name):
                         fig = px.line(x=np.array(ndf.columns, dtype=np.float), y=np.array(ndf.values, dtype=np.float)[0],
                                         labels={'x': 'Frequency [Hz]', 'y': 'abs(fft(ADC))'})
 
+                        if int(stream[-1]) < 2:
+                            title = f'Induction plane {int(stream[-1]) + 1}'
+                        elif int(stream[-1]) < 3:
+                            title = f'Collection plane'
+                        else:
+                            title = 'All planes'
                         fig.update_layout({'xaxis_title': 'Frequency [Hz]', 'yaxis_title': 'abs(fft(ADC))',
-                                           'title': f'Induction plane {int(stream[-1]) + 1}' if int(stream[-1]) < 2 else 'Collection plane',
+                                           'title': title,
                                            'plot_bgcolor': 'rgba(0, 0, 0, 0)',
                                            })
 
