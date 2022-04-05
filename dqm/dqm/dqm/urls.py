@@ -30,15 +30,16 @@ from django.urls import path, include
 from myhome.views import index
 
 from sources.views import sources
-from display.views import system_display_index, overview_display_index, create_display, show_display, show_overview_display, delete_overview_display
 from test.views import PersonView
-
-from templates.views import show_templates
 
 import json
 from django.http import JsonResponse
 
 from display.models import OverviewDisplay
+from display.views import system_display_index, overview_display_index, create_display, show_display, show_overview_display, delete_overview_display, edit_overview_display
+
+from templates.views import show_templates
+from templates.views import edit_overview_template, edit_system_template
 
 from Platform import utils
 def ajax_view(request, choice):
@@ -59,7 +60,7 @@ def search_results(request, text):
     for i in range(len(obj)):
         if text in obj[i].name or text in obj[i].description:
             showls[i] = True
-    ret = [elem.name for elem, show in zip(obj, showls) if show]
+    ret = [{'name': elem.name, 'description': elem.description, 'url': elem.get_absolute_url()} for elem, show in zip(obj, showls) if show]
     return JsonResponse(ret, safe=False)
 # from dash_static.views import show_display_static
 
@@ -75,7 +76,7 @@ urlpatterns = [
     path('display/', system_display_index, name='display'),
     path('overview/', overview_display_index, name='overview'),
     path('overview/<name>/delete', delete_overview_display, name='overview'),
-    path('overview/<name>/edit', delete_overview_display, name='overview'),
+    path('overview/<name>/edit', edit_overview_display, name='overview'),
     path('sources/', sources, name='sources'),
     path('create-display/', create_display, name='create display'),
     # path('displays/<displayname>', show_display, name='show display'),
@@ -86,8 +87,9 @@ urlpatterns = [
     path('ajax/<choice>', ajax_view, name='ajax'),
     path('aj/<text>', search_results, name='ajax_search'),
     path('templates', show_templates, name='templates'),
+    path('templates-overview/<name>/edit', edit_overview_template, name='edit_overview_template'),
+    path('templates-system/<name>/edit', edit_system_template, name='edit_system_template'),
     # path('dash_static/', show_display_static, name='static display')
-
 ]
 
 # Add in static routes so daphne can serve files; these should
