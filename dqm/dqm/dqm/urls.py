@@ -1,4 +1,4 @@
-"""dqm URL Configuration
+"""dqm-backend URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/3.2/topics/http/urls/
@@ -17,29 +17,21 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 from django.conf.urls import url
-
 from django.views.generic import TemplateView
-
 from django.conf import settings
 from django.conf.urls.static import static
 
 from django_plotly_dash.views import add_to_session
 
-from django.contrib import admin
-from django.urls import path, include
 from myhome.views import index
-
 from sources.views import sources
 from test.views import PersonView
+from display.views import system_display_index, overview_display_index, create_display, show_display, show_overview_display, delete_overview_display, edit_overview_display
+from templates.views import show_templates, edit_overview_template, edit_system_template
 
 import json
 from django.http import JsonResponse
-
 from display.models import OverviewDisplay
-from display.views import system_display_index, overview_display_index, create_display, show_display, show_overview_display, delete_overview_display, edit_overview_display
-
-from templates.views import show_templates
-from templates.views import edit_overview_template, edit_system_template
 
 from Platform import utils
 def ajax_view(request, choice):
@@ -62,16 +54,19 @@ def search_results(request, text):
             showls[i] = True
     ret = [{'name': elem.name, 'description': elem.description, 'url': elem.get_absolute_url()} for elem, show in zip(obj, showls) if show]
     return JsonResponse(ret, safe=False)
+
+from django.shortcuts import render
+def render_test(request):
+    return render(request, 'test.html')
+
+def get_json(request):
+    return JsonResponse(json.loads(open('./data.json').read()), safe=False)
+
+
 # from dash_static.views import show_display_static
 
 urlpatterns = [
-    path('django_plotly_dash/', include('django_plotly_dash.urls')),
-
-    path('demo-session-var', add_to_session, name="session-variable-example"),
-    path('dash_static/', TemplateView.as_view(template_name='display_static.html'), name='dash-static'),
-
     path('admin/', admin.site.urls),
-    # path('hello/', hello, name='home'),
     path('', index, name='home'),
     path('display/', system_display_index, name='display'),
     path('overview/', overview_display_index, name='overview'),
@@ -79,7 +74,6 @@ urlpatterns = [
     path('overview/<name>/edit', edit_overview_display, name='overview'),
     path('sources/', sources, name='sources'),
     path('create-display/', create_display, name='create display'),
-    # path('displays/<displayname>', show_display, name='show display'),
     path('overview/<overview_name>/<displayname>', show_display, name='show display'),
     path('overview/<partition>', show_overview_display, name='show display'),
     path('django_plotly_dash/', include('django_plotly_dash.urls')),
@@ -89,7 +83,9 @@ urlpatterns = [
     path('templates', show_templates, name='templates'),
     path('templates-overview/<name>/edit', edit_overview_template, name='edit_overview_template'),
     path('templates-system/<name>/edit', edit_system_template, name='edit_system_template'),
-    # path('dash_static/', show_display_static, name='static display')
+    path('test', render_test, name='test'),
+    path('get_json', get_json, name='get_json'),
+    # path('file-explorer',
 ]
 
 # Add in static routes so daphne can serve files; these should
