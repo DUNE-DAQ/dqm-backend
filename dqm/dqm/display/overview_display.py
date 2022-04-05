@@ -135,7 +135,7 @@ def create_overview_display(name):
 
 
         display = OverviewDisplay.objects.filter(name=pathname)[0]
-        partition = display.source
+        partition = display.partition
 
         runs = utils.get_all_runs(partition)
         current_run = utils.get_current_run(partition)
