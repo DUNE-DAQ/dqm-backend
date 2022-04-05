@@ -23,10 +23,11 @@ from templates.models import SystemTemplate
 
 layout_dic = {}
 
-def create_display(partition, name):
+def create_display(overview_name, name):
+    print(f'Calling create_display with args {overview_name} {name}')
 
     print(f'Creating app with {name=}')
-    app = DjangoDash(name)
+    app = DjangoDash(overview_name + name)
 
     app.layout = html.Div([
         dcc.Location(id='url', refresh=False),

@@ -12,5 +12,5 @@
 
 {% block content %}
      {% include "navigation.html" %}
-     {% plotly_direct name=displayname %}
+     {% plotly_direct name=app_name %}
 {% endblock content %}

@@ -79,7 +79,7 @@ urlpatterns = [
     path('sources/', sources, name='sources'),
     path('create-display/', create_display, name='create display'),
     # path('displays/<displayname>', show_display, name='show display'),
-    path('overview/<partition>/<displayname>', show_display, name='show display'),
+    path('overview/<overview_name>/<displayname>', show_display, name='show display'),
     path('overview/<partition>', show_overview_display, name='show display'),
     path('django_plotly_dash/', include('django_plotly_dash.urls')),
     path('test/', PersonView.as_view()),

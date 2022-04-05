@@ -88,11 +88,12 @@ def delete_overview_display(request, name):
     return overview_display_index(request)
 
 displays = {}
-def show_display(request, partition, displayname):
-    if (partition, displayname) not in displays:
-        app = new_display(partition, displayname)
-        displays[(partition, displayname)] = app
-    return render(request, 'display.dtl', context={'displayname': displayname})
+def show_display(request, overview_name, displayname):
+    if (overview_name, displayname) not in displays:
+        app = new_display(overview_name, displayname)
+        displays[(overview_name, displayname)] = app
+    app_name = overview_name + displayname
+    return render(request, 'display.dtl', context={'app_name': app_name, 'displayname': displayname})
 
 overview_displays = {}
 def show_overview_display(request, partition):
