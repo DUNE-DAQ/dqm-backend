@@ -119,16 +119,16 @@ def create_display(request):
         if not SystemTemplate.objects.all():
             SystemTemplate.objects.create(name='TPC Charge Template',
                                            display={
-                                                    'fft_sums_display0': {'plot_type': 'line'   , 'pos': 0},
-                                                    'fft_sums_display1': {'plot_type': 'line'   , 'pos': 1},
-                                                    'fft_sums_display2': {'plot_type': 'line'   , 'pos': 2},
-                                                    'fft_sums_display3': {'plot_type': 'line'   , 'pos': 3},
-                                                    'rmsm_display0':     {'plot_type': 'scatter', 'pos': 4},
-                                                    'rmsm_display1':     {'plot_type': 'scatter', 'pos': 5},
-                                                    'rmsm_display2':     {'plot_type': 'scatter', 'pos': 6},
-                                                    'raw_display0':      {'plot_type': 'heatmap', 'pos': 7},
-                                                    'raw_display1':      {'plot_type': 'heatmap', 'pos': 8},
-                                                    'raw_display2':      {'plot_type': 'heatmap', 'pos': 9}
+                                                    'fft_sums_display0': {'plot_type': 'line'   , 'pos': 0, 'size': 3},
+                                                    'fft_sums_display1': {'plot_type': 'line'   , 'pos': 1, 'size': 3},
+                                                    'fft_sums_display2': {'plot_type': 'line'   , 'pos': 2, 'size': 3},
+                                                    'fft_sums_display3': {'plot_type': 'line'   , 'pos': 3, 'size': 3},
+                                                    'rmsm_display0':     {'plot_type': 'scatter', 'pos': 4, 'size': 4},
+                                                    'rmsm_display1':     {'plot_type': 'scatter', 'pos': 5, 'size': 4},
+                                                    'rmsm_display2':     {'plot_type': 'scatter', 'pos': 6, 'size': 4},
+                                                    'raw_display0':      {'plot_type': 'heatmap', 'pos': 7, 'size': 4},
+                                                    'raw_display1':      {'plot_type': 'heatmap', 'pos': 8, 'size': 4},
+                                                    'raw_display2':      {'plot_type': 'heatmap', 'pos': 9, 'size': 4}
                                                    })
 
         partitions = utils.get_partitions()

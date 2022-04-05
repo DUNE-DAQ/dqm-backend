@@ -61,6 +61,7 @@ def create_display(overview_name, name):
 
         data_funcs = []
         plot_ls = []
+        sizes = []
 
         i = -1
         for source in displays:
@@ -68,6 +69,7 @@ def create_display(overview_name, name):
             for pos, key in pos_keys:
                 i += 1
                 plottype = displays[source][key]['plot_type']
+                sizes.append(displays[source][key]['size'])
 
                 @app.callback(
                     Output(f'interm-{pathname}-{i}', 'value'), 
@@ -188,7 +190,7 @@ def create_display(overview_name, name):
 
         layout = html.Div(
             [html.Div([dcc.Graph(id=f'{pathname}-graph-{i}')],
-                            className='col-4') for i in range(num_plots)]
+                            className=f'col-{sizes[i]}') for i in range(num_plots)]
             +
             [dcc.Interval(
                             id='interval-component',
