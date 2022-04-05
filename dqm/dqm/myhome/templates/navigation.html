@@ -15,25 +15,39 @@
 <nav class="navbar navbar-expand navbar-dark" style="background-color: #070c49;">
   <div class="container fluid">
     <a class="nav-link h5" href="{% url 'home' %}">
-      <div class="nav-text"><b>Home</b>
+      <div class="nav-text">
+        <b>Home
+        </b>
       </div>
     </a>
     <a class="nav-link h5" href="{% url 'overview' %}">
-      <div class="nav-text"><b>Displays</b>
+      <div class="nav-text">
+        <b>Displays
+        </b>
       </div>
     </a>
     <a class="nav-link h5" href="{% url 'create display' %}">
-      <div class="nav-text"><b>Create Display</b>
+      <div class="nav-text">
+        <b>Create Display
+        </b>
       </div>
     </a>
     <a class="nav-link h5" href="{% url 'sources' %}">
-      <div class="nav-text"><b>Sources</b>
+      <div class="nav-text">
+        <b>Sources
+        </b>
       </div>
     </a>
-    <form class="d-flex">
-      <input class="form-control mx-3" type="search" placeholder="Not working yet" aria-label="Search">
-      <button class="btn btn-outline-success" type="submit">Search
-      </button>
-    </form>
+    <a class="nav-link h5" href="{% url 'templates' %}">
+      <div class="nav-text">
+        <b>Templates
+        </b>
+      </div>
+    </a>
+    <div class="d-flex flex-column mb-3">
+      <ul class="list-group" id="result">
+      </ul>
+      <input type="text" name="search" id="id_source" placeholder="Search" class="form-control" />
+    </div>
   </div>
 </nav>
