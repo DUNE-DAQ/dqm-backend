@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'django_plotly_dash.apps.DjangoPlotlyDashConfig',
     'dpd_static_support',
     
-    'myhome',
+    'home',
     'sources',
     'display',
     'test',
