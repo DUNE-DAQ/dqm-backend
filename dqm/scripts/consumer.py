@@ -29,10 +29,6 @@ class TimeSeries:
         self.index = 0
         self.max_index = 0
     def add(self, date, value):
-        # new_index = list(self.data.index)
-        # new_index[self.index] = pd.to_datetime(date)
-        # self.data.index = new_index
-        # self.data.iloc[self.index] = value
         self.data[self.index] = value
         self.time[self.index] = date
         self.index += 1
@@ -46,12 +42,9 @@ def write_database(data, source, stream_name, run_number, plane):
     values = data['value']
     if len(values.shape) == 1:
         values = values.reshape((1, -1))
-    # print(values.shape)
-    # print(data['channels'].shape)
     df = pd.DataFrame(values)
     if 'channels' in data:
         df.columns = data['channels']
-        # print(df.columns)
     from datetime import datetime
     now = datetime.now().strftime('%y%m%d-%H%M%S')
     filename = f'{stream_name}-{plane}-{now}'
@@ -72,17 +65,8 @@ for message in consumer:
 
     message = str(message.value).split(';')
     # print(message)
-    # message[0] = message[0].replace("b", "")
-    # message[0] = message[0].replace("'", "")
-    # message[0] = message[0].replace('"', "")
-    # message[8] = message[8].replace("'", "")
 
     source = message[0][2:]
-    # originalDataId = message[0]
-    # originalRecordId = message[1]
-    # dataPath = message[2]
-    # encoding = message[3]
-    # originalDataName = message[4]
     run_number = message[2]
     plane = message[10]
 
@@ -135,11 +119,12 @@ for message in consumer:
             dindex = (source, plane_index)
             if dindex not in time_series:
                 time_series[dindex] = TimeSeries()
-            # time_series[dindex].add(int(datetime.now().timestamp()), val[0])
+            time_series[dindex].add(int(datetime.now().timestamp()), val[0])
             send_to_pipe_channel(channel_name=f'time_evol_{plane_index}',
                                 label=f'time_evol_{plane_index}',
-                                value={'data': val.mean(),
-                                       'timestamp': int(datetime.now().timestamp())})
+                                value={'data': time_series[dindex].data[:time_series[dindex].max_index],
+                                       'timestamp': time_series[dindex].time[:time_series[dindex].max_index]}
+                                 )
     except Exception:
         tb = traceback.format_exc()
         logging.error(' error in consumer with traceback: ' + tb + '\nAnd the message is ' + str(message))
