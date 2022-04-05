@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  {% block pagestyles %}{% endblock %}
+  {%load plotly_dash%}
+  {% plotly_header %}
+
+  {% load static%}
+  {% block extra_header%}{% endblock%}
+
+</head>
+
+<body class="{{ template }}">
+  {% block content %}{% endblock %}
+</body>
+
+ {% block post_body%}{% endblock%}
+ {% plotly_footer %}
+
+</html>
