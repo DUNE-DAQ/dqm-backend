@@ -53,7 +53,21 @@ def overview_display_index(request):
     Renders the page with the list of displays
     """
 
-    displays = OverviewDisplay.objects.all()
+    partitions = utils.get_partitions()
+    displays = list(OverviewDisplay.objects.all())
+    partitions_in_default_displays = set([d.partition for d in displays if d.default])
+
+    # Create default display if there isn't one
+    for p in partitions:
+        if p not in partitions_in_default_displays:
+            obj = OverviewDisplay.objects.create(name=f'{p}_default',
+                                           description=f'Default display for partition {p}',
+                                           data={},
+                                           partition=p,
+                                           default=True)
+            displays.append(obj)
+
+
     ls = []
 
     for d in displays:
