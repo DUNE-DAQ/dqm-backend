@@ -155,7 +155,7 @@ def create_overview_display(name):
             [html.Div(children=[html.A(f'{app}', href=f'/overview/{pathname}/{app}', className="list-group-item list-group-item-action") for app in apps], className="list-group")]
                           )]
             +
-            [html.Div(children=f'This is an interesting plot', className='h1')]
+            [html.Div(children=f'Mean value of the RMS (for all channels) for each plane', className='h1')]
             +
             [    dcc.Graph(
                     id=f'{pathname}-graph-{0}',
