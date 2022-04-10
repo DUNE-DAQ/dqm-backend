@@ -107,6 +107,7 @@ def create_display(overview_name, name):
                         fig.update_layout({'xaxis_title': 'Channel number', 'yaxis_title': 'RMS',
                                            'title': f'Induction plane {int(stream[-1]) + 1}' if int(stream[-1]) < 2 else 'Collection plane',
                                            'plot_bgcolor': 'rgba(0, 0, 0, 0)',
+                                           'margin': dict(l=20, r=20, t=80, b=20),
                                            })
 
                         fig.update_xaxes(showgrid=False, zeroline=False)
@@ -140,7 +141,9 @@ def create_display(overview_name, name):
                         fig = px.imshow(ndf, aspect=100, origin='lower', labels={'x': 'Channel number', 'y': 'Time tick', 'color': 'ADC'})
                         fig.update_layout({'xaxis_title': 'Channel number', 'yaxis_title': 'Time ticks',
                                            'title': f'Induction plane {int(stream[-1]) + 1}' if int(stream[-1]) < 2 else 'Collection plane',
-                                        'plot_bgcolor': 'rgba(0, 0, 0, 0)'})
+                                           'plot_bgcolor': 'rgba(0, 0, 0, 0)',
+                                           'margin': dict(l=20, r=20, t=80, b=20),
+                                           })
                         fig.update_xaxes(showgrid=False, zeroline=False)
                         fig.update_yaxes(showgrid=False, zeroline=False)
                         fig.add_annotation(xref='paper', yref='paper', x=.9, y=1.15,
@@ -171,6 +174,7 @@ def create_display(overview_name, name):
                         fig.update_layout({'xaxis_title': 'Frequency [Hz]', 'yaxis_title': 'abs(fft(ADC))',
                                            'title': title,
                                            'plot_bgcolor': 'rgba(0, 0, 0, 0)',
+                                           'margin': dict(l=20, r=20, t=80, b=20),
                                            })
 
                         fig.update_xaxes(showgrid=False, zeroline=False)
