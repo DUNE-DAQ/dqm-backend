@@ -26,8 +26,7 @@ def get_runs(source):
     """
     Get a sorted list of all the runs in the database
     """
-    runs = [str(val) for val in sorted(map(int, os.listdir(DATABASE_PATH + source)))]
-    return runs
+    return list(map(str, sorted(map(int, os.listdir(DATABASE_PATH + source)))))
 
 def get_current_run(partition):
     """
