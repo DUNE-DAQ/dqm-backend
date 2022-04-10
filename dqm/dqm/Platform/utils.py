@@ -24,9 +24,9 @@ def get_streams():
 
 def get_runs(source):
     """
-    Get a list of all the runs in the database
+    Get a sorted list of all the runs in the database
     """
-    runs = os.listdir(DATABASE_PATH + source)
+    runs = [str(val) for val in sorted(map(int, os.listdir(DATABASE_PATH + source)))]
     return runs
 
 def get_current_run(partition):
