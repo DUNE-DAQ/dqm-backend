@@ -3,11 +3,12 @@ import numpy as np
 import pandas as pd
 import os
 import traceback
+from datetime import datetime
+import logging
 
 from django.conf import settings
 from django_plotly_dash.consumers import send_to_pipe_channel
-from datetime import datetime
-import logging
+from django_plotly_dash.consumers import send_to_pipe_channel
 
 time_series = {}
 
@@ -16,11 +17,8 @@ PATH_DATABASE = settings.PATH_DATABASE
 logging.basicConfig(filename='consumer.log',
                     level=logging.ERROR, format='%(asctime)s %(message)s')
 
-import numpy as np
-import pandas as pd
-from django_plotly_dash.consumers import send_to_pipe_channel
 
-MAX_POINTS = 1000
+MAX_POINTS = 10000
 
 class TimeSeries:
     def __init__(self):
@@ -37,6 +35,10 @@ class TimeSeries:
             self.index = 0
 
 def write_database(data, source, stream_name, run_number, plane):
+    """
+    Write DQM results coming from the DQM C++ part to the database
+    so that they can be reused later
+    """
     print('Writing to database', source, stream_name, plane)
     database_path = PATH_DATABASE
     values = data['value']
@@ -128,6 +130,8 @@ for message in consumer:
                                     value={'data': time_series[dindex].data[:time_series[dindex].max_index],
                                         'timestamp': time_series[dindex].time[:time_series[dindex].max_index]}
                                     )
+    except KeyboardInterrupt:
+        print('Exiting...')
     except Exception:
         tb = traceback.format_exc()
         logging.error(' error in consumer with traceback: ' + tb + '\nAnd the message is ' + str(message))
