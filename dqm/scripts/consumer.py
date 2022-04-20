@@ -68,6 +68,7 @@ for message in consumer:
 
     source = message[0][2:]
     run_number = message[2]
+    app_name = message[8]
     plane = message[10]
 
     try:
@@ -115,16 +116,18 @@ for message in consumer:
                                 label=f'{source}-rmsm_display{plane}',
                                 value=timestamp)
 
-            plane_index = int(plane)
-            dindex = (source, plane_index)
-            if dindex not in time_series:
-                time_series[dindex] = TimeSeries()
-            time_series[dindex].add(int(datetime.now().timestamp()), val[0])
-            send_to_pipe_channel(channel_name=f'time_evol_{plane_index}',
-                                label=f'time_evol_{plane_index}',
-                                value={'data': time_series[dindex].data[:time_series[dindex].max_index],
-                                       'timestamp': time_series[dindex].time[:time_series[dindex].max_index]}
-                                 )
+            # Only send to the time plot data coming from the first DQM-RU app
+            if app_name == 'dqm0_ru':
+                plane_index = int(plane)
+                dindex = (source, plane_index)
+                if dindex not in time_series:
+                    time_series[dindex] = TimeSeries()
+                time_series[dindex].add(int(datetime.now().timestamp()), val[0])
+                send_to_pipe_channel(channel_name=f'time_evol_{plane_index}',
+                                    label=f'time_evol_{plane_index}',
+                                    value={'data': time_series[dindex].data[:time_series[dindex].max_index],
+                                        'timestamp': time_series[dindex].time[:time_series[dindex].max_index]}
+                                    )
     except Exception:
         tb = traceback.format_exc()
         logging.error(' error in consumer with traceback: ' + tb + '\nAnd the message is ' + str(message))
