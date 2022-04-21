@@ -20,6 +20,7 @@ django_redis
 
 
 # These are coming from django-plotly-dash
+-e git+https://github.com/jmcarcell/django-plotly-dash#egg=django-plotly-dash
 dash>=1.11,<1.21.0
 dash-core-components
 dash-html-components
