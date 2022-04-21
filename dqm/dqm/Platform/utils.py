@@ -64,7 +64,9 @@ class DataStream:
         plane_number = self.name[-1]
         source_name = self.source.name
         if run_number == 'last':
-            run_number = sorted([f for f in os.listdir(DATABASE_PATH + source_name)])[-1]
+            folders = [x for x in os.listdir(DATABASE_PATH + source_name)]
+            times = [os.path.getmtime(DATABASE_PATH + source_name + '/' + x) for x in folders]
+            run_number = max(zip(times, folders))[1]
 
         files = [f for f in os.listdir(DATABASE_PATH + source_name + '/' + run_number) if self.name[:-1] + f'-{plane_number}' in f]
         files.sort(reverse=True)
