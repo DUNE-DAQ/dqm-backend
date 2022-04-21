@@ -23,7 +23,7 @@ from django.conf.urls.static import static
 
 from django_plotly_dash.views import add_to_session
 
-from myhome.views import index
+from home.views import index
 from sources.views import sources
 from test.views import PersonView
 from display.views import system_display_index, overview_display_index, create_display, show_display, show_overview_display, delete_overview_display, edit_overview_display

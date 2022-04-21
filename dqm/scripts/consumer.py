@@ -40,7 +40,6 @@ def write_database(data, source, stream_name, run_number, plane):
     so that they can be reused later
     """
     print('Writing to database', source, stream_name, plane)
-    database_path = PATH_DATABASE
     values = data['value']
     if len(values.shape) == 1:
         values = values.reshape((1, -1))

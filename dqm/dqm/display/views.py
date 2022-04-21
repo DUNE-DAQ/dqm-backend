@@ -93,14 +93,14 @@ def show_display(request, overview_name, displayname):
         app = new_display(overview_name, displayname)
         displays[(overview_name, displayname)] = app
     app_name = overview_name + displayname
-    return render(request, 'display.dtl', context={'app_name': app_name, 'displayname': displayname})
+    return render(request, 'display.html', context={'app_name': app_name, 'displayname': displayname})
 
 overview_displays = {}
 def show_overview_display(request, partition):
     if partition not in overview_displays:
         app = create_overview_display(partition)
         overview_displays[partition] = app
-    return render(request, 'overview.dtl', context={'displayname': partition})
+    return render(request, 'overview.html', context={'displayname': partition})
 
 
 def create_display(request):
