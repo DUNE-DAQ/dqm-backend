@@ -211,4 +211,4 @@ def create_display(request):
             print('Form is not valid')
     else:
         form = Form()
-    return render(request, 'create_display.dtl', context={'form': form})
+    return render(request, 'create_display.html', context={'form': form})
