@@ -40,7 +40,6 @@ def get_current_run(partition):
     print(f'{most_recent_source=}')
     runs = [x for x in os.listdir(DATABASE_PATH + most_recent_source)]
     times = [os.path.getmtime(DATABASE_PATH + most_recent_source + '/' + x) for x in runs]
-    print(runs, times)
     return max(zip(times, runs))[1]
 
 
@@ -99,5 +98,3 @@ def get_apps_for_partition(partition):
 def get_last_result(source, stream_name):
     files = os.listdir(f'{DATABASE_PATH_RESULTS}/{source}')
     return max([f for f in files if f.startswith(stream_name)])
-    
-
