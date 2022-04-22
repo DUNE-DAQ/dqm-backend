@@ -69,14 +69,19 @@ class DataStream:
             run_number = max(zip(times, folders))[1]
 
         files = [f for f in os.listdir(DATABASE_PATH + source_name + '/' + run_number) if self.name[:-1] + f'-{plane_number}' in f]
-        files.sort(reverse=True)
-        if files:
-            print('Reading file ' + DATABASE_PATH + source_name + '/' + run_number + '/' + files[0])
+        last_file = max(files)
+        index = last_file.find('.hdf5')
+        # Date has 13 digits, YYMMDD-HHMMSS
+        date = last_file[index-13:index]
+
+        if last_file:
+            path = DATABASE_PATH + source_name + '/' + run_number + '/' + last_file
+            print(f'Reading file {path}')
             try:
-                return pd.read_hdf(DATABASE_PATH + source_name + '/' + run_number + '/' + files[0])
+                return (pd.read_hdf(path), date)
             except:
                 print('Unable to read data')
-                print((pd.read_hdf(DATABASE_PATH + source_name + '/' + run_number + '/' + files[0])))
+                print((pd.read_hdf(path)))
                 return None
         else:
             print('No data available')

@@ -79,12 +79,13 @@ def create_display(overview_name, name):
                     print('Getting data', name, source)
                     ds = utils.DataStream(name, utils.DataSource(source))
                     # ds = data_stream_dics
-                    ndf = ds.get_data()
-                    if ndf is None:
+                    res = ds.get_data()
+                    if res is None:
                         return None
+                    ndf, date = res
                     ret = {}
                     ret['data'] = ndf.to_dict()
-                    return ret
+                    return (ret, date)
                 data_funcs.append(get_data)
 
                 if plottype == 'scatter':
@@ -93,9 +94,9 @@ def create_display(overview_name, name):
                        [Input(f'interm-{pathname}-{i}', 'value'),
                         Input('run-dropdown', 'value'),
                         Input('rewind-dropdown', 'value')])
-                    def plot_scatter(dic={}, args=None, rewind_run=None, source=source, stream=key):
-                        reference_run = args
+                    def plot_scatter(data={}, reference_run=None, n_clicks=None, rewind_run=None, source=source, stream=key):
                         print('PLOT SCATTER', reference_run)
+                        dic, date = data
                         if dic is None:
                             print('NONE')
                             return px.scatter()
@@ -113,7 +114,7 @@ def create_display(overview_name, name):
                         fig.update_xaxes(showgrid=False, zeroline=False)
                         fig.update_yaxes(showgrid=True, zeroline=False, gridwidth=.05, gridcolor='lightgrey')
                         fig.add_annotation(xref='paper', yref='paper', x=.9, y=1.15,
-                                           text=f'Last updated at {datetime.now().strftime("%H:%M:%S %d/%m/%Y")}',
+                                           text=f'Last updated at {datetime.strptime(date, "%y%m%d-%H%M%S").strftime("%H:%M:%S %d/%m/%Y")}',
                                            showarrow=False)
                         if reference_run is not None:
                             ds = utils.DataStream(stream, utils.DataSource(source))
@@ -130,7 +131,8 @@ def create_display(overview_name, name):
                         Output(f'{pathname}-graph-{i}', 'figure'),
                         [Input(f'interm-{pathname}-{i}', 'value'),
                          Input('rewind-dropdown', 'value')])
-                    def plot_heatmap(dic={}, rewind_run=None, source=source, stream=key):
+                    def plot_heatmap(data={}, rewind_run=None, source=source, stream=key):
+                        dic, date = data
                         if dic is None:
                             print('NONE')
                             return px.scatter()
@@ -147,7 +149,7 @@ def create_display(overview_name, name):
                         fig.update_xaxes(showgrid=False, zeroline=False)
                         fig.update_yaxes(showgrid=False, zeroline=False)
                         fig.add_annotation(xref='paper', yref='paper', x=.9, y=1.15,
-                                           text=f'Last updated at {datetime.now().strftime("%H:%M:%S %d/%m/%Y")}',
+                                           text=f'Last updated at {datetime.strptime(date, "%y%m%d-%H%M%S").strftime("%H:%M:%S %d/%m/%Y")}',
                                            showarrow=False)
                         return fig
                     plot_ls.append(plot_heatmap)
@@ -156,7 +158,8 @@ def create_display(overview_name, name):
                         Output(f'{pathname}-graph-{i}', 'figure'),
                         [Input(f'interm-{pathname}-{i}', 'value'),
                          Input('rewind-dropdown', 'value')])
-                    def plot_line(dic={}, rewind_run=None, source=source, stream=key):
+                    def plot_line(data={}, reference_run=None, rewind_run=None, source=source, stream=key):
+                        dic, date = data
                         if dic is None:
                             print('NONE')
                             return px.scatter()
@@ -180,7 +183,7 @@ def create_display(overview_name, name):
                         fig.update_xaxes(showgrid=False, zeroline=False)
                         fig.update_yaxes(showgrid=True, zeroline=False, gridwidth=.05, gridcolor='lightgrey')
                         fig.add_annotation(xref='paper', yref='paper', x=.9, y=1.15,
-                                           text=f'Last updated at {datetime.now().strftime("%H:%M:%S %d/%m/%Y")}',
+                                           text=f'Last updated at {datetime.strptime(date, "%y%m%d-%H%M%S").strftime("%H:%M:%S %d/%m/%Y")}',
                                            showarrow=False)
                         return fig
                     plot_ls.append(plot_line)
