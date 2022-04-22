@@ -51,10 +51,6 @@ def get_all_runs(partition):
             s.add(run)
     return s
 
-class DataSource:
-    def __init__(self, name):
-        self.name = name
-
 class DataStream:
     def __init__(self, name, source):
         self.name = name
