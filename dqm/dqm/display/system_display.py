@@ -77,7 +77,7 @@ def create_display(overview_name, name):
                     # Input(f'interval-component', 'n_intervals'))
                 def get_data(_, name=f'{key}', source=source):
                     print('Getting data', name, source)
-                    ds = utils.DataStream(name, utils.DataSource(source))
+                    ds = utils.DataStream(name, source)
                     # ds = data_stream_dics
                     res = ds.get_data()
                     if res is None:
@@ -117,7 +117,7 @@ def create_display(overview_name, name):
                                            text=f'Last updated at {datetime.strptime(date, "%y%m%d-%H%M%S").strftime("%H:%M:%S %d/%m/%Y")}',
                                            showarrow=False)
                         if reference_run is not None:
-                            ds = utils.DataStream(stream, utils.DataSource(source))
+                            ds = utils.DataStream(stream, source)
                             ndf = pd.DataFrame(ds.get_data(reference_run))
                             fig.add_trace(go.Scatter(x=np.array(ndf.columns, dtype=np.float),
                                                      y=np.array(ndf.values, dtype=np.float)[0],

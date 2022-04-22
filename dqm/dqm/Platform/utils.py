@@ -5,6 +5,7 @@ import pandas as pd
 from django.conf import settings
 
 DATABASE_PATH = settings.PATH_DATABASE
+DATABASE_PATH_RESULTS = settings.PATH_DATABASE_RESULTS
 
 def get_streams():
     """
@@ -58,20 +59,19 @@ class DataStream:
 
     def get_data(self, run_number='last'):
         plane_number = self.name[-1]
-        source_name = self.source.name
         if run_number == 'last':
-            folders = [x for x in os.listdir(DATABASE_PATH + source_name)]
-            times = [os.path.getmtime(DATABASE_PATH + source_name + '/' + x) for x in folders]
+            folders = [x for x in os.listdir(DATABASE_PATH + self.source)]
+            times = [os.path.getmtime(DATABASE_PATH + self.source + '/' + x) for x in folders]
             run_number = max(zip(times, folders))[1]
 
-        files = [f for f in os.listdir(DATABASE_PATH + source_name + '/' + run_number) if self.name[:-1] + f'-{plane_number}' in f]
+        files = [f for f in os.listdir(DATABASE_PATH + self.source + '/' + run_number) if self.name[:-1] + f'-{plane_number}' in f]
         last_file = max(files)
         index = last_file.find('.hdf5')
         # Date has 13 digits, YYMMDD-HHMMSS
         date = last_file[index-13:index]
 
         if last_file:
-            path = DATABASE_PATH + source_name + '/' + run_number + '/' + last_file
+            path = DATABASE_PATH + self.source + '/' + run_number + '/' + last_file
             print(f'Reading file {path}')
             try:
                 return (pd.read_hdf(path), date)
@@ -95,4 +95,9 @@ def get_apps_for_partition(partition):
         if source[:source.find('_dqm')] == partition:
             apps.append(source[source.find('dqm'):])
     return apps
+
+def get_last_result(source, stream_name):
+    files = os.listdir(f'{DATABASE_PATH_RESULTS}/{source}')
+    return max([f for f in files if f.startswith(stream_name)])
+    
 
