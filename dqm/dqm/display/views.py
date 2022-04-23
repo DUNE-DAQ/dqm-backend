@@ -96,11 +96,11 @@ def show_display(request, overview_name, displayname):
     return render(request, 'display.html', context={'app_name': app_name, 'displayname': displayname})
 
 overview_displays = {}
-def show_overview_display(request, partition):
-    if partition not in overview_displays:
-        app = create_overview_display(partition)
-        overview_displays[partition] = app
-    return render(request, 'overview.html', context={'displayname': partition})
+def show_overview_display(request, display_name):
+    if display_name not in overview_displays:
+        app = create_overview_display(display_name)
+        overview_displays[display_name] = app
+    return render(request, 'overview.html', context={'displayname': display_name})
 
 
 def create_display(request):
