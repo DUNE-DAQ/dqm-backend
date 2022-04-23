@@ -39,8 +39,10 @@ def create_overview_display(name):
 
     @app.callback(
         Output(f'{pathname}-graph-{0}', 'figure'),
-        [Input(f'pipe-partition-{pathname}-{i}', 'value') for i in range(3)])
-    def plot_scatter(dic_0={}, dic_1={}, dic_2={}):
+        [Input(f'pipe-partition-{pathname}-{i}', 'value') for i in range(3)],
+        [State(f'{pathname}-graph-{0}', 'relayoutData')]
+    )
+    def plot_scatter(dic_0={}, dic_1={}, dic_2={}, relayout_data=None):
 
         if not dic_0 and not dic_1 and not dic_2:
             dic_0 = utils.get_last_result(partition + '_dqm0_ru', 'rmsm_display-0')
@@ -52,7 +54,6 @@ def create_overview_display(name):
         data_0 = pd.concat((previous_data_0, pd.DataFrame(dic_0)))
         data_1 = pd.concat((previous_data_1, pd.DataFrame(dic_1)))
         data_2 = pd.concat((previous_data_2, pd.DataFrame(dic_2)))
-        print(data_0)
 
         fig = px.scatter(x=pd.to_datetime(data_0['timestamp'], unit='s'), y=data_0['values'],
                             labels={'x': 'Time', 'y': 'RMS'})
@@ -78,6 +79,13 @@ def create_overview_display(name):
         # fig.add_annotation(xref='paper', yref='paper', x=.9, y=1.15,
         #                     text=f'Last updated at {datetime.now().strftime("%H:%M:%S %d/%m/%Y")}',
         #                     showarrow=False)
+
+        try:
+            fig['layout']['xaxis']['range'] = [relayout_data['xaxis.range[0]'], relayout_data['xaxis.range[1]']]
+            fig['layout']['yaxis']['range'] = [relayout_data['yaxis.range[0]'], relayout_data['yaxis.range[1]']]
+        except (KeyError, TypeError):
+            pass
+
 
         return fig
 
