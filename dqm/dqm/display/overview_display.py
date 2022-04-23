@@ -1,17 +1,18 @@
 from datetime import datetime
 import numpy as np
 import pandas as pd
+import plotly.express as px
+import plotly.graph_objects as go
 from dash import Dash
 from dash.dependencies import Input, State, Output
 import dash_core_components as dcc
 import dash_html_components as html
-import dpd_components as dpd
-import plotly.graph_objects as go
 from django_plotly_dash import DjangoDash
 from django_plotly_dash.consumers import send_to_pipe_channel
-import plotly.express as px
-from Platform import utils
+import dpd_components as dpd
+from django.core.cache import cache
 
+from Platform import utils
 from display.models import OverviewDisplay
 
 layout_dic = {}
@@ -33,25 +34,38 @@ def create_overview_display(name):
         print(f'{pathname} in layout_dic')
         return layout_dic[pathname]
 
+    display = OverviewDisplay.objects.filter(name=pathname)[0]
+    partition = display.partition
+
     @app.callback(
         Output(f'{pathname}-graph-{0}', 'figure'),
         [Input(f'pipe-partition-{pathname}-{i}', 'value') for i in range(3)])
     def plot_scatter(dic_0={}, dic_1={}, dic_2={}):
-        print('Calling plot_scatter')
-        # print(dic)
-        # ndf = pd.DataFrame(dic['data'])
-        fig = px.scatter(x=pd.to_datetime(dic_0['timestamp'], unit='s'), y=dic_0['data'],
+
+        if not dic_0 and not dic_1 and not dic_2:
+            dic_0 = utils.get_last_result(partition + '_dqm0_ru', 'rmsm_display-0')
+            dic_1 = utils.get_last_result(partition + '_dqm0_ru', 'rmsm_display-1')
+            dic_2 = utils.get_last_result(partition + '_dqm0_ru', 'rmsm_display-2')
+            cache.set(name, [dic_0, dic_1, dic_2], None)
+
+        previous_data_0, previous_data_1, previous_data_2 = cache.get(name)
+        data_0 = pd.concat((previous_data_0, pd.DataFrame(dic_0)))
+        data_1 = pd.concat((previous_data_1, pd.DataFrame(dic_1)))
+        data_2 = pd.concat((previous_data_2, pd.DataFrame(dic_2)))
+        print(data_0)
+
+        fig = px.scatter(x=pd.to_datetime(data_0['timestamp'], unit='s'), y=data_0['values'],
                             labels={'x': 'Time', 'y': 'RMS'})
         fig['data'][0]['showlegend'] = True
         fig['data'][0]['name'] = 'Induction plane 1'
 
-        fig.add_trace(go.Scatter(x=pd.to_datetime(dic_1['timestamp'], unit='s'),
-                                    y=dic_1['data'],
+        fig.add_trace(go.Scatter(x=pd.to_datetime(data_1['timestamp'], unit='s'),
+                                    y=data_1['values'],
                                     mode='markers',
                                     name=f'Induction plane 2'))
 
-        fig.add_trace(go.Scatter(x=pd.to_datetime(dic_2['timestamp'], unit='s'),
-                                    y=dic_2['data'],
+        fig.add_trace(go.Scatter(x=pd.to_datetime(data_2['timestamp'], unit='s'),
+                                    y=data_2['values'],
                                     mode='markers',
                                     name=f'Collection plane'))
 
@@ -90,8 +104,6 @@ def create_overview_display(name):
 
     #     return fig
 
-    display = OverviewDisplay.objects.filter(name=pathname)[0]
-    partition = display.partition
 
     runs = utils.get_all_runs(partition)
     current_run = utils.get_current_run(partition)
@@ -140,7 +152,7 @@ def create_overview_display(name):
         [dcc.Graph(id=f'{pathname}-graph-{0}')]
         +
         [dpd.Pipe(id=f'pipe-partition-{pathname}-{i}',
-                    value={'data': []},
+                    value={},
                     label=f'time_evol_{i}',
                     channel_name=f'time_evol_{i}')
                     for i in range(3)]

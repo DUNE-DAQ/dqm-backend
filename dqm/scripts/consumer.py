@@ -8,31 +8,46 @@ import logging
 
 from django.conf import settings
 from django_plotly_dash.consumers import send_to_pipe_channel
-from django_plotly_dash.consumers import send_to_pipe_channel
 
 time_series = {}
 
 PATH_DATABASE = settings.PATH_DATABASE
+PATH_DATABASE_RESULTS = settings.PATH_DATABASE_RESULTS
 
-logging.basicConfig(filename='consumer.log',
-                    level=logging.ERROR, format='%(asctime)s %(message)s')
-
+logging.basicConfig(filename='consumer.log', level=logging.ERROR, format='%(asctime)s %(message)s')
 
 MAX_POINTS = 10000
 
+time_series_ls = []
 class TimeSeries:
-    def __init__(self):
+    def __init__(self, source, stream_name, plane, run_number):
+        self.source = source
+        self.stream_name = stream_name
+        self.plane = plane
+        time_series_ls.append(self)
         self.data = [0] * MAX_POINTS
         self.time = [0] * MAX_POINTS
         self.index = 0
         self.max_index = 0
-    def add(self, date, value):
+        self.run_number = run_number
+    def add(self, date, value, run_number):
+        if run_number != self.run_number:
+            self.run_number = self.run_number
+            self.save()
+            self.index = 0
+            self.max_index = 0
+
         self.data[self.index] = value
         self.time[self.index] = date
         self.index += 1
         self.max_index = max(self.max_index, self.index)
         if self.index >= MAX_POINTS:
             self.index = 0
+            self.save()
+    def save(self):
+        max_index = self.index if self.index != 0 else MAX_POINTS
+        dic = {'values': self.data[:max_index], 'timestamp': self.time[:max_index]}
+        write_result_to_database(dic, self.source, self.stream_name, self.plane)
 
 def write_database(data, source, stream_name, run_number, plane):
     """
@@ -46,7 +61,6 @@ def write_database(data, source, stream_name, run_number, plane):
     df = pd.DataFrame(values)
     if 'channels' in data:
         df.columns = data['channels']
-    from datetime import datetime
     now = datetime.now().strftime('%y%m%d-%H%M%S')
     filename = f'{stream_name}-{plane}-{now}'
     if not os.path.exists(f'{PATH_DATABASE}/{source}'):
@@ -56,6 +70,18 @@ def write_database(data, source, stream_name, run_number, plane):
         print(f'Creating directory at {PATH_DATABASE}/{source}/{run_number}')
         os.mkdir(f'{PATH_DATABASE}/{source}/{run_number}')
     df.to_hdf(f'{PATH_DATABASE}/{source}/{run_number}/{filename}.hdf5', 'data')
+
+def write_result_to_database(data, source, stream_name, plane):
+    """
+    Write DQM results like the time evolution
+    """
+    df = pd.DataFrame(data)
+    now = datetime.now().strftime('%y%m%d-%H%M%S')
+    if not os.path.exists(f'{PATH_DATABASE_RESULTS}/{source}'):
+        print(f'Creating directory at {PATH_DATABASE_RESULTS}/{source}')
+        os.mkdir(f'{PATH_DATABASE_RESULTS}/{source}')
+    filename = f'{stream_name}-{plane}-{now}'
+    df.to_hdf(f'{PATH_DATABASE_RESULTS}/{source}/{filename}.hdf5', 'data')
 
 consumer = KafkaConsumer('testdunedqm',
                          bootstrap_servers='monkafka:30092',
@@ -122,11 +148,11 @@ for message in consumer:
                 plane_index = int(plane)
                 dindex = (source, plane_index)
                 if dindex not in time_series:
-                    time_series[dindex] = TimeSeries()
-                time_series[dindex].add(int(datetime.now().timestamp()), val[0])
+                    time_series[dindex] = TimeSeries(source, 'rmsm_display', plane, run_number)
+                time_series[dindex].add(int(datetime.now().timestamp()), val[0], run_number)
                 send_to_pipe_channel(channel_name=f'time_evol_{plane_index}',
                                     label=f'time_evol_{plane_index}',
-                                    value={'data': time_series[dindex].data[:time_series[dindex].max_index],
+                                    value={'values': time_series[dindex].data[:time_series[dindex].max_index],
                                         'timestamp': time_series[dindex].time[:time_series[dindex].max_index]}
                                     )
     except KeyboardInterrupt:

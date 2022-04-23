@@ -97,4 +97,6 @@ def get_apps_for_partition(partition):
 
 def get_last_result(source, stream_name):
     files = os.listdir(f'{DATABASE_PATH_RESULTS}/{source}')
-    return max([f for f in files if f.startswith(stream_name)])
+    # max will return the latest one since they are called the same except for the date
+    filename = max([f for f in files if f.startswith(stream_name)])
+    return pd.read_hdf(f'{DATABASE_PATH_RESULTS}/{source}/{filename}')
