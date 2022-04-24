@@ -26,35 +26,17 @@ layout_dic = {}
 def create_display(overview_name, name):
     print(f'Calling create_display with args {overview_name} {name}')
 
-    print(f'Creating app with {name=}')
     app = DjangoDash(overview_name + name)
 
-    # app.layout = html.Div([
-    #     dcc.Location(id='url', refresh=False),
-    #     html.Div(id='page-content'),
-    # ])
-
-    # @app.callback(Output('page-content', 'children'),
-    #                 Input('url', 'pathname'), prevent_inital_call=False)
-
-
     app_name = name
-    pathname = overview_name + name
+    pathname = f'{overview_name}_{name}'
 
-    print(f'Running get_layout with {pathname=}')
-    # if '/' in pathname:
-    #     _, _, overview_name, app_name = pathname.split('/')
-    #     print(f'overview_name set to {overview_name} and app_name set to {app_name}')
-    #     # pathname = pathname.split('/')[-1]
-    # if not pathname:
-    #     return html.Div()
     if (overview_name, app_name) in layout_dic:
         print(f'{(overview_name, app_name)} in layout_dic')
         return layout_dic[(overview_name, app_name)]
 
     obj = OverviewDisplay.objects.filter(name=overview_name)[0]
     partition = obj.partition
-
 
     # displays = utils.DataSource(pathname.replace('/dash/', '')).get_displays()
     # displays = SystemDisplay.objects.filter(name=pathname.replace('/dash/', ''))[0].data
