@@ -234,11 +234,21 @@ def create_overview_display(name):
         # ]
         [dcc.Graph(id=f'{pathname}-graph-{0}')]
         +
+        [dcc.Graph(id=f'{pathname}-graph-{0}-run-comparison')]
+        +
         [dpd.Pipe(id=f'pipe-partition-{pathname}-{i}',
                     value={},
                     label=f'time_evol_{i}',
                     channel_name=f'time_evol_{i}')
                     for i in range(3)]
+        +
+        [dpd.Pipe(id=f'pipe-rmsm-{pathname}-{i}',
+                    value={},
+                    label=f'{source}-rmsm_display{i}',
+                    channel_name=f'{source}-rmsm_display{i}')
+                    for i in range(3)]
+        +
+        [html.Div(id=f'interm-{pathname}-{i}') for i in range(3)]
 
         )
 
