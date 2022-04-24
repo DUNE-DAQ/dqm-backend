@@ -93,9 +93,12 @@ def create_display(overview_name, name):
                         Output(f'{pathname}-graph-{i}', 'figure'),
                        [Input(f'interm-{pathname}-{i}', 'value'),
                         Input('run-dropdown', 'value'),
-                        Input('rewind-dropdown', 'value')])
-                    def plot_scatter(data={}, reference_run=None, n_clicks=None, rewind_run=None, source=source, stream=key):
-                        print('PLOT SCATTER', reference_run)
+                        Input('rewind-dropdown', 'value'),
+                        ],
+                       [State(f'{pathname}-graph-{i}', 'relayoutData')]
+                    )
+                    def plot_scatter(data={}, reference_run=None, n_clicks=None, rewind_run=None, source=source, stream=key, relayout_data=None):
+                        print('PLOT SCATTER', reference_run, relayout_data)
                         dic, date = data
                         if dic is None:
                             print('NONE')
@@ -124,14 +127,22 @@ def create_display(overview_name, name):
                                                      mode='markers',
                                                      name=f'Run {reference_run}'))
 
+                        try:
+                            fig['layout']['xaxis']['range'] = [relayout_data['xaxis.range[0]'], relayout_data['xaxis.range[1]']]
+                            fig['layout']['yaxis']['range'] = [relayout_data['yaxis.range[0]'], relayout_data['yaxis.range[1]']]
+                        except (KeyError, TypeError):
+                            pass
+
                         return fig
                     plot_ls.append(plot_scatter)
                 elif plottype == 'heatmap':
                     @app.callback(
                         Output(f'{pathname}-graph-{i}', 'figure'),
                         [Input(f'interm-{pathname}-{i}', 'value'),
-                         Input('rewind-dropdown', 'value')])
-                    def plot_heatmap(data={}, rewind_run=None, source=source, stream=key):
+                         Input('rewind-dropdown', 'value')],
+                        [State(f'{pathname}-graph-{i}', 'relayoutData')]
+                    )
+                    def plot_heatmap(data={}, rewind_run=None, source=source, stream=key, relayout_data=None):
                         dic, date = data
                         if dic is None:
                             print('NONE')
@@ -151,14 +162,23 @@ def create_display(overview_name, name):
                         fig.add_annotation(xref='paper', yref='paper', x=.9, y=1.15,
                                            text=f'Last updated at {datetime.strptime(date, "%y%m%d-%H%M%S").strftime("%H:%M:%S %d/%m/%Y")}',
                                            showarrow=False)
+                        try:
+                            fig['layout']['xaxis']['range'] = [relayout_data['xaxis.range[0]'], relayout_data['xaxis.range[1]']]
+                            fig['layout']['yaxis']['range'] = [relayout_data['yaxis.range[0]'], relayout_data['yaxis.range[1]']]
+                        except (KeyError, TypeError):
+                            pass
+
                         return fig
                     plot_ls.append(plot_heatmap)
                 elif plottype == 'line':
                     @app.callback(
                         Output(f'{pathname}-graph-{i}', 'figure'),
                         [Input(f'interm-{pathname}-{i}', 'value'),
-                         Input('rewind-dropdown', 'value')])
-                    def plot_line(data={}, reference_run=None, rewind_run=None, source=source, stream=key):
+                         Input('run-dropdown', 'value'),
+                         Input('rewind-dropdown', 'value')],
+                        [State(f'{pathname}-graph-{i}', 'relayoutData')]
+                    )
+                    def plot_line(data={}, reference_run=None, rewind_run=None, source=source, stream=key, relayout_data=None):
                         dic, date = data
                         if dic is None:
                             print('NONE')
@@ -185,8 +205,32 @@ def create_display(overview_name, name):
                         fig.add_annotation(xref='paper', yref='paper', x=.9, y=1.15,
                                            text=f'Last updated at {datetime.strptime(date, "%y%m%d-%H%M%S").strftime("%H:%M:%S %d/%m/%Y")}',
                                            showarrow=False)
+
+                        if reference_run is not None:
+                            ds = utils.DataStream(stream, source)
+                            ndf = pd.DataFrame(ds.get_data(reference_run))
+                            fig.add_trace(go.Scatter(x=np.array(ndf.columns, dtype=np.float),
+                                                     y=np.array(ndf.values, dtype=np.float)[0],
+                                                     mode='lines',
+                                                     name=f'Run {reference_run}'))
+
+                        try:
+                            fig['layout']['xaxis']['range'] = [relayout_data['xaxis.range[0]'], relayout_data['xaxis.range[1]']]
+                            fig['layout']['yaxis']['range'] = [relayout_data['yaxis.range[0]'], relayout_data['yaxis.range[1]']]
+                        except (KeyError, TypeError):
+                            pass
+
                         return fig
                     plot_ls.append(plot_line)
+
+
+        @app.callback(
+            Output(f'run-list', 'value'),
+            [Input('run-dropdown', 'n_clicks'),
+             Input('run-button', 'n_clicks')])
+        def get_display_run_list():
+            changed_id = [p['prop_id'] for p in callback_context.triggered][0]
+            run_list
 
 
         pipe_ls = []
@@ -215,6 +259,10 @@ def create_display(overview_name, name):
             +
             [html.Div(id=f'interm-{pathname}-{i}') for i in range(num_plots)]
             +
+            [html.Div('Plot options', className='h2')]
+            +
+            [html.Div('Add another run to the fourier and RMS plots')]
+            +
             [dcc.Dropdown(
                 id='run-dropdown',
                 options=[{'label': f'Run {n}', 'value': n}
@@ -223,6 +271,10 @@ def create_display(overview_name, name):
                 className='col-4'
                 )
              ]
+            +
+            # [html.Button('Button 1', id='run-button', n_clicks=0)]
+            # +
+            [html.Div('Rewind to a previous run')]
             +
             [dcc.Dropdown(
                 id='rewind-dropdown',
