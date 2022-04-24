@@ -29,18 +29,24 @@ def get_runs(source):
     """
     return list(map(str, sorted(map(int, os.listdir(DATABASE_PATH + source)))))
 
-def get_current_run(partition):
+def get_ordered_runs(partition):
     """
-    Get the current run based on the modification date
+    Get a list of the modification times and runs so they can be sorted in time
     """
-
     files = [x for x in os.listdir(DATABASE_PATH) if x.startswith(partition + '_dqm')]
     times = [os.path.getmtime(DATABASE_PATH + x) for x in files]
     most_recent_source = max(zip(times, files))[1]
     print(f'{most_recent_source=}')
     runs = [x for x in os.listdir(DATABASE_PATH + most_recent_source)]
     times = [os.path.getmtime(DATABASE_PATH + most_recent_source + '/' + x) for x in runs]
-    return max(zip(times, runs))[1]
+    return zip(times, runs)
+
+def get_current_run(partition):
+    """
+    Get the current run based on the modification date
+    """
+
+    return max(get_ordered_runs(partition))[1]
 
 
 def get_all_runs(partition):
@@ -100,3 +106,13 @@ def get_last_result(source, stream_name):
     # max will return the latest one since they are called the same except for the date
     filename = max([f for f in files if f.startswith(stream_name)])
     return pd.read_hdf(f'{DATABASE_PATH_RESULTS}/{source}/{filename}')
+
+def get_average(source, stream_name, run):
+    """
+    Get the average value for a stream for a whole run
+    """
+    files = [f'{DATABASE_PATH}/{source}/{run}/{f}' for f in os.listdir(f'{DATABASE_PATH}/{source}/{run}') if f.startswith(stream_name)]
+    print(f'Reading {len(files)} files')
+    data = pd.concat([pd.read_hdf(f) for f in files[:100]])
+    mean = data.mean(axis=0)
+    return mean.to_frame().T.reset_index(drop=True)

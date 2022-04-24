@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+import plotly.subplots as subplots
 from dash import Dash
 from dash.dependencies import Input, State, Output
 import dash_core_components as dcc
@@ -36,6 +37,7 @@ def create_overview_display(name):
 
     display = OverviewDisplay.objects.filter(name=pathname)[0]
     partition = display.partition
+    source = partition + '_dqm0_ru'
 
     @app.callback(
         Output(f'{pathname}-graph-{0}', 'figure'),
@@ -112,6 +114,79 @@ def create_overview_display(name):
 
     #     return fig
 
+    for i in range(3):
+        @app.callback(
+                    Output(f'interm-{pathname}-{i}', 'value'),
+                    [Input(f'pipe-rmsm-{pathname}-{i}', 'value')])
+        def get_data(_, source=source, stream_name='rmsm_display0'):
+            print('Getting data', stream_name, source)
+            ds = utils.DataStream(stream_name, source)
+            # ds = data_stream_dics
+            res = ds.get_data()
+            if res is None:
+                return None
+            ndf, date = res
+            ret = {}
+            ret['data'] = ndf.to_dict()
+            return (ret, date)
+
+
+    @app.callback(
+        Output(f'{pathname}-graph-{0}-run-comparison', 'figure'),
+        [Input(f'interm-{pathname}-{i}', 'value') for i in range(3)],
+        [State(f'{pathname}-graph-{0}-run-comparison', 'relayoutData')]
+    )
+    def plot_run_comparison(dic_0={}, dic_1={}, dic_2={}, relayout_data=None):
+
+        if not cache.get(f'plot-comparison-{name}'):
+            runs = sorted(utils.get_ordered_runs(partition))
+            previous_run = runs[-2][1]
+
+            dic_0 = utils.get_average(partition + '_dqm0_ru', 'rmsm_display-0', previous_run)
+            dic_1 = utils.get_average(partition + '_dqm0_ru', 'rmsm_display-1', previous_run)
+            dic_2 = utils.get_average(partition + '_dqm0_ru', 'rmsm_display-2', previous_run)
+
+            cache.set(f'plot-comparison-{name}', [dic_0, dic_1, dic_2], None)
+
+        previous_data_0, previous_data_1, previous_data_2 = cache.get(f'plot-comparison-{name}')
+
+        fig = subplots.make_subplots(rows=2, cols=1)
+
+        # fig['data'][0]['showlegend'] = True
+        # fig['data'][0]['name'] = 'Induction plane 1'
+
+        fig.update_layout({'xaxis_title': 'Channel number', 'yaxis_title': 'RMS',
+                            'plot_bgcolor': 'rgba(0, 0, 0, 0)',
+                            })
+
+        fig.update_xaxes(showgrid=False, zeroline=False)
+        fig.update_yaxes(showgrid=True, zeroline=False, gridwidth=.05, gridcolor='lightgrey')
+        # fig.add_annotation(xref='paper', yref='paper', x=.9, y=1.15,
+        #                     text=f'Last updated at {datetime.now().strftime("%H:%M:%S %d/%m/%Y")}',
+        #                     showarrow=False)
+
+        for data in [previous_data_0, previous_data_1, previous_data_2]:
+            fig.add_trace(go.Scatter(x=data.columns,
+                                     y=data.values.flatten(),
+                                     mode='markers',
+                                     name=f'Induction plane 1'), row=1, col=1)
+
+        if len(dic_0) > 1:
+            dic_0 = dic_0[0]['data']
+        dic_0 = pd.DataFrame(dic_0)
+        dic_0.columns = dic_0.columns.astype('int64')
+        ratio_0 = pd.DataFrame(dic_0).reset_index(drop=True).div(previous_data_0)
+        fig.add_trace(go.Scatter(x=ratio_0.columns, y=ratio_0.values.flatten(), mode='markers',
+                                 name=f'Induction plane 2'), row=2, col=1)
+
+        # try:
+        #     fig['layout']['xaxis']['range'] = [relayout_data['xaxis.range[0]'], relayout_data['xaxis.range[1]']]
+        #     fig['layout']['yaxis']['range'] = [relayout_data['yaxis.range[0]'], relayout_data['yaxis.range[1]']]
+        # except (KeyError, TypeError):
+        #     print('Hello')
+        #     pass
+
+        return fig
 
     runs = utils.get_all_runs(partition)
     current_run = utils.get_current_run(partition)

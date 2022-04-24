@@ -32,8 +32,13 @@ from templates.views import show_templates, edit_overview_template, edit_system_
 import json
 from django.http import JsonResponse
 from display.models import OverviewDisplay
+from django.core.cache import cache
 
 from Platform import utils
+
+print('Clearing cache...')
+cache.clear()
+
 def ajax_view(request, choice):
     streams = utils.get_streams()
     if choice in streams:
