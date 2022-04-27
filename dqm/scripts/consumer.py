@@ -100,7 +100,7 @@ for message in consumer:
             # At f = 0 Hz there will be a huge value that doesn't let
             # us see the rest of the points
             write_database({'value': val[1:], 'channels': freq[1:]},
-                            source, 'fft_sums_display',
+                            partition, app_name, 'fft_sums_display',
                             run_number, plane)
 
 
@@ -116,7 +116,7 @@ for message in consumer:
             val = np.fromstring(' '.join(m[2::2]), sep=' ', dtype=np.int).reshape(( len(timestamps), len(channels) ))
 
             write_database({'value': val, 'channels': channels, 'timestamps': timestamps},
-                        source, 'raw_display',
+                           partition, app_name, 'raw_display',
                         run_number, plane)
 
             timestamp = datetime.now().strftime('%Y/%m/%d %H:%M:%S')
@@ -129,7 +129,7 @@ for message in consumer:
             channels = np.fromstring(m[0].split(',')[-1], sep=' ', dtype=np.int)
             val = np.fromstring(m[-2], sep=' ')
             write_database({'value': val, 'channels': channels},
-                        source, 'rmsm_display',
+                           partition, app_name, 'rmsm_display',
                         run_number, plane)
 
             timestamp = datetime.now().strftime('%Y/%m/%d %H:%M:%S')
