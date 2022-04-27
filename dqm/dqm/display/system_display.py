@@ -136,9 +136,12 @@ def create_display(overview_name, name):
                         return px.scatter()
                     print('Calling plot_heatmap')
                     ndf = pd.DataFrame(dic['data'])
+                    # Subtract the baseline, the median for all frames
+                    ndf -= ndf.mean(axis=0)
+
                     # aspect=100 makes it a square, the default option 'equal' uses as much spacing as elements
                     # has each axis (i.e. a 200x100 array is plotted as a 200x100 rectangle in arbritrary units)
-                    fig = px.imshow(ndf, aspect=100, origin='lower', labels={'x': 'Channel number', 'y': 'Time tick', 'color': 'ADC'})
+                    fig = px.imshow(ndf, aspect=100, origin='lower', labels={'x': 'Channel number', 'y': 'Time tick', 'color': 'ADC-baseline'})
                     fig.update_layout({'xaxis_title': 'Channel number', 'yaxis_title': 'Time ticks',
                                         'title': f'Induction plane {int(stream[-1]) + 1}' if int(stream[-1]) < 2 else 'Collection plane',
                                         'plot_bgcolor': 'rgba(0, 0, 0, 0)',
