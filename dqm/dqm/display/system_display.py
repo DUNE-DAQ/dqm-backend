@@ -63,7 +63,7 @@ def create_display(overview_name, name):
                 # Input(f'interval-component', 'n_intervals'))
             def get_data(_, name=f'{key}', source=source):
                 print('Getting data', name, source)
-                ds = utils.DataStream(name, source)
+                ds = utils.DataStream(name, partition, app_name)
                 # ds = data_stream_dics
                 res = ds.get_data()
                 if res is None:
@@ -84,7 +84,7 @@ def create_display(overview_name, name):
                     [State(f'{pathname}-graph-{i}', 'relayoutData')]
                 )
                 def plot_scatter(data={}, reference_run=None, rewind_run=None, relayout_data=None, source=source, stream=key):
-                    print('PLOT SCATTER', reference_run, relayout_data)
+                    print('PLOT SCATTER', reference_run)
                     dic, date = data
                     if dic is None:
                         print('NONE')
@@ -229,7 +229,7 @@ def create_display(overview_name, name):
                                     label=f'{source}-{key}',
                                     channel_name=f'{source}-{key}'),)
 
-    run_numbers = utils.get_runs(list(displays.keys())[0])
+    run_numbers = utils.get_runs(partition, app_name)
 
     layout = html.Div(
         [html.Div([dcc.Graph(id=f'{pathname}-graph-{i}')],

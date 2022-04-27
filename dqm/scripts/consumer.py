@@ -49,12 +49,12 @@ class TimeSeries:
         dic = {'values': self.data[:max_index], 'timestamp': self.time[:max_index]}
         write_result_to_database(dic, self.source, self.stream_name, self.plane)
 
-def write_database(data, source, stream_name, run_number, plane):
+def write_database(data, partition, app_name, stream_name, run_number, plane):
     """
     Write DQM results coming from the DQM C++ part to the database
     so that they can be reused later
     """
-    print('Writing to database', source, stream_name, plane)
+    print('Writing to database', partition, app_name, stream_name, plane)
     values = data['value']
     if len(values.shape) == 1:
         values = values.reshape((1, -1))
@@ -63,13 +63,8 @@ def write_database(data, source, stream_name, run_number, plane):
         df.columns = data['channels']
     now = datetime.now().strftime('%y%m%d-%H%M%S')
     filename = f'{stream_name}-{plane}-{now}'
-    if not os.path.exists(f'{PATH_DATABASE}/{source}'):
-        print(f'Creating directory at {PATH_DATABASE}/{source}')
-        os.mkdir(f'{PATH_DATABASE}/{source}')
-    if not os.path.exists(f'{PATH_DATABASE}/{source}/{run_number}'):
-        print(f'Creating directory at {PATH_DATABASE}/{source}/{run_number}')
-        os.mkdir(f'{PATH_DATABASE}/{source}/{run_number}')
-    df.to_hdf(f'{PATH_DATABASE}/{source}/{run_number}/{filename}.hdf5', 'data')
+    os.makedirs(f'{PATH_DATABASE}/{partition}/{app_name}/{run_number}', exist_ok=True)
+    df.to_hdf(f'{PATH_DATABASE}/{partition}/{app_name}/{run_number}/{filename}.hdf5', 'data')
 
 def write_result_to_database(data, source, stream_name, plane):
     """
@@ -77,11 +72,9 @@ def write_result_to_database(data, source, stream_name, plane):
     """
     df = pd.DataFrame(data)
     now = datetime.now().strftime('%y%m%d-%H%M%S')
-    if not os.path.exists(f'{PATH_DATABASE_RESULTS}/{source}'):
-        print(f'Creating directory at {PATH_DATABASE_RESULTS}/{source}')
-        os.mkdir(f'{PATH_DATABASE_RESULTS}/{source}')
     filename = f'{stream_name}-{plane}-{now}'
-    df.to_hdf(f'{PATH_DATABASE_RESULTS}/{source}/{filename}.hdf5', 'data')
+    os.makedirs(f'{PATH_DATABASE_RESULTS}/{partition}/{app_name}/{run_number}', exist_ok=True) 
+    df.to_hdf(f'{PATH_DATABASE_RESULTS}/{partition}/{app_name}/{run_number}/{filename}.hdf5', 'data')
 
 consumer = KafkaConsumer('testdunedqm',
                          bootstrap_servers='monkafka:30092',
@@ -95,6 +88,7 @@ for message in consumer:
 
     source = message[0][2:]
     run_number = message[2]
+    partition = message[7]
     app_name = message[8]
     plane = message[10]
 

@@ -47,9 +47,9 @@ def create_overview_display(name):
     def plot_scatter(dic_0={}, dic_1={}, dic_2={}, relayout_data=None):
 
         if not dic_0 and not dic_1 and not dic_2:
-            dic_0 = utils.get_last_result(partition + '_dqm0_ru', 'rmsm_display-0')
-            dic_1 = utils.get_last_result(partition + '_dqm0_ru', 'rmsm_display-1')
-            dic_2 = utils.get_last_result(partition + '_dqm0_ru', 'rmsm_display-2')
+            dic_0 = utils.get_last_result(partition, 'dqm0_ru', 'rmsm_display-0')
+            dic_1 = utils.get_last_result(partition, 'dqm0_ru', 'rmsm_display-1')
+            dic_2 = utils.get_last_result(partition, 'dqm0_ru', 'rmsm_display-2')
             cache.set(name, [dic_0, dic_1, dic_2], None)
 
         previous_data_0, previous_data_1, previous_data_2 = cache.get(name)
@@ -120,7 +120,7 @@ def create_overview_display(name):
                     [Input(f'pipe-rmsm-{pathname}-{i}', 'value')])
         def get_data(_, source=source, stream_name='rmsm_display0'):
             print('Getting data', stream_name, source)
-            ds = utils.DataStream(stream_name, source)
+            ds = utils.DataStream(stream_name, partition, stream_name)
             # ds = data_stream_dics
             res = ds.get_data()
             if res is None:

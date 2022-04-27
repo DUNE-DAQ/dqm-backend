@@ -23,23 +23,27 @@ def get_streams():
     print(f'Running get_streams with output {ret}')
     return ret
 
-def get_runs(source):
+def get_runs(partition, app_name):
     """
     Get a sorted list of all the runs in the database
     """
-    return list(map(str, sorted(map(int, os.listdir(DATABASE_PATH + source)))))
+    return list(map(str, sorted(map(int, os.listdir(f'{DATABASE_PATH}/{partition}/{app_name}')))))
 
 def get_ordered_runs(partition):
     """
     Get a list of the modification times and runs so they can be sorted in time
     """
-    files = [x for x in os.listdir(DATABASE_PATH) if x.startswith(partition + '_dqm')]
-    times = [os.path.getmtime(DATABASE_PATH + x) for x in files]
-    most_recent_source = max(zip(times, files))[1]
-    print(f'{most_recent_source=}')
-    runs = [x for x in os.listdir(DATABASE_PATH + most_recent_source)]
-    times = [os.path.getmtime(DATABASE_PATH + most_recent_source + '/' + x) for x in runs]
-    return zip(times, runs)
+    apps = os.listdir(f'{DATABASE_PATH}/{partition}')
+    runs = {}
+    for app in apps:
+        for run in os.listdir(f'{DATABASE_PATH}/{partition}/{app}'):
+            runs[run] = max(os.path.getmtime(f'{DATABASE_PATH}/{partition}/{app}/{run}'), runs[app] if app in runs else 0)
+    times = [os.path.getmtime(f'{DATABASE_PATH}/{partition}/{app}/{run}') for app in apps for run in os.listdir(f'{DATABASE_PATH}/{partition}/{app}')]
+    # most_recent_source = max(zip(times, files))[1]
+    # print(f'{most_recent_source=}')
+    # runs = [x for x in os.listdir(DATABASE_PATH + most_recent_source)]
+    # times = [os.path.getmtime(DATABASE_PATH + most_recent_source + '/' + x) for x in runs]
+    return zip(runs.values(), runs.keys())
 
 def get_current_run(partition):
     """
@@ -58,25 +62,26 @@ def get_all_runs(partition):
     return s
 
 class DataStream:
-    def __init__(self, name, source):
+    def __init__(self, name, partition, app_name):
         self.name = name
-        self.source = source
+        self.partition = partition
+        self.app_name = app_name
 
     def get_data(self, run_number='last'):
         plane_number = self.name[-1]
         if run_number == 'last':
-            folders = [x for x in os.listdir(DATABASE_PATH + self.source)]
-            times = [os.path.getmtime(DATABASE_PATH + self.source + '/' + x) for x in folders]
+            folders = os.listdir(f'{DATABASE_PATH}/{self.partition}/{self.app_name}')
+            times = [os.path.getmtime(f'{DATABASE_PATH}/{self.partition}/{self.app_name}/{x}') for x in folders]
             run_number = max(zip(times, folders))[1]
 
-        files = [f for f in os.listdir(DATABASE_PATH + self.source + '/' + run_number) if self.name[:-1] + f'-{plane_number}' in f]
+        files = [f for f in os.listdir(f'{DATABASE_PATH}/{self.partition}/{self.app_name}/{run_number}') if self.name[:-1] + f'-{plane_number}' in f]
         last_file = max(files)
         index = last_file.find('.hdf5')
         # Date has 13 digits, YYMMDD-HHMMSS
         date = last_file[index-13:index]
 
         if last_file:
-            path = DATABASE_PATH + self.source + '/' + run_number + '/' + last_file
+            path = f'{DATABASE_PATH}/{self.partition}/{self.app_name}/{run_number}/{last_file}'
             print(f'Reading file {path}')
             try:
                 return (pd.read_hdf(path), date)
@@ -89,23 +94,16 @@ class DataStream:
             return None
 
 def get_partitions():
-    s = set()
-    for source in os.listdir(DATABASE_PATH):
-        s.add(source[:source.find('_dqm')])
-    return list(s)
+    return os.listdir(DATABASE_PATH)
 
 def get_apps_for_partition(partition):
-    apps = []
-    for source in os.listdir(DATABASE_PATH):
-        if source[:source.find('_dqm')] == partition:
-            apps.append(source[source.find('dqm'):])
-    return apps
+    return os.listdir(f'{DATABASE_PATH}/{partition}')
 
-def get_last_result(source, stream_name):
-    files = os.listdir(f'{DATABASE_PATH_RESULTS}/{source}')
+def get_last_result(partition, app_name, stream_name):
+    files = os.listdir(f'{DATABASE_PATH_RESULTS}/{partition}/{app_name}')
     # max will return the latest one since they are called the same except for the date
     filename = max([f for f in files if f.startswith(stream_name)])
-    return pd.read_hdf(f'{DATABASE_PATH_RESULTS}/{source}/{filename}')
+    return pd.read_hdf(f'{DATABASE_PATH_RESULTS}/{partition}/{app_name}/{filename}')
 
 def get_average(source, stream_name, run):
     """
