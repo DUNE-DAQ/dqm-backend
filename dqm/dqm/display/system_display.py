@@ -106,8 +106,9 @@ def create_display(overview_name, name):
                                         text=f'Last updated at {datetime.strptime(date, "%y%m%d-%H%M%S").strftime("%H:%M:%S %d/%m/%Y")}',
                                         showarrow=False)
                     if reference_run is not None:
-                        ds = utils.DataStream(stream, source)
-                        ndf = pd.DataFrame(ds.get_data(reference_run))
+                        print('reference_run', reference_run, stream, partition, app_name)
+                        ds = utils.DataStream(stream, partition, app_name)
+                        ndf = pd.DataFrame(ds.get_data(reference_run)[0])
                         fig.add_trace(go.Scatter(x=np.array(ndf.columns, dtype=np.float),
                                                     y=np.array(ndf.values, dtype=np.float)[0],
                                                     mode='markers',
@@ -193,8 +194,8 @@ def create_display(overview_name, name):
                                         showarrow=False)
 
                     if reference_run is not None:
-                        ds = utils.DataStream(stream, source)
-                        ndf = pd.DataFrame(ds.get_data(reference_run))
+                        ds = utils.DataStream(stream, partition, app_name)
+                        ndf = pd.DataFrame(ds.get_data(reference_run)[0])
                         fig.add_trace(go.Scatter(x=np.array(ndf.columns, dtype=np.float),
                                                     y=np.array(ndf.values, dtype=np.float)[0],
                                                     mode='lines',
