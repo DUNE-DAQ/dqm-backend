@@ -102,6 +102,18 @@ def show_overview_display(request, display_name):
         overview_displays[display_name] = app
     return render(request, 'overview.html', context={'displayname': display_name})
 
+channel_displays = {}
+def show_channel_display(request, overview_name, displayname, channel):
+    partition = OverviewDisplay.objects.filter(name=overview_name)[0].partition
+    app_name = displayname
+    name = f'channel-{partition}-{displayname}'
+    if name not in channel_displays:
+        app = create_channel_display(partition, displayname)
+        channel_displays[name] = app
+    else:
+        app = channel_displays[name]
+    return render(request, 'channel.html', context={'displayname': name})
+
 
 def create_display(request):
 

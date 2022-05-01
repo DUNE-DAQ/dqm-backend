@@ -150,7 +150,9 @@ for message in consumer:
                                         'timestamp': time_series[dindex].time[:time_series[dindex].max_index]}
                                     )
     except KeyboardInterrupt:
-        print('Exiting...')
+        for time_series in time_series_ls:
+            time_series.save()
+        exit()
     except Exception:
         tb = traceback.format_exc()
         logging.error(' error in consumer with traceback: ' + tb + '\nAnd the message is ' + str(message))
