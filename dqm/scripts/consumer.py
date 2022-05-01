@@ -20,7 +20,7 @@ PATH_DATABASE_RESULTS = settings.PATH_DATABASE_RESULTS
 
 logging.basicConfig(filename='consumer.log', level=logging.ERROR, format='%(asctime)s %(message)s')
 
-MAX_POINTS = 10000
+MAX_POINTS = 1000
 
 time_series_ls = []
 class TimeSeries:
@@ -151,7 +151,12 @@ def main():
                                     value={'values': time_series[dindex].data[:time_series[dindex].max_index],
                                         'timestamp': time_series[dindex].time[:time_series[dindex].max_index]}
                                     )
+if __name__ == 'django.core.management.commands.shell':
+
+    try:
+        main()
     except KeyboardInterrupt:
+        print('Saving')
         for time_series in time_series_ls:
             time_series.save()
         exit()
