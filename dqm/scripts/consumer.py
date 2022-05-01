@@ -9,6 +9,10 @@ import logging
 from django.conf import settings
 from django_plotly_dash.consumers import send_to_pipe_channel
 
+consumer = KafkaConsumer('testdunedqm',
+                         bootstrap_servers='monkafka:30092',
+                         client_id='test')
+
 time_series = {}
 
 PATH_DATABASE = settings.PATH_DATABASE
@@ -20,8 +24,9 @@ MAX_POINTS = 10000
 
 time_series_ls = []
 class TimeSeries:
-    def __init__(self, source, stream_name, plane, run_number):
-        self.source = source
+    def __init__(self, partition, app_name, stream_name, plane, run_number):
+        self.partition = partition
+        self.app_name = app_name
         self.stream_name = stream_name
         self.plane = plane
         time_series_ls.append(self)
@@ -32,8 +37,8 @@ class TimeSeries:
         self.run_number = run_number
     def add(self, date, value, run_number):
         if run_number != self.run_number:
-            self.run_number = run_number
             self.save()
+            self.run_number = run_number
             self.index = 0
             self.max_index = 0
 
@@ -47,7 +52,7 @@ class TimeSeries:
     def save(self):
         max_index = self.index if self.index != 0 else MAX_POINTS
         dic = {'values': self.data[:max_index], 'timestamp': self.time[:max_index]}
-        write_result_to_database(dic, self.source, self.stream_name, self.plane)
+        write_result_to_database(dic, self.partition, self.app_name, self.stream_name, self.run_number, self.plane)
 
 def write_database(data, partition, app_name, stream_name, run_number, plane):
     """
@@ -66,7 +71,7 @@ def write_database(data, partition, app_name, stream_name, run_number, plane):
     os.makedirs(f'{PATH_DATABASE}/{partition}/{app_name}/{run_number}', exist_ok=True)
     df.to_hdf(f'{PATH_DATABASE}/{partition}/{app_name}/{run_number}/{filename}.hdf5', 'data')
 
-def write_result_to_database(data, source, stream_name, plane):
+def write_result_to_database(data, partition, app_name, stream_name, run_number, plane):
     """
     Write DQM results like the time evolution
     """
@@ -76,23 +81,20 @@ def write_result_to_database(data, source, stream_name, plane):
     os.makedirs(f'{PATH_DATABASE_RESULTS}/{partition}/{app_name}/{run_number}', exist_ok=True) 
     df.to_hdf(f'{PATH_DATABASE_RESULTS}/{partition}/{app_name}/{run_number}/{filename}.hdf5', 'data')
 
-consumer = KafkaConsumer('testdunedqm',
-                         bootstrap_servers='monkafka:30092',
-                         client_id='test')
 
-for message in consumer:
-    # print(str(message))
+def main():
+    for message in consumer:
+        # print(str(message))
 
-    message = str(message.value).split(';')
-    # print(message)
+        message = str(message.value).split(';')
+        # print(message)
 
-    source = message[0][2:]
-    run_number = message[2]
-    partition = message[7]
-    app_name = message[8]
-    plane = message[10]
+        source = message[0][2:]
+        run_number = message[2]
+        partition = message[7]
+        app_name = message[8]
+        plane = message[10]
 
-    try:
         if 'fft_sums_display' in message[1]:
             m = message[-1].split('\\n')
             freq = np.fromstring(m[0], sep=' ')
@@ -116,7 +118,7 @@ for message in consumer:
             val = np.fromstring(' '.join(m[2::2]), sep=' ', dtype=np.int).reshape(( len(timestamps), len(channels) ))
 
             write_database({'value': val, 'channels': channels, 'timestamps': timestamps},
-                           partition, app_name, 'raw_display',
+                        partition, app_name, 'raw_display',
                         run_number, plane)
 
             timestamp = datetime.now().strftime('%Y/%m/%d %H:%M:%S')
@@ -129,7 +131,7 @@ for message in consumer:
             channels = np.fromstring(m[0].split(',')[-1], sep=' ', dtype=np.int)
             val = np.fromstring(m[-2], sep=' ')
             write_database({'value': val, 'channels': channels},
-                           partition, app_name, 'rmsm_display',
+                        partition, app_name, 'rmsm_display',
                         run_number, plane)
 
             timestamp = datetime.now().strftime('%Y/%m/%d %H:%M:%S')
@@ -142,7 +144,7 @@ for message in consumer:
                 plane_index = int(plane)
                 dindex = (source, plane_index)
                 if dindex not in time_series:
-                    time_series[dindex] = TimeSeries(source, 'rmsm_display', plane, run_number)
+                    time_series[dindex] = TimeSeries(partition, app_name, 'rmsm_display', plane, run_number)
                 time_series[dindex].add(int(datetime.now().timestamp()), val[0], run_number)
                 send_to_pipe_channel(channel_name=f'time_evol_{plane_index}',
                                     label=f'time_evol_{plane_index}',
@@ -157,4 +159,3 @@ for message in consumer:
         tb = traceback.format_exc()
         logging.error(' error in consumer with traceback: ' + tb + '\nAnd the message is ' + str(message))
         print('EXCEPTION')
-        continue
