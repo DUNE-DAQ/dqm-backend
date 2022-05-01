@@ -26,7 +26,7 @@ from django_plotly_dash.views import add_to_session
 from home.views import index
 from sources.views import sources
 from test.views import PersonView
-from display.views import system_display_index, overview_display_index, create_display, show_display, show_overview_display, delete_overview_display, edit_overview_display
+from display.views import system_display_index, overview_display_index, create_display, show_display, show_overview_display, delete_overview_display, edit_overview_display, show_channel_display
 from templates.views import show_templates, edit_overview_template, edit_system_template
 
 import json
@@ -79,6 +79,7 @@ urlpatterns = [
     path('overview/<name>/edit', edit_overview_display, name='overview'),
     path('sources/', sources, name='sources'),
     path('create-display/', create_display, name='create display'),
+    path('overview/<overview_name>/<displayname>/<channel>', show_channel_display, name='show channel display'),
     path('overview/<overview_name>/<displayname>', show_display, name='show display'),
     path('overview/<display_name>', show_overview_display, name='show display'),
     path('django_plotly_dash/', include('django_plotly_dash.urls')),

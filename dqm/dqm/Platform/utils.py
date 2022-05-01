@@ -93,6 +93,40 @@ class DataStream:
             print('No data available')
             return None
 
+    def get_all_streams(self, stream_name, run_number='last'):
+        if run_number == 'last':
+            folders = os.listdir(f'{DATABASE_PATH}/{self.partition}/{self.app_name}')
+            times = [os.path.getmtime(f'{DATABASE_PATH}/{self.partition}/{self.app_name}/{x}') for x in folders]
+            run_number = max(zip(times, folders))[1]
+
+        # files = [f for f in  if self.name[:-1] in f]
+        all_files = os.listdir(f'{DATABASE_PATH}/{self.partition}/{self.app_name}/{run_number}')
+        last_files = [max([f for f in all_files if f'{stream_name}-{i}' in f]) for i in range(3)]
+        index = last_files[0].find('.hdf5')
+        # Date has 13 digits, YYMMDD-HHMMSS
+        date = last_files[0][index-13:index]
+
+        if last_files:
+            dfs = []
+            for f in last_files:
+                path = f'{DATABASE_PATH}/{self.partition}/{self.app_name}/{run_number}/{f}'
+                print(f'Reading file {path}')
+                try:
+                    dfs.append(pd.read_hdf(path))
+                except:
+                    print('Unable to read data')
+                    print((pd.read_hdf(path)))
+                    return
+            try:
+                return (pd.concat(dfs, axis=1), date)
+            except:
+                print('Unable to read data')
+                print(dfs)
+                return
+        else:
+            print('No data available')
+            return
+
 def get_partitions():
     return os.listdir(DATABASE_PATH)
 
@@ -105,12 +139,13 @@ def get_last_result(partition, app_name, stream_name):
     filename = max([f for f in files if f.startswith(stream_name)])
     return pd.read_hdf(f'{DATABASE_PATH_RESULTS}/{partition}/{app_name}/{filename}')
 
-def get_average(source, stream_name, run):
+def get_average(partition, app_name, stream_name, run):
     """
     Get the average value for a stream for a whole run
     """
-    files = [f'{DATABASE_PATH}/{source}/{run}/{f}' for f in os.listdir(f'{DATABASE_PATH}/{source}/{run}') if f.startswith(stream_name)]
+    files = [f'{DATABASE_PATH}/{partition}/{app_name}/{run}/{f}' for f in os.listdir(f'{DATABASE_PATH}/{partition}/{app_name}/{run}') if f.startswith(stream_name)]
     print(f'Reading {len(files)} files')
     data = pd.concat([pd.read_hdf(f) for f in files[:100]])
     mean = data.mean(axis=0)
     return mean.to_frame().T.reset_index(drop=True)
+
