@@ -5,3 +5,4 @@ static/dist/css/
 db.sqlite3
 *.ipynb
 .env
+set_env
