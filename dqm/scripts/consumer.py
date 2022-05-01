@@ -32,7 +32,7 @@ class TimeSeries:
         self.run_number = run_number
     def add(self, date, value, run_number):
         if run_number != self.run_number:
-            self.run_number = self.run_number
+            self.run_number = run_number
             self.save()
             self.index = 0
             self.max_index = 0

@@ -30,7 +30,7 @@ def create_channel_display(partition, app_name):
     stream = 'raw_display'
 
     @app.callback(
-        Output(f'interm-channel', 'value'), 
+        Output(f'interm-channel', 'value'),
         Input(f'pipe-{partition}-{stream}', 'value'))
     def get_data(_):
         # print('Getting data', name, source)
