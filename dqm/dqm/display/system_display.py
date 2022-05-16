@@ -234,12 +234,6 @@ def create_display(overview_name, name):
         [html.Div([dcc.Graph(id=f'{pathname}-graph-{i}')],
                         className=f'col-{sizes[i]}') for i in range(num_plots)]
         +
-        [dcc.Interval(
-                        id='interval-component',
-                        interval=5*1000, # in milliseconds
-                        ),
-        ]
-        +
         pipe_ls
         +
         [html.Div(id=f'interm-{pathname}-{i}') for i in range(num_plots)]
