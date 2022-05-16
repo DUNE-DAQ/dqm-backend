@@ -162,5 +162,5 @@ if __name__ == 'django.core.management.commands.shell':
         exit()
     except Exception:
         tb = traceback.format_exc()
-        logging.error(' error in consumer with traceback: ' + tb + '\nAnd the message is ' + str(message))
+        logging.error(' error in consumer with traceback: ' + tb)
         print('EXCEPTION')
