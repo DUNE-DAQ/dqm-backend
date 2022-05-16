@@ -155,7 +155,6 @@ def main():
             m = message[-1].split('\\n')
             channels = np.fromstring(m[0].split(',')[-1], sep=' ', dtype=np.int)
             val = np.fromstring(m[1], sep=' ')
-            print(channels, val)
             write_database({'value': val, 'channels': channels},
                         partition, app_name, 'channel_mask_display',
                         run_number, plane)
