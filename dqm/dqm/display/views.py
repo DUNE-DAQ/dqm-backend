@@ -62,7 +62,7 @@ def overview_display_index(request):
         if p not in partitions_in_default_displays:
             obj = OverviewDisplay.objects.create(name=f'{p}_default',
                                            description=f'Default display for partition {p}',
-                                           data={},
+                                           data={p : default_system_template.display},
                                            partition=p,
                                            default=True)
             displays.append(obj)
