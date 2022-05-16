@@ -128,7 +128,7 @@ def create_display(request):
                                             description='test',
                                             display={})
 
-        if not SystemTemplate.objects.all():
+        if not SystemTemplate.objects.filter(name='TPC Charge Template'):
             SystemTemplate.objects.create(name='TPC Charge Template',
                                            display={
                                                     'fft_sums_display0': {'plot_type': 'line'   , 'pos': 0, 'size': 3},
@@ -143,6 +143,7 @@ def create_display(request):
                                                     'raw_display2':      {'plot_type': 'heatmap', 'pos': 9, 'size': 4}
                                                    })
 
+        if not SystemTemplate.objects.filter(name='TPC Charge Template (WIB2)'):
             SystemTemplate.objects.create(name='TPC Charge Template (WIB2)',
                                            display={
                                                     'fft_sums_display0':          {'plot_type': 'line'   , 'pos': 0, 'size': 3},
@@ -212,7 +213,9 @@ def create_display(request):
             print(f'Creating form with name {form.cleaned_data["name"]}')
             # data.create_display(form.cleaned_data['name'], {form.cleaned_data['source'][0] : form.cleaned_data['choices']})
             obj = OverviewDisplay.objects.filter(name=form.cleaned_data['name'])
-            if not obj:
+            if obj:
+                print(f'Panel with name {form.cleaned_data["name"]} already exists')
+            else:
                 displays = {}
                 if form.cleaned_data['overview_template'] is not None:
                     _ = OverviewTemplate.objects.filter(name=form.cleaned_data['overview_template'])[0].display
@@ -226,16 +229,15 @@ def create_display(request):
                             displays[d] = 'scatter'
                         elif 'fft_sums_display' in d:
                             displays[d] = 'line'
+                        elif 'channel_mask_display' in d:
+                            displays[d] = 'scatter'
                 dataa = {form.cleaned_data['source']: displays}
                 OverviewDisplay.objects.create(name=form.cleaned_data['name'],
                                                description=form.cleaned_data['description'],
                                                data=dataa,
-                                               source=form.cleaned_data['source']
+                                               partition=form.cleaned_data['source'],
+                                               default=False
                                                )
-            else:
-                print(f'Panel with name {form.cleaned_data["name"]} already exists')
-
-            # return HttpResponseRedirect('/thanks/')
         else:
             print('Form is not valid')
     else:
