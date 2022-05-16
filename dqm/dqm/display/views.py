@@ -143,6 +143,23 @@ def create_display(request):
                                                     'raw_display2':      {'plot_type': 'heatmap', 'pos': 9, 'size': 4}
                                                    })
 
+            SystemTemplate.objects.create(name='TPC Charge Template (WIB2)',
+                                           display={
+                                                    'fft_sums_display0':          {'plot_type': 'line'   , 'pos': 0, 'size': 3},
+                                                    'fft_sums_display1':          {'plot_type': 'line'   , 'pos': 1, 'size': 3},
+                                                    'fft_sums_display2':          {'plot_type': 'line'   , 'pos': 2, 'size': 3},
+                                                    'fft_sums_display3':          {'plot_type': 'line'   , 'pos': 3, 'size': 3},
+                                                    'rmsm_display0':              {'plot_type': 'scatter', 'pos': 4, 'size': 4},
+                                                    'rmsm_display1':              {'plot_type': 'scatter', 'pos': 5, 'size': 4},
+                                                    'rmsm_display2':              {'plot_type': 'scatter', 'pos': 6, 'size': 4},
+                                                    'raw_display0':               {'plot_type': 'heatmap', 'pos': 7, 'size': 4},
+                                                    'raw_display1':               {'plot_type': 'heatmap', 'pos': 8, 'size': 4},
+                                                    'raw_display2':               {'plot_type': 'heatmap', 'pos': 9, 'size': 4},
+                                                    'channel_mask_display0':      {'plot_type': 'scatter', 'pos': 10, 'size': 4},
+                                                    'channel_mask_display1':      {'plot_type': 'scatter', 'pos': 11, 'size': 4},
+                                                    'channel_mask_display2':      {'plot_type': 'scatter', 'pos': 12, 'size': 4},
+                                                   })
+
         partitions = utils.get_partitions()
         possible_names = utils.get_streams()
         # This is a hack to find all the available streams and pass them as possible choices
