@@ -69,8 +69,7 @@ def create_channel_display(partition, app_name):
         fig.update_xaxes(showgrid=False, zeroline=False)
         fig.update_yaxes(showgrid=True, zeroline=False, gridwidth=.05, gridcolor='lightgrey')
         fig.add_annotation(xref='paper', yref='paper', x=.9, y=1.15,
-                            #text=f'Last updated at {datetime.strptime(date, "%y%m%d-%H%M%S").strftime("%H:%M:%S %d/%m/%Y")}',
-                            text="debug?"
+                            text=f'Last updated at {datetime.strptime(date, "%y%m%d-%H%M%S").strftime("%H:%M:%S %d/%m/%Y")}',
                             showarrow=False)
 
         # if reference_run is not None:
