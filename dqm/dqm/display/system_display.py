@@ -103,7 +103,8 @@ def create_display(overview_name, name):
                     fig.update_xaxes(showgrid=False, zeroline=False)
                     fig.update_yaxes(showgrid=True, zeroline=False, gridwidth=.05, gridcolor='lightgrey')
                     fig.add_annotation(xref='paper', yref='paper', x=.9, y=1.15,
-                                        text=f'Last updated at {datetime.strptime(date, "%y%m%d-%H%M%S").strftime("%H:%M:%S %d/%m/%Y")}',
+                                        #text=f'Last updated at {datetime.strptime(date, "%y%m%d-%H%M%S").strftime("%H:%M:%S %d/%m/%Y")}',
+                                        text="debug!"
                                         showarrow=False)
                     if reference_run is not None:
                         print('reference_run', reference_run, stream, partition, app_name)
@@ -150,7 +151,8 @@ def create_display(overview_name, name):
                     fig.update_xaxes(showgrid=False, zeroline=False)
                     fig.update_yaxes(showgrid=False, zeroline=False)
                     fig.add_annotation(xref='paper', yref='paper', x=.9, y=1.15,
-                                        text=f'Last updated at {datetime.strptime(date, "%y%m%d-%H%M%S").strftime("%H:%M:%S %d/%m/%Y")}',
+                                        #text=f'Last updated at {datetime.strptime(date, "%y%m%d-%H%M%S").strftime("%H:%M:%S %d/%m/%Y")}',
+                                        text="debug!"
                                         showarrow=False)
                     try:
                         fig['layout']['xaxis']['range'] = [relayout_data['xaxis.range[0]'], relayout_data['xaxis.range[1]']]
@@ -193,7 +195,8 @@ def create_display(overview_name, name):
                     fig.update_xaxes(showgrid=False, zeroline=False)
                     fig.update_yaxes(showgrid=True, zeroline=False, gridwidth=.05, gridcolor='lightgrey')
                     fig.add_annotation(xref='paper', yref='paper', x=.9, y=1.15,
-                                        text=f'Last updated at {datetime.strptime(date, "%y%m%d-%H%M%S").strftime("%H:%M:%S %d/%m/%Y")}',
+                                        #text=f'Last updated at {datetime.strptime(date, "%y%m%d-%H%M%S").strftime("%H:%M:%S %d/%m/%Y")}',
+                                        text="debug!"
                                         showarrow=False)
 
                     if reference_run is not None:
