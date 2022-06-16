@@ -26,6 +26,7 @@ SECRET_KEY = 'va-ndhg=u^uti9x^9^9npg=+a4p%j(=50oiee+@zklb5qcnup4'
 DEBUG = True
 
 ALLOWED_HOSTS = os.environ['ALLOWED_HOSTS'].split()
+HOST_IP = "10.73.136.36"
 PATH_DATABASE = os.environ['PATH_DATABASE']
 # PATH_DATABASE = '/home/juanmi/Dune/Newp/Database/'
 PATH_DATABASE_RESULTS = os.environ['PATH_DATABASE_RESULTS']
@@ -178,7 +179,8 @@ STATICFILES_DIRS = [
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",
+        #"LOCATION": "redis://127.0.0.1:6379/1",
+        "LOCATION": "redis://"+HOST_IP+":6379/1"
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient"
         },

@@ -40,3 +40,4 @@ django-bootstrap4
 channels-redis
 whitenoise
 
+werkzeug==2.0.1
