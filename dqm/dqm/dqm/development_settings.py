@@ -31,6 +31,8 @@ PATH_DATABASE = os.environ['PATH_DATABASE']
 # PATH_DATABASE = '/home/juanmi/Dune/Newp/Database/'
 PATH_DATABASE_RESULTS = os.environ['PATH_DATABASE_RESULTS']
 
+REDIS_HOST = "dqm-redis-svc.dqm"
+LOCATION = "redis://" + REDIS_HOST + "6379/1",
 
 # Application definition
 
@@ -176,16 +178,29 @@ STATICFILES_DIRS = [
 
 # Caching - demo uses redis as this is present due to channels use
 
+#CACHES = {
+#    "default": {
+#        "BACKEND": "django_redis.cache.RedisCache",
+#        "LOCATION": "redis://dqm-redis-svc.dqm:6379/1",
+#        "OPTIONS": {
+#            "CLIENT_CLASS": "django_redis.client.DefaultClient"
+#        },
+#        "KEY_PREFIX": "dpd-demo"
+#    }
+#}
+
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://dqm-redis-svc.dqm:6379/1",
+        "LOCATION": LOCATION,
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient"
         },
         "KEY_PREFIX": "dpd-demo"
     }
 }
+
+
 
 # Channels config, to use channel layers
 
