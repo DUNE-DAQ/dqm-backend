@@ -32,7 +32,7 @@ PATH_DATABASE = os.environ['PATH_DATABASE']
 PATH_DATABASE_RESULTS = os.environ['PATH_DATABASE_RESULTS']
 
 REDIS_HOST = "dqm-redis-svc.dqm"
-LOCATION = "redis://" + REDIS_HOST + "6379/1",
+LOCATION = "redis://" + REDIS_HOST + ":6379/1",
 
 # Application definition
 
