@@ -152,6 +152,19 @@ def main():
                                     value={'values': time_series[dindex].data[:time_series[dindex].max_index],
                                         'timestamp': time_series[dindex].time[:time_series[dindex].max_index]}
                                     )
+        if 'channel_mask_display' in message[1]:
+            m = message[-1].split('\\n')
+            channels = np.fromstring(m[0].split(',')[-1], sep=' ', dtype=np.int)
+            val = np.fromstring(m[1], sep=' ')
+            write_database({'value': val, 'channels': channels},
+                        partition, app_name, 'channel_mask_display',
+                        run_number, plane)
+
+            timestamp = datetime.now().strftime('%Y/%m/%d %H:%M:%S')
+            send_to_pipe_channel(channel_name=f'{source}-channel_mask_display{plane}',
+                                label=f'{source}-channel_mask_display{plane}',
+                                value=timestamp)
+
 if __name__ == 'django.core.management.commands.shell':
 
     try:
@@ -163,5 +176,5 @@ if __name__ == 'django.core.management.commands.shell':
         exit()
     except Exception:
         tb = traceback.format_exc()
-        logging.error(' error in consumer with traceback: ' + tb + '\nAnd the message is ' + str(message))
+        logging.error(' error in consumer with traceback: ' + tb)
         print('EXCEPTION')

@@ -57,17 +57,18 @@ def create_overview_display(name):
         data_1 = pd.concat((previous_data_1, pd.DataFrame(dic_1)))
         data_2 = pd.concat((previous_data_2, pd.DataFrame(dic_2)))
 
-        fig = px.scatter(x=pd.to_datetime(data_0['timestamp'], unit='s'), y=data_0['values'],
+        fig = px.scatter(x=pd.to_datetime(data_0['timestamp'], unit='s', utc=True), y=data_0['values'],
                             labels={'x': 'Time', 'y': 'RMS'})
+
         fig['data'][0]['showlegend'] = True
         fig['data'][0]['name'] = 'Induction plane 1'
 
-        fig.add_trace(go.Scatter(x=pd.to_datetime(data_1['timestamp'], unit='s'),
+        fig.add_trace(go.Scatter(x=pd.to_datetime(data_1['timestamp'], unit='s', utc=True),
                                     y=data_1['values'],
                                     mode='markers',
                                     name=f'Induction plane 2'))
 
-        fig.add_trace(go.Scatter(x=pd.to_datetime(data_2['timestamp'], unit='s'),
+        fig.add_trace(go.Scatter(x=pd.to_datetime(data_2['timestamp'], unit='s', utc=True),
                                     y=data_2['values'],
                                     mode='markers',
                                     name=f'Collection plane'))
@@ -120,7 +121,7 @@ def create_overview_display(name):
                     [Input(f'pipe-rmsm-{pathname}-{i}', 'value')])
         def get_data(_, source=source, stream_name='rmsm_display0'):
             print('Getting data', stream_name, source)
-            ds = utils.DataStream(stream_name, partition, stream_name)
+            ds = utils.DataStream(stream_name, partition, 'dqm0_ru')
             # ds = data_stream_dics
             res = ds.get_data()
             if res is None:
@@ -140,11 +141,16 @@ def create_overview_display(name):
 
         if not cache.get(f'plot-comparison-{name}'):
             runs = sorted(utils.get_ordered_runs(partition))
-            previous_run = runs[-2][1]
+            if len(runs) > 1:
+                previous_run = runs[-2][1]
 
-            dic_0 = utils.get_average(partition + '_dqm0_ru', 'rmsm_display-0', previous_run)
-            dic_1 = utils.get_average(partition + '_dqm0_ru', 'rmsm_display-1', previous_run)
-            dic_2 = utils.get_average(partition + '_dqm0_ru', 'rmsm_display-2', previous_run)
+                dic_0 = utils.get_average(partition, 'dqm0_ru', 'rmsm_display-0', previous_run)
+                dic_1 = utils.get_average(partition, 'dqm0_ru', 'rmsm_display-1', previous_run)
+                dic_2 = utils.get_average(partition, 'dqm0_ru', 'rmsm_display-2', previous_run)
+            else:
+                dic_0 = pd.DataFrame()
+                dic_1 = pd.DataFrame()
+                dic_2 = pd.DataFrame()
 
             cache.set(f'plot-comparison-{name}', [dic_0, dic_1, dic_2], None)
 
@@ -232,9 +238,11 @@ def create_overview_display(name):
         #         )
         #     ),
         # ]
-        [dcc.Graph(id=f'{pathname}-graph-{0}')]
+        [html.Div(dcc.Graph(id=f'{pathname}-graph-{0}'), className='col-8')]
         +
-        [dcc.Graph(id=f'{pathname}-graph-{0}-run-comparison')]
+        [html.Div(children=f'Comparison of the RMS between the current run and the previous run', className='h1')]
+        +
+        [html.Div(dcc.Graph(id=f'{pathname}-graph-{0}-run-comparison'), className='col-8')]
         +
         [dpd.Pipe(id=f'pipe-partition-{pathname}-{i}',
                     value={},

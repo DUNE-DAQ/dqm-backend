@@ -37,12 +37,7 @@ def create_display(overview_name, name):
 
     obj = OverviewDisplay.objects.filter(name=overview_name)[0]
     partition = obj.partition
-
-    # displays = utils.DataSource(pathname.replace('/dash/', '')).get_displays()
-    # displays = SystemDisplay.objects.filter(name=pathname.replace('/dash/', ''))[0].data
-    displays = SystemTemplate.objects.filter()[0].display
-    displays = {f'{partition}_{app_name}': displays}
-
+    displays = obj.data
     num_plots = sum([len(displays[s]) for s in displays])
 
     data_funcs = []
@@ -51,7 +46,7 @@ def create_display(overview_name, name):
 
     i = -1
     for source in displays:
-        pos_keys = sorted([(val['pos'] if 'pos' in val else i, key) for key,val in displays[source].items()])
+        pos_keys = sorted([(data['pos'] if 'pos' in data else i, stream) for stream,data in displays[source].items()])
         for pos, key in pos_keys:
             i += 1
             plottype = displays[source][key]['plot_type']
@@ -238,12 +233,6 @@ def create_display(overview_name, name):
     layout = html.Div(
         [html.Div([dcc.Graph(id=f'{pathname}-graph-{i}')],
                         className=f'col-{sizes[i]}') for i in range(num_plots)]
-        +
-        [dcc.Interval(
-                        id='interval-component',
-                        interval=5*1000, # in milliseconds
-                        ),
-        ]
         +
         pipe_ls
         +

@@ -28,6 +28,7 @@ from sources.views import sources
 from test.views import PersonView
 from display.views import system_display_index, overview_display_index, create_display, show_display, show_overview_display, delete_overview_display, edit_overview_display, show_channel_display
 from templates.views import show_templates, edit_overview_template, edit_system_template
+# from files.views import show_files_display
 
 import json
 from django.http import JsonResponse
@@ -91,7 +92,7 @@ urlpatterns = [
     path('templates-system/<name>/edit', edit_system_template, name='edit_system_template'),
     path('test', render_test, name='test'),
     path('get_json', get_json, name='get_json'),
-    # path('file-explorer',
+    # path('file-explorer', show_files_display, name='file explorer'),
 ]
 
 # Add in static routes so daphne can serve files; these should
