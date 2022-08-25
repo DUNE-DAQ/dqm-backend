@@ -15,7 +15,7 @@ consumer = KafkaConsumer('testdunedqm',
 
 time_series = {}
 
-settings.configure()
+#settings.configure()
 PATH_DATABASE = settings.PATH_DATABASE
 PATH_DATABASE_RESULTS = settings.PATH_DATABASE_RESULTS
 
