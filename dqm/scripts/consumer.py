@@ -19,8 +19,6 @@ time_series = {}
 PATH_DATABASE = settings.PATH_DATABASE
 PATH_DATABASE_RESULTS = settings.PATH_DATABASE_RESULTS
 
-formatter = logging.Formatter(format='[%(asctime)s %(levelname)s] %(message)s', datefmt=datefmt='%Y-%b-%d %H:%M:%S')
-
 # Add one logger for regular messages
 logger = logging.getLogger('logger')
 logger.setLevel(logging.INFO)
