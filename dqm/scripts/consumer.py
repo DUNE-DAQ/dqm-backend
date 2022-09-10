@@ -170,7 +170,7 @@ if __name__ == 'django.core.management.commands.shell':
     try:
         main()
     except KeyboardInterrupt:
-        logger.info('Ctrl+C has been pressed, saving...')
+        logger.info('\nCtrl+C has been pressed, saving...')
         for time_series in time_series_ls:
             time_series.save()
     except Exception:
