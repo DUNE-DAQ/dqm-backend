@@ -2,6 +2,7 @@ from kafka import KafkaConsumer
 import numpy as np
 import pandas as pd
 import os
+import sys
 import traceback
 from datetime import datetime
 import logging
@@ -18,7 +19,19 @@ time_series = {}
 PATH_DATABASE = settings.PATH_DATABASE
 PATH_DATABASE_RESULTS = settings.PATH_DATABASE_RESULTS
 
-logging.basicConfig(filename='consumer.log', level=logging.ERROR, format='%(asctime)s %(message)s')
+# Add one logger for regular messages
+logger = logging.getLogger('logger')
+logger.setLevel(logging.INFO)
+formatter = logging.Formatter('[%(asctime)s %(levelname)s] %(message)s', datefmt='%Y-%b-%d %H:%M:%S')
+handler = logging.StreamHandler(stream=sys.stdout)
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+
+# Add another logger for the exception errors and messages
+exc_logger = logging.getLogger('exception_logger')
+exc_logger_handler = logging.FileHandler('consumer.log')
+exc_logger_handler.setFormatter(formatter)
+exc_logger.addHandler(exc_logger_handler)
 
 MAX_POINTS = 1000
 
@@ -59,7 +72,7 @@ def write_database(data, partition, app_name, stream_name, run_number, plane):
     Write DQM results coming from the DQM C++ part to the database
     so that they can be reused later
     """
-    print('Writing to database', partition, app_name, stream_name, plane)
+    logger.info(f'Writing to database. partition={partition}, app={app_name}, stream={stream_name}, plane={plane}')
     values = data['value']
     if len(values.shape) == 1:
         values = values.reshape((1, -1))
@@ -151,29 +164,17 @@ def main():
                                     value={'values': time_series[dindex].data[:time_series[dindex].max_index],
                                         'timestamp': time_series[dindex].time[:time_series[dindex].max_index]}
                                     )
-        if 'channel_mask_display' in message[1]:
-            m = message[-1].split('\\n')
-            channels = np.fromstring(m[0].split(',')[-1], sep=' ', dtype=np.int)
-            val = np.fromstring(m[1], sep=' ')
-            write_database({'value': val, 'channels': channels},
-                        partition, app_name, 'channel_mask_display',
-                        run_number, plane)
-
-            timestamp = datetime.now().strftime('%Y/%m/%d %H:%M:%S')
-            send_to_pipe_channel(channel_name=f'{source}-channel_mask_display{plane}',
-                                label=f'{source}-channel_mask_display{plane}',
-                                value=timestamp)
 
 if __name__ == 'django.core.management.commands.shell':
 
     try:
+        logger.info('Waiting for messages...')
         main()
     except KeyboardInterrupt:
-        print('Saving')
+        logger.info('\nCtrl+C has been pressed, saving...')
         for time_series in time_series_ls:
             time_series.save()
-        exit()
     except Exception:
         tb = traceback.format_exc()
-        logging.error(' error in consumer with traceback: ' + tb)
-        print('EXCEPTION')
+        exc_logger.error(' error in consumer with traceback: ' + tb)
+        logger.info('An exception has been raised, check the log file for more details. Aborting...')
