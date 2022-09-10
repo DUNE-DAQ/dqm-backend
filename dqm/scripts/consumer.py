@@ -72,7 +72,7 @@ def write_database(data, partition, app_name, stream_name, run_number, plane):
     Write DQM results coming from the DQM C++ part to the database
     so that they can be reused later
     """
-    logger.info(f'Writing to database {partition} {app_name} {stream_name} {plane}')
+    logger.info(f'Writing to database. partition={partition}, app={app_name}, stream={stream_name}, plane={plane}')
     values = data['value']
     if len(values.shape) == 1:
         values = values.reshape((1, -1))
@@ -168,6 +168,7 @@ def main():
 if __name__ == 'django.core.management.commands.shell':
 
     try:
+        logger.info('Waiting for messages...')
         main()
     except KeyboardInterrupt:
         logger.info('\nCtrl+C has been pressed, saving...')
