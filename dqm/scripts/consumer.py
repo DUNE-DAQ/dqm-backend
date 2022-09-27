@@ -204,7 +204,7 @@ def main():
                 plane_index = int(plane)
                 dindex = (source, plane_index)
                 if dindex not in time_series:
-                    time_series[dindex] = TimeSeries(partition, app_name, 'rmsm_display', plane, run_number)
+                    time_series[dindex] = TimeSeries(partition, app_name, 'std', plane, run_number)
                 time_series[dindex].add(int(datetime.now().timestamp()), val[0], run_number)
                 send_to_pipe_channel(channel_name=f'time_evol_{plane_index}',
                                     label=f'time_evol_{plane_index}',

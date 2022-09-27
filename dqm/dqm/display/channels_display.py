@@ -27,7 +27,7 @@ def create_channel_display(partition, app_name):
     app = DjangoDash(f'channel-{partition}-{app_name}')
 
     source = f'{partition}_{app_name}'
-    stream = 'raw_display'
+    stream = 'raw'
 
     @app.callback(
         Output(f'interm-channel', 'value'),
@@ -91,8 +91,8 @@ def create_channel_display(partition, app_name):
     pipe_ls = []
     pipe_ls.append(dpd.Pipe(id=f'pipe-{partition}-{stream}',
                             value='',
-                            label=f'{source}-raw_display0',
-                            channel_name=f'{source}-raw_display0'),)
+                            label=f'{source}-raw0',
+                            channel_name=f'{source}-raw0'),)
 
     layout = html.Div(
         [dcc.Location(id='url', refresh=False)]

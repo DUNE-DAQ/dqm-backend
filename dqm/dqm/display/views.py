@@ -98,12 +98,12 @@ def edit_overview_display(request, name):
 
         if not SystemTemplate.objects.all():
             SystemTemplate.objects.create(name='TPC Charge Template',
-                                           display={'rmsm_display0': {'plot_type': 'scatter', 'pos': 1},
-                                                    'rmsm_display1': {'plot_type': 'scatter', 'pos': 0},
-                                                    'rmsm_display2': {'plot_type': 'scatter', 'pos': 2},
-                                                    'raw_display0':  {'plot_type': 'heatmap', 'pos': 3},
-                                                    'raw_display1':  {'plot_type': 'heatmap', 'pos': 4},
-                                                    'raw_display2':  {'plot_type': 'heatmap', 'pos': 5}
+                                           display={'std0': {'plot_type': 'scatter', 'pos': 1},
+                                                    'std1': {'plot_type': 'scatter', 'pos': 0},
+                                                    'std2': {'plot_type': 'scatter', 'pos': 2},
+                                                    'raw0':  {'plot_type': 'heatmap', 'pos': 3},
+                                                    'raw1':  {'plot_type': 'heatmap', 'pos': 4},
+                                                    'raw2':  {'plot_type': 'heatmap', 'pos': 5}
                                                    })
 
         partitions = utils.get_partitions()
@@ -166,11 +166,11 @@ def edit_overview_display(request, name):
                     displays = SystemTemplate.objects.filter(name=form.cleaned_data['system_template'])[0].display
                 else:
                     for d in form.cleaned_data['choices']:
-                        if 'raw_display' in d:
+                        if 'raw' in d:
                             displays[d] = 'heatmap'
-                        elif 'rmsm_display' in d:
+                        elif 'std' in d:
                             displays[d] = 'scatter'
-                        elif 'fft_sums_display' in d:
+                        elif 'fourier_plane' in d:
                             displays[d] = 'line'
                         elif 'channel_mask_display' in d:
                             displays[d] = 'scatter'
@@ -239,31 +239,31 @@ def create_display(request):
         if not SystemTemplate.objects.filter(name='TPC Charge Template'):
             SystemTemplate.objects.create(name='TPC Charge Template',
                                            display={
-                                                    'fft_sums_display0': {'plot_type': 'line'   , 'pos': 0, 'size': 3},
-                                                    'fft_sums_display1': {'plot_type': 'line'   , 'pos': 1, 'size': 3},
-                                                    'fft_sums_display2': {'plot_type': 'line'   , 'pos': 2, 'size': 3},
-                                                    'fft_sums_display3': {'plot_type': 'line'   , 'pos': 3, 'size': 3},
-                                                    'rmsm_display0':     {'plot_type': 'scatter', 'pos': 4, 'size': 4},
-                                                    'rmsm_display1':     {'plot_type': 'scatter', 'pos': 5, 'size': 4},
-                                                    'rmsm_display2':     {'plot_type': 'scatter', 'pos': 6, 'size': 4},
-                                                    'raw_display0':      {'plot_type': 'heatmap', 'pos': 7, 'size': 4},
-                                                    'raw_display1':      {'plot_type': 'heatmap', 'pos': 8, 'size': 4},
-                                                    'raw_display2':      {'plot_type': 'heatmap', 'pos': 9, 'size': 4}
+                                                    'fourier_plane0': {'plot_type': 'line'   , 'pos': 0, 'size': 3},
+                                                    'fourier_plane1': {'plot_type': 'line'   , 'pos': 1, 'size': 3},
+                                                    'fourier_plane2': {'plot_type': 'line'   , 'pos': 2, 'size': 3},
+                                                    'fourier_plane3': {'plot_type': 'line'   , 'pos': 3, 'size': 3},
+                                                    'std0':     {'plot_type': 'scatter', 'pos': 4, 'size': 4},
+                                                    'std1':     {'plot_type': 'scatter', 'pos': 5, 'size': 4},
+                                                    'std2':     {'plot_type': 'scatter', 'pos': 6, 'size': 4},
+                                                    'raw0':      {'plot_type': 'heatmap', 'pos': 7, 'size': 4},
+                                                    'raw1':      {'plot_type': 'heatmap', 'pos': 8, 'size': 4},
+                                                    'raw2':      {'plot_type': 'heatmap', 'pos': 9, 'size': 4}
                                                    })
 
         if not SystemTemplate.objects.filter(name='TPC Charge Template (WIB2)'):
             SystemTemplate.objects.create(name='TPC Charge Template (WIB2)',
                                            display={
-                                                    'fft_sums_display0':          {'plot_type': 'line'   , 'pos': 0, 'size': 3},
-                                                    'fft_sums_display1':          {'plot_type': 'line'   , 'pos': 1, 'size': 3},
-                                                    'fft_sums_display2':          {'plot_type': 'line'   , 'pos': 2, 'size': 3},
-                                                    'fft_sums_display3':          {'plot_type': 'line'   , 'pos': 3, 'size': 3},
-                                                    'rmsm_display0':              {'plot_type': 'scatter', 'pos': 4, 'size': 4},
-                                                    'rmsm_display1':              {'plot_type': 'scatter', 'pos': 5, 'size': 4},
-                                                    'rmsm_display2':              {'plot_type': 'scatter', 'pos': 6, 'size': 4},
-                                                    'raw_display0':               {'plot_type': 'heatmap', 'pos': 7, 'size': 4},
-                                                    'raw_display1':               {'plot_type': 'heatmap', 'pos': 8, 'size': 4},
-                                                    'raw_display2':               {'plot_type': 'heatmap', 'pos': 9, 'size': 4},
+                                                    'fourier_plane0':          {'plot_type': 'line'   , 'pos': 0, 'size': 3},
+                                                    'fourier_plane1':          {'plot_type': 'line'   , 'pos': 1, 'size': 3},
+                                                    'fourier_plane2':          {'plot_type': 'line'   , 'pos': 2, 'size': 3},
+                                                    'fourier_plane3':          {'plot_type': 'line'   , 'pos': 3, 'size': 3},
+                                                    'std0':              {'plot_type': 'scatter', 'pos': 4, 'size': 4},
+                                                    'std1':              {'plot_type': 'scatter', 'pos': 5, 'size': 4},
+                                                    'std2':              {'plot_type': 'scatter', 'pos': 6, 'size': 4},
+                                                    'raw0':               {'plot_type': 'heatmap', 'pos': 7, 'size': 4},
+                                                    'raw1':               {'plot_type': 'heatmap', 'pos': 8, 'size': 4},
+                                                    'raw2':               {'plot_type': 'heatmap', 'pos': 9, 'size': 4},
                                                     'channel_mask_display0':      {'plot_type': 'scatter', 'pos': 10, 'size': 4},
                                                     'channel_mask_display1':      {'plot_type': 'scatter', 'pos': 11, 'size': 4},
                                                     'channel_mask_display2':      {'plot_type': 'scatter', 'pos': 12, 'size': 4},
@@ -331,11 +331,11 @@ def create_display(request):
                     displays = SystemTemplate.objects.filter(name=form.cleaned_data['system_template'])[0].display
                 else:
                     for d in form.cleaned_data['choices']:
-                        if 'raw_display' in d:
+                        if 'raw' in d:
                             displays[d] = 'heatmap'
-                        elif 'rmsm_display' in d:
+                        elif 'std' in d:
                             displays[d] = 'scatter'
-                        elif 'fft_sums_display' in d:
+                        elif 'fourier_plane' in d:
                             displays[d] = 'line'
                         elif 'channel_mask_display' in d:
                             displays[d] = 'scatter'

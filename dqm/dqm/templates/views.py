@@ -97,11 +97,11 @@ def edit_overview_template(request, name):
                     displays = SystemTemplate.objects.filter(name=form.cleaned_data['system_template'])[0].display
                 else:
                     for d in form.cleaned_data['choices']:
-                        if 'raw_display' in d:
+                        if 'raw' in d:
                             displays[d] = 'heatmap'
-                        elif 'rmsm_display' in d:
+                        elif 'std' in d:
                             displays[d] = 'scatter'
-                        elif 'fft_sums_display' in d:
+                        elif 'fourier_plane' in d:
                             displays[d] = 'line'
                 dataa = {form.cleaned_data['source']: displays}
                 # OverviewDisplay.objects.create(name=form.cleaned_data['name'],
@@ -221,11 +221,11 @@ def edit_system_template(request, name):
                     displays = SystemTemplate.objects.filter(name=form.cleaned_data['system_template'])[0].display
                 else:
                     for d in form.cleaned_data['choices']:
-                        if 'raw_display' in d:
+                        if 'raw' in d:
                             displays[d] = 'heatmap'
-                        elif 'rmsm_display' in d:
+                        elif 'std' in d:
                             displays[d] = 'scatter'
-                        elif 'fft_sums_display' in d:
+                        elif 'fourier_plane' in d:
                             displays[d] = 'line'
                 dataa = {form.cleaned_data['source']: displays}
                 # OverviewDisplay.objects.create(name=form.cleaned_data['name'],

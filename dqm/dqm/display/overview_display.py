@@ -47,9 +47,9 @@ def create_overview_display(name):
     def plot_scatter(dic_0={}, dic_1={}, dic_2={}, relayout_data=None):
 
         if not dic_0 and not dic_1 and not dic_2:
-            dic_0 = utils.get_last_result(partition, 'dqm0_ru', 'rmsm_display-0')
-            dic_1 = utils.get_last_result(partition, 'dqm0_ru', 'rmsm_display-1')
-            dic_2 = utils.get_last_result(partition, 'dqm0_ru', 'rmsm_display-2')
+            dic_0 = utils.get_last_result(partition, 'dqm0_ru', 'std-0')
+            dic_1 = utils.get_last_result(partition, 'dqm0_ru', 'std-1')
+            dic_2 = utils.get_last_result(partition, 'dqm0_ru', 'std-2')
             cache.set(name, [dic_0, dic_1, dic_2], None)
 
         previous_data_0, previous_data_1, previous_data_2 = cache.get(name)
@@ -119,7 +119,7 @@ def create_overview_display(name):
         @app.callback(
                     Output(f'interm-{pathname}-{i}', 'value'),
                     [Input(f'pipe-rmsm-{pathname}-{i}', 'value')])
-        def get_data(_, source=source, stream_name='rmsm_display0'):
+        def get_data(_, source=source, stream_name='std0'):
             print('Getting data', stream_name, source)
             ds = utils.DataStream(stream_name, partition, 'dqm0_ru')
             # ds = data_stream_dics
@@ -144,9 +144,9 @@ def create_overview_display(name):
             if len(runs) > 1:
                 previous_run = runs[-2][1]
 
-                dic_0 = utils.get_average(partition, 'dqm0_ru', 'rmsm_display-0', previous_run)
-                dic_1 = utils.get_average(partition, 'dqm0_ru', 'rmsm_display-1', previous_run)
-                dic_2 = utils.get_average(partition, 'dqm0_ru', 'rmsm_display-2', previous_run)
+                dic_0 = utils.get_average(partition, 'dqm0_ru', 'std-0', previous_run)
+                dic_1 = utils.get_average(partition, 'dqm0_ru', 'std-1', previous_run)
+                dic_2 = utils.get_average(partition, 'dqm0_ru', 'std-2', previous_run)
             else:
                 dic_0 = pd.DataFrame()
                 dic_1 = pd.DataFrame()
@@ -252,8 +252,8 @@ def create_overview_display(name):
         +
         [dpd.Pipe(id=f'pipe-rmsm-{pathname}-{i}',
                     value={},
-                    label=f'{source}-rmsm_display{i}',
-                    channel_name=f'{source}-rmsm_display{i}')
+                    label=f'{source}-std{i}',
+                    channel_name=f'{source}-std{i}')
                     for i in range(3)]
         +
         [html.Div(id=f'interm-{pathname}-{i}') for i in range(3)]
