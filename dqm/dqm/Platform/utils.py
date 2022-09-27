@@ -68,11 +68,15 @@ class DataStream:
         self.app_name = app_name
 
     def get_data(self, run_number='last'):
+
         plane_number = self.name[-1]
         if run_number == 'last':
             folders = os.listdir(f'{DATABASE_PATH}/{self.partition}/{self.app_name}')
             times = [os.path.getmtime(f'{DATABASE_PATH}/{self.partition}/{self.app_name}/{x}') for x in folders]
             run_number = max(zip(times, folders))[1]
+
+        print(f'Calling get_data, {DATABASE_PATH}/{self.partition}/{self.app_name}/{run_number}')
+        print(self.name[:-1] + f'-{plane_number}')
 
         files = [f for f in os.listdir(f'{DATABASE_PATH}/{self.partition}/{self.app_name}/{run_number}') if self.name[:-1] + f'-{plane_number}' in f]
         last_file = max(files)
