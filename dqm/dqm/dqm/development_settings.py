@@ -31,6 +31,9 @@ PATH_DATABASE = os.environ['PATH_DATABASE']
 PATH_DATABASE_RESULTS = os.environ['PATH_DATABASE_RESULTS']
 REDIS_HOST = os.environ['REDIS_HOST']
 REDIS_LOCATION = "redis://" + REDIS_HOST + ":6379/1",
+KAFKA_HOST = os.environ.get('KAFKA_HOST', 'monkafka')
+KAFKA_PORT = os.environ.get('KAFKA_PORT', 30092)
+KAFKA_LOCATION = f'{KAFKA_HOST}:{KAFKA_PORT}'
 
 # Application definition
 
