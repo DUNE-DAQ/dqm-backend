@@ -9,6 +9,7 @@ crispy-bootstrap5
 kafka-python
 pandas
 tables
+msgpack
 
 dash-core-components
 dash-html-components
