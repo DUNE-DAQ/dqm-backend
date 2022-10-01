@@ -106,7 +106,7 @@ def write_result_to_database(data, partition, app_name, stream_name, run_number,
 
 def main():
     for message in consumer:
-        print(str(message))
+        # print(str(message))
 
         ls = message.value.split(b'\n\n\n')
         nls = []
@@ -124,19 +124,18 @@ def main():
             write_database({'channels': x, 'value': y}, header, 'std')
 
             timestamp = datetime.now().strftime('%Y/%m/%d %H:%M:%S')
-            send_to_pipe_channel(channel_name=f'{header["source"]}-std{header["plane"]}',
-                                label=f'{header["source"]}-std{header["plane"]}',
+            send_to_pipe_channel(channel_name=f'{header['partition']}-std{header["plane"]}',
+                                label=f'{header['partition']}-std{header["plane"]}',
                                 value=timestamp)
         elif header['algorithm'] == 'fourier_plane':
             x = np.array(msgpack.unpackb(ls[1][1:]))
             y = np.array(msgpack.unpackb(ls[2][1:]))
-            print(x, y)
 
             write_database({'channels': x[1:], 'value': y[1:]}, header, 'fourier_plane')
 
             timestamp = datetime.now().strftime('%Y/%m/%d %H:%M:%S')
-            send_to_pipe_channel(channel_name=f'{header["source"]}-fourier_plane{header["plane"]}',
-                                label=f'{header["source"]}-fourier_plane{header["plane"]}',
+            send_to_pipe_channel(channel_name=f'{header['partition']}-fourier_plane{header["plane"]}',
+                                label=f'{header['partition']}-fourier_plane{header["plane"]}',
                                 value=timestamp)
         elif header['algorithm'] == 'raw':
             x = np.array(msgpack.unpackb(ls[1][1:]))
@@ -149,55 +148,11 @@ def main():
                            header, 'raw')
 
             timestamp = datetime.now().strftime('%Y/%m/%d %H:%M:%S')
-            send_to_pipe_channel(channel_name=f'{header["source"]}-std{header["plane"]}',
-                                label=f'{header["source"]}-std{header["plane"]}',
+            send_to_pipe_channel(channel_name=f'{header['partition']}-std{header["plane"]}',
+                                label=f'{header['partition']}-std{header["plane"]}',
                                 value=timestamp)
 
         continue
-
-        if 'fft_sums_display' in message[1]:
-            m = message[-1].split('\\n')
-            freq = np.fromstring(m[0], sep=' ')
-            val = np.fromstring(m[-2], sep=' ')
-            # At f = 0 Hz there will be a huge value that doesn't let
-            # us see the rest of the points
-            write_database({'value': val[1:], 'channels': freq[1:]},
-                            partition, app_name, 'fft_sums_display',
-                            run_number, plane)
-
-
-            timestamp = datetime.now().strftime('%Y/%m/%d %H:%M:%S')
-            send_to_pipe_channel(channel_name=f'{source}-fft_sums_display{plane}',
-                                label=f'{source}-fft_sums_display{plane}',
-                                value=timestamp)
-
-        if 'raw_display' in message[1]:
-            m = message[-1].split('\\n')
-            channels = np.fromstring(m[0].split(',')[-1], sep=' ', dtype=np.int)
-            timestamps = np.array(m[1:-1:2], dtype=int)
-            val = np.fromstring(' '.join(m[2::2]), sep=' ', dtype=np.int).reshape(( len(timestamps), len(channels) ))
-
-            write_database({'value': val, 'channels': channels, 'timestamps': timestamps},
-                        partition, app_name, 'raw_display',
-                        run_number, plane)
-
-            timestamp = datetime.now().strftime('%Y/%m/%d %H:%M:%S')
-            send_to_pipe_channel(channel_name=f'{source}-raw_display{plane}',
-                                label=f'{source}-raw_display{plane}',
-                                value=timestamp)
-
-        if 'rmsm_display' in message[1]:
-            m = message[-1].split('\\n')
-            channels = np.fromstring(m[0].split(',')[-1], sep=' ', dtype=np.int)
-            val = np.fromstring(m[-2], sep=' ')
-            write_database({'value': val, 'channels': channels},
-                        partition, app_name, 'rmsm_display',
-                        run_number, plane)
-
-            timestamp = datetime.now().strftime('%Y/%m/%d %H:%M:%S')
-            send_to_pipe_channel(channel_name=f'{source}-rmsm_display{plane}',
-                                label=f'{source}-rmsm_display{plane}',
-                                value=timestamp)
 
             # Only send to the time plot data coming from the first DQM-RU app
             if app_name == 'dqm0_ru':
