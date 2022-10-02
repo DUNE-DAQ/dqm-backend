@@ -79,7 +79,7 @@ def write_database(data, header, stream_name):
     Write DQM results coming from the DQM C++ part to the database
     so that they can be reused later
     """
-    partition, app_name, run_number, plane = header['partition'], \
+    partition, app_name, run_number, plane = header["partition"], \
         header['app_name'], header['run_number'], header['plane']
     logger.info(f'Writing to database. partition={partition}, app={app_name}, stream={stream_name}, plane={plane}')
     values = data['value']
@@ -124,8 +124,8 @@ def main():
             write_database({'channels': x, 'value': y}, header, 'std')
 
             timestamp = datetime.now().strftime('%Y/%m/%d %H:%M:%S')
-            send_to_pipe_channel(channel_name=f'{header['partition']}-std{header["plane"]}',
-                                label=f'{header['partition']}-std{header["plane"]}',
+            send_to_pipe_channel(channel_name=f'{header["partition"]}-std{header["plane"]}',
+                                label=f'{header["partition"]}-std{header["plane"]}',
                                 value=timestamp)
         elif header['algorithm'] == 'fourier_plane':
             x = np.array(msgpack.unpackb(ls[1][1:]))
@@ -134,8 +134,8 @@ def main():
             write_database({'channels': x[1:], 'value': y[1:]}, header, 'fourier_plane')
 
             timestamp = datetime.now().strftime('%Y/%m/%d %H:%M:%S')
-            send_to_pipe_channel(channel_name=f'{header['partition']}-fourier_plane{header["plane"]}',
-                                label=f'{header['partition']}-fourier_plane{header["plane"]}',
+            send_to_pipe_channel(channel_name=f'{header["partition"]}-fourier_plane{header["plane"]}',
+                                label=f'{header["partition"]}-fourier_plane{header["plane"]}',
                                 value=timestamp)
         elif header['algorithm'] == 'raw':
             x = np.array(msgpack.unpackb(ls[1][1:]))
@@ -148,8 +148,8 @@ def main():
                            header, 'raw')
 
             timestamp = datetime.now().strftime('%Y/%m/%d %H:%M:%S')
-            send_to_pipe_channel(channel_name=f'{header['partition']}-std{header["plane"]}',
-                                label=f'{header['partition']}-std{header["plane"]}',
+            send_to_pipe_channel(channel_name=f'{header["partition"]}-std{header["plane"]}',
+                                label=f'{header["partition"]}-std{header["plane"]}',
                                 value=timestamp)
 
         continue
