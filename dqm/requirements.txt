@@ -1,43 +1,36 @@
-# django
-django_extensions
-django_tables2
-django_plotly_dash
-django-crispy-forms
-django-environ
-crispy-bootstrap5
-
+#python
 kafka-python
 pandas
 tables
 msgpack
-
-dash-core-components
-dash-html-components
-dash-renderer
-plotly
-dpd-components
-dash-bootstrap-components
-django_redis
-
-
-# These are coming from django-plotly-dash
--e git+https://github.com/jmcarcell/django-plotly-dash#egg=django-plotly-dash
-dash>=1.11,<1.21.0
-dash-core-components
-dash-html-components
-dash-renderer
-plotly
-dpd-components
-
-dash-bootstrap-components
-
 channels<3.0
 Django>=2.2,<4.0.0
 Flask>=1.0.2
-
-bootstrap4
-dpd_static_support
-django-bootstrap4
 channels-redis
+plotly
+dash>=1.11,<1.21.0
+bootstrap4
 whitenoise
 
+# django
+django-bootstrap4
+django-crispy-forms
+django-environ
+django_extensions
+django_plotly_dash
+django_redis
+django_tables2
+
+# Others
+dash-bootstrap-components
+dash-core-components
+dash-html-components
+dash-renderer
+dpd-components
+dpd_static_support
+crispy-bootstrap5
+
+
+# Fix with a bug that prevented the plots to update
+# TODO: Test if main / develop works
+-e git+https://github.com/jmcarcell/django-plotly-dash#egg=django-plotly-dash
