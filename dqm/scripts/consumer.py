@@ -18,6 +18,8 @@ consumer = KafkaConsumer('DQM',
                          bootstrap_servers='monkafka:30092',
                          client_id='test')
 
+unpacker = msgpack.Unpacker(max_array_len=int(1e8))
+
 # Time used
 timezone = pytz.timezone('Europe/Madrid')
 
@@ -74,6 +76,32 @@ class TimeSeries:
         dic = {'values': self.data[:max_index], 'timestamp': self.time[:max_index]}
         write_result_to_database(dic, self.partition, self.app_name, self.stream_name, self.run_number, self.plane)
 
+class MessageBuffer:
+    def __init__(self):
+        self.buffer = {}
+
+    def add_to_buffer(self, message, source, app, plane, part, total_parts):
+        part = int(part)
+        total_parts = int(total_parts)
+        if (source, app, plane) not in self.buffer:
+            self.buffer[(source, app, plane)] = [[None]*(part - 1) + [message] + [None] * (total_parts - part), 1, total_parts]
+            return
+        self.buffer[(source, app, plane)][0][part-1] = message
+        self.buffer[(source, app, plane)][1] += 1
+
+    def get_msg_if_available(self, source, app, plane):
+        if self.buffer[(source, app, plane)][1] == self.buffer[(source, app, plane)][2]:
+            return self.unpack_message(source, app, plane)
+        return None
+
+    def unpack_message(self, source, app, plane):
+        # We're done so let's clean up
+        msg = b''.join(self.buffer[(source, app, plane)][0])
+        self.buffer.pop((source, app, plane))
+        return msg
+
+mebuf = MessageBuffer()
+
 def write_database(data, header, stream_name):
     """
     Write DQM results coming from the DQM C++ part to the database
@@ -111,10 +139,16 @@ def main():
         ls = message.value.split(b'\n\n\n')
         nls = []
 
-        # print(ls)
-
         header_bytes = ls[0]
         header = json.loads(header_bytes)
+
+        if 'part' in header:
+            mebuf.add_to_buffer(b'\n\n\n'.join(ls[1:]), header['source'], header['app_name'], header['plane'], header['part'], header['total_parts'])
+            if (msg := mebuf.get_msg_if_available(header['source'], header['app_name'], header['plane'])):
+                print('Buffer is complete', b'\n\n\n' in msg)
+                ls = [None] + msg.split(b'\n\n\n')
+            else:
+                continue
 
         if header['algorithm'] == 'std':
             x = np.array(msgpack.unpackb(ls[1][1:]))
@@ -127,9 +161,21 @@ def main():
             send_to_pipe_channel(channel_name=f'{header["partition"]}-std{header["plane"]}',
                                 label=f'{header["partition"]}-std{header["plane"]}',
                                 value=timestamp)
+        if header['algorithm'] == 'rms':
+            x = np.array(msgpack.unpackb(ls[1][1:]))
+            y = np.array(msgpack.unpackb(ls[2][1:]))
+            print(x.shape, y.shape)
+
+            write_database({'channels': x, 'value': y}, header, 'rms')
+
+            timestamp = datetime.now().strftime('%Y/%m/%d %H:%M:%S')
+            # send_to_pipe_channel(channel_name=f'{header["partition"]}-std{header["plane"]}',
+            #                     label=f'{header["partition"]}-std{header["plane"]}',
+            #                     value=timestamp)
         elif header['algorithm'] == 'fourier_plane':
             x = np.array(msgpack.unpackb(ls[1][1:]))
             y = np.array(msgpack.unpackb(ls[2][1:]))
+            print(x.shape, y.shape)
 
             write_database({'channels': x[1:], 'value': y[1:]}, header, 'fourier_plane')
 
@@ -140,6 +186,7 @@ def main():
         elif header['algorithm'] == 'raw':
             x = np.array(msgpack.unpackb(ls[1][1:]))
             y = np.array(msgpack.unpackb(ls[2][1:]))
+
             y = y.reshape((x.shape[0], -1)).T
             timestamps = np.arange(x.shape[0])
             print(x.shape, y.shape)
@@ -148,29 +195,29 @@ def main():
                            header, 'raw')
 
             timestamp = datetime.now().strftime('%Y/%m/%d %H:%M:%S')
-            send_to_pipe_channel(channel_name=f'{header["partition"]}-std{header["plane"]}',
-                                label=f'{header["partition"]}-std{header["plane"]}',
+            send_to_pipe_channel(channel_name=f'{header["partition"]}-raw{header["plane"]}',
+                                label=f'{header["partition"]}-raw{header["plane"]}',
                                 value=timestamp)
 
         continue
 
-            # Only send to the time plot data coming from the first DQM-RU app
-            if app_name == 'dqm0_ru':
-                plane_index = int(plane)
-                dindex = (source, plane_index)
-                if dindex not in time_series:
-                    time_series[dindex] = TimeSeries(partition, app_name, 'std', plane, run_number)
-                time_series[dindex].add(int(datetime.now().timestamp()), val[0], run_number)
-                send_to_pipe_channel(channel_name=f'time_evol_{plane_index}',
-                                    label=f'time_evol_{plane_index}',
-                                    value={'values': time_series[dindex].data[:time_series[dindex].max_index],
-                                        'timestamp': time_series[dindex].time[:time_series[dindex].max_index]}
-                                    )
-                # send_to_pipe_channel(channel_name=f'time_evol_{plane_index}',
-                #                     label=f'time_evol_{plane_index}',
-                #                     value={'data': time_series[dindex].data[time_series[dindex].index-1],
-                #                            'timestamp': time_series[dindex].time[time_series[dindex].index-1]}
-                #                     )
+        # Only send to the time plot data coming from the first DQM-RU app
+        if app_name == 'dqm0_ru':
+            plane_index = int(plane)
+            dindex = (source, plane_index)
+            if dindex not in time_series:
+                time_series[dindex] = TimeSeries(partition, app_name, 'std', plane, run_number)
+            time_series[dindex].add(int(datetime.now().timestamp()), val[0], run_number)
+            send_to_pipe_channel(channel_name=f'time_evol_{plane_index}',
+                                label=f'time_evol_{plane_index}',
+                                value={'values': time_series[dindex].data[:time_series[dindex].max_index],
+                                    'timestamp': time_series[dindex].time[:time_series[dindex].max_index]}
+                                )
+            # send_to_pipe_channel(channel_name=f'time_evol_{plane_index}',
+            #                     label=f'time_evol_{plane_index}',
+            #                     value={'data': time_series[dindex].data[time_series[dindex].index-1],
+            #                            'timestamp': time_series[dindex].time[time_series[dindex].index-1]}
+            #                     )
 
 if __name__ == 'django.core.management.commands.shell':
 
