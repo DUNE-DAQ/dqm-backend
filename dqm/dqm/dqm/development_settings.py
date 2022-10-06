@@ -29,7 +29,11 @@ ALLOWED_HOSTS = os.environ['ALLOWED_HOSTS'].split()
 PATH_DATABASE = os.environ['PATH_DATABASE']
 # PATH_DATABASE = '/home/juanmi/Dune/Newp/Database/'
 PATH_DATABASE_RESULTS = os.environ['PATH_DATABASE_RESULTS']
-
+REDIS_HOST = os.environ['REDIS_HOST']
+REDIS_LOCATION = "redis://" + REDIS_HOST + ":6379/1",
+KAFKA_HOST = os.environ.get('KAFKA_HOST', 'monkafka')
+KAFKA_PORT = os.environ.get('KAFKA_PORT', 30092)
+KAFKA_LOCATION = f'{KAFKA_HOST}:{KAFKA_PORT}'
 
 # Application definition
 
@@ -178,7 +182,7 @@ STATICFILES_DIRS = [
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",
+        "LOCATION": REDIS_LOCATION,
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient"
         },
@@ -192,7 +196,7 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            'hosts': [('127.0.0.1', 6379),],
+            'hosts': [(REDIS_HOST, 6379),],
         },
     },
 }

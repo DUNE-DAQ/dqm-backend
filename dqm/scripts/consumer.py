@@ -15,7 +15,7 @@ from django.conf import settings
 from django_plotly_dash.consumers import send_to_pipe_channel
 
 consumer = KafkaConsumer('DQM',
-                         bootstrap_servers='monkafka:30092',
+                         bootstrap_servers=settings.KAFKA_LOCATION,
                          client_id='test')
 
 # Time used
@@ -23,6 +23,7 @@ timezone = pytz.timezone('Europe/Madrid')
 
 time_series = {}
 
+#settings.configure()
 PATH_DATABASE = settings.PATH_DATABASE
 PATH_DATABASE_RESULTS = settings.PATH_DATABASE_RESULTS
 
@@ -37,8 +38,11 @@ logger.addHandler(handler)
 # Add another logger for the exception errors and messages
 exc_logger = logging.getLogger('exception_logger')
 exc_logger_handler = logging.FileHandler('consumer.log')
+err_handler = logging.StreamHandler(stream=sys.stderr)
 exc_logger_handler.setFormatter(formatter)
-exc_logger.addHandler(exc_logger_handler)
+err_handler.setFormatter(formatter)
+#exc_logger.addHandler(exc_logger_handler)
+exc_logger.addHandler(err_handler)
 
 MAX_POINTS = 1000
 
