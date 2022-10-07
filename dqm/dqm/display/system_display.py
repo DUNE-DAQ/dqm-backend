@@ -82,7 +82,7 @@ def create_display(overview_name, name):
                     print('PLOT SCATTER', reference_run)
                     dic, date = data
                     if dic is None:
-                        print('NONE')
+                        print('Calling PLOT SCATTER returned no data')
                         return px.scatter()
                     print('Calling plot_scatter')
                     ndf = pd.DataFrame(dic['data'])
@@ -125,9 +125,10 @@ def create_display(overview_name, name):
                     [State(f'{pathname}-graph-{i}', 'relayoutData')]
                 )
                 def plot_heatmap(data={}, rewind_run=None, relayout_data=None, source=source, stream=key):
+                    print('PLOT HEATMAP')
                     dic, date = data
                     if dic is None:
-                        print('NONE')
+                        print('HEATMAP NONE')
                         return px.scatter()
                     print('Calling plot_heatmap')
                     ndf = pd.DataFrame(dic['data'])

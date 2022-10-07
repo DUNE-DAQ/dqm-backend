@@ -151,6 +151,7 @@ def main():
                 continue
 
         if header['algorithm'] == 'std':
+            print('std', len(ls))
             x = np.array(msgpack.unpackb(ls[1][1:]))
             y = np.array(msgpack.unpackb(ls[2][1:]))
             print(x.shape, y.shape)
@@ -162,6 +163,7 @@ def main():
                                 label=f'{header["partition"]}-std{header["plane"]}',
                                 value=timestamp)
         if header['algorithm'] == 'rms':
+            print('rms', len(ls))
             x = np.array(msgpack.unpackb(ls[1][1:]))
             y = np.array(msgpack.unpackb(ls[2][1:]))
             print(x.shape, y.shape)
@@ -173,6 +175,7 @@ def main():
             #                     label=f'{header["partition"]}-std{header["plane"]}',
             #                     value=timestamp)
         elif header['algorithm'] == 'fourier_plane':
+            print('fourier_plane', len(ls))
             x = np.array(msgpack.unpackb(ls[1][1:]))
             y = np.array(msgpack.unpackb(ls[2][1:]))
             print(x.shape, y.shape)
@@ -184,12 +187,15 @@ def main():
                                 label=f'{header["partition"]}-fourier_plane{header["plane"]}',
                                 value=timestamp)
         elif header['algorithm'] == 'raw':
+            print('raw', len(ls))
             x = np.array(msgpack.unpackb(ls[1][1:]))
             y = np.array(msgpack.unpackb(ls[2][1:]))
 
             y = y.reshape((x.shape[0], -1)).T
             timestamps = np.arange(x.shape[0])
             print(x.shape, y.shape)
+            if y.shape[0] > 100:
+                y = y[:100]
 
             write_database({'value': y, 'channels': x, 'timestamps': timestamps},
                            header, 'raw')

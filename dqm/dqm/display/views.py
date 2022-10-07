@@ -18,6 +18,8 @@ from crispy_forms.layout import Layout, Fieldset
 
 from django.utils.html import format_html
 
+import datetime
+
 class NameTable(tables.Table):
     name = tables.Column(attrs={'td': {'class': 'col-6'}}, linkify=True)
     description = tables.Column()
@@ -32,6 +34,27 @@ class OverviewTable(tables.Table):
 
     def render_options(self, record):
         return format_html(f'<a href={record["object"].get_edit_url()}>Edit</a> <a href={record["object"].get_delete_url()}>Delete</a>')
+
+def create_default_system_template():
+    """
+    Create a default system template used as default for all the partitions
+    """
+    template = SystemTemplate.objects.create(name='TPC Charge Template',
+                                             description='Default template',
+        display={
+            'fourier_plane0': {'plot_type': 'line'   , 'pos': 0, 'size': 3},
+            'fourier_plane1': {'plot_type': 'line'   , 'pos': 1, 'size': 3},
+            'fourier_plane2': {'plot_type': 'line'   , 'pos': 2, 'size': 3},
+            'fourier_plane3': {'plot_type': 'line'   , 'pos': 3, 'size': 3},
+            'std0':     {'plot_type': 'scatter', 'pos': 4, 'size': 4},
+            'std1':     {'plot_type': 'scatter', 'pos': 5, 'size': 4},
+            'std2':     {'plot_type': 'scatter', 'pos': 6, 'size': 4},
+            'raw0':      {'plot_type': 'heatmap', 'pos': 7, 'size': 4},
+            'raw1':      {'plot_type': 'heatmap', 'pos': 8, 'size': 4},
+            'raw2':      {'plot_type': 'heatmap', 'pos': 9, 'size': 4}
+            },
+        creation_date=datetime.datetime.now())
+    return template
 
 def system_display_index(request):
 
@@ -57,7 +80,11 @@ def overview_display_index(request):
     displays = list(OverviewDisplay.objects.all())
     partitions_in_default_displays = set([d.partition for d in displays if d.default])
 
-    default_system_template = SystemTemplate.objects.filter(name='TPC Charge Template')[0]
+    system_templates = SystemTemplate.objects.filter(name='TPC Charge Template')
+    if not system_templates:
+        default_system_template = create_default_system_template()
+    else:
+        default_system_template = system_templates[0]
 
     # Create default display if there isn't one
     for p in partitions:
@@ -66,7 +93,8 @@ def overview_display_index(request):
                                            description=f'Default display for partition {p}',
                                            data={p : default_system_template.display},
                                            partition=p,
-                                           default=True)
+                                                 default=True,
+                                                 creation_date=datetime.datetime.now())
             displays.append(obj)
 
 
@@ -94,7 +122,8 @@ def edit_overview_display(request, name):
         if not OverviewTemplate.objects.all():
             OverviewTemplate.objects.create(name='TPC Charge Template',
                                             description='test',
-                                            display={})
+                                            display={},
+                                            creation_date=datetime.datetime.now())
 
         if not SystemTemplate.objects.all():
             SystemTemplate.objects.create(name='TPC Charge Template',
@@ -104,7 +133,8 @@ def edit_overview_display(request, name):
                                                     'raw0':  {'plot_type': 'heatmap', 'pos': 3},
                                                     'raw1':  {'plot_type': 'heatmap', 'pos': 4},
                                                     'raw2':  {'plot_type': 'heatmap', 'pos': 5}
-                                                   })
+                                                    },
+                                          creation_date=datetime.datetime.now())
 
         partitions = utils.get_partitions()
         possible_names = utils.get_streams()
@@ -249,7 +279,8 @@ def create_display(request):
                                                     'raw0':      {'plot_type': 'heatmap', 'pos': 7, 'size': 4},
                                                     'raw1':      {'plot_type': 'heatmap', 'pos': 8, 'size': 4},
                                                     'raw2':      {'plot_type': 'heatmap', 'pos': 9, 'size': 4}
-                                                   })
+                                                   },
+                                          creation_date=datetime.datetime.now())
 
         if not SystemTemplate.objects.filter(name='TPC Charge Template (WIB2)'):
             SystemTemplate.objects.create(name='TPC Charge Template (WIB2)',
@@ -267,7 +298,8 @@ def create_display(request):
                                                     'channel_mask_display0':      {'plot_type': 'scatter', 'pos': 10, 'size': 4},
                                                     'channel_mask_display1':      {'plot_type': 'scatter', 'pos': 11, 'size': 4},
                                                     'channel_mask_display2':      {'plot_type': 'scatter', 'pos': 12, 'size': 4},
-                                                   })
+                                                   },
+                                          creation_date=datetime.datetime.now())
 
         partitions = utils.get_partitions()
         possible_names = utils.get_streams()
