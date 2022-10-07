@@ -11,6 +11,7 @@ plotly
 dash>=1.11,<1.21.0
 bootstrap4
 whitenoise
+werkzeug==2.0.1
 
 # django
 django-bootstrap4
