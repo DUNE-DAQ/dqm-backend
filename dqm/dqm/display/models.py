@@ -13,6 +13,7 @@ class OverviewDisplay(models.Model):
     data = models.JSONField()
     partition = models.CharField(max_length=30)
     default = models.BooleanField()
+    creation_date = models.DateField()
 
     def get_absolute_url(self):
         return f'/overview/{self.name}'
@@ -25,6 +26,7 @@ class SystemDisplay(models.Model):
     name = models.CharField(max_length=50, unique=True)
     description = models.CharField(max_length=200)
     data = models.JSONField()
+    creation_date = models.DateField()
 
     def get_absolute_url(self):
         return f'/displays/{self.name}'
