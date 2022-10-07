@@ -264,7 +264,8 @@ def create_display(request):
         if not OverviewTemplate.objects.all():
             OverviewTemplate.objects.create(name='TPC Charge Template',
                                             description='test',
-                                            display={})
+                                            display={},
+                                            creation_date=datetime.datetime.now())
 
         if not SystemTemplate.objects.filter(name='TPC Charge Template'):
             SystemTemplate.objects.create(name='TPC Charge Template',
