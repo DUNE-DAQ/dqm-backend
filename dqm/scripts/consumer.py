@@ -146,6 +146,9 @@ def main():
         header_bytes = ls[0]
         header = json.loads(header_bytes)
 
+        if len(ls) > 3:
+            continue
+
         if 'part' in header:
             mebuf.add_to_buffer(b'\n\n\n'.join(ls[1:]), header['source'], header['app_name'], header['plane'], header['part'], header['total_parts'])
             if (msg := mebuf.get_msg_if_available(header['source'], header['app_name'], header['plane'])):

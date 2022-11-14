@@ -2,6 +2,7 @@
 #
 # source env/bin/activate
 cd dqm
+python3 manage.py makemigrations
 python3 manage.py migrate
 python3 manage.py shell < configdb.py # Add a superuser if needed
 python3 manage.py collectstatic -i "*.py" -i "*.pyc" --noinput --link
