@@ -4,14 +4,14 @@ pandas
 tables
 msgpack
 channels<3.0
-Django>=2.2,<4.0.0
-Flask>=1.0.2
+Django<4.0.0
+Flask
 channels-redis
 plotly
-dash>=1.11,<1.21.0
+dash
 bootstrap4
 whitenoise
-werkzeug==2.0.1
+werkzeug
 
 # django
 django-bootstrap4
@@ -23,6 +23,7 @@ django_redis
 django_tables2
 
 # Others
+django_plotly_dash
 dash-bootstrap-components
 dash-core-components
 dash-html-components
@@ -31,7 +32,5 @@ dpd-components
 dpd_static_support
 crispy-bootstrap5
 
-
 # Fix with a bug that prevented the plots to update
 # TODO: Test if main / develop works
--e git+https://github.com/jmcarcell/django-plotly-dash#egg=django-plotly-dash
