@@ -1,13 +1,11 @@
 from dash import Dash
 from dash.dependencies import Input, State, Output
-import dash_core_components as dcc
-import dash_html_components as html
+from dash import dcc, html
 import dpd_components as dpd
 
 import plotly.graph_objects as go
 
 from display.models import SystemDisplay, OverviewDisplay
-
 
 from Platform import utils
 import pandas as pd
@@ -15,11 +13,7 @@ import plotly.express as px
 import numpy as np
 
 from django_plotly_dash import DjangoDash
-from django_plotly_dash.consumers import send_to_pipe_channel
 from datetime import datetime
-
-from templates.models import SystemTemplate
-
 
 layout_dic = {}
 

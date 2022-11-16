@@ -31,6 +31,3 @@ dash-renderer
 dpd-components
 dpd_static_support
 crispy-bootstrap5
-
-# Fix with a bug that prevented the plots to update
-# TODO: Test if main / develop works
