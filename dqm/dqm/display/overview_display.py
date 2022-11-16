@@ -191,23 +191,46 @@ def create_overview_display(name):
 
         return fig
 
-    runs = utils.get_all_runs(partition)
-    current_run = utils.get_current_run(partition)
+    @app.callback(
+        Output(f'run', 'children'),
+        Input(f'pipe-run', 'value'),
+    )
+    def plot_run_number(current_run):
+        """
+        Return the current run number
+        """
+        if current_run:
+            cache.set(f'{partition}-run', current_run)
+        else:
+            current_run = cache.get(f'{partition}-run')
+        if current_run is None:
+            current_run = '[waiting for data...]'
+        return f'The current run number is {current_run}'
 
-    apps = utils.get_apps_for_partition(partition)
+    @app.callback(
+        Output(f'apps', 'children'),
+        Input(f'pipe-run', 'value'),
+    )
+    def plot_apps(value):
+        """
+        Return a list of all the apps that have sent data to the current partition
+        """
+        apps = utils.get_apps_for_partition(partition)
+        return [html.A(f'{app}', href=f'/overview/{pathname}/{app}', className="list-group-item list-group-item-action") for app in apps]
+
 
     layout = html.Div(
         [html.Div(children=f'Overview for partition {partition}', className='h1')]
         +
-        [html.Div(children=f'The current run number is {current_run}', className='h1')]
+        [html.Div(id='run', className='h1')]
         +
         [html.Details(children=
-        [html.Summary(children=f'Receiving data from the following apps', className='h1')]
-        +
-        # [html.Div(children='<ul class="list-group">' + ''.join([f'<li class="list-group-item">{app}</li>' for apps in apps]) + '</ul>')]
-        # [html.Ul(children=['<li class="list-group-item">{app}</li>' for apps in apps])]
-        [html.Div(children=[html.A(f'{app}', href=f'/overview/{pathname}/{app}', className="list-group-item list-group-item-action") for app in apps], className="list-group")]
-                        )]
+            [html.Summary(children=f'Receiving data from the following apps', className='h1')]
+            +
+            # [html.Div(children='<ul class="list-group">' + ''.join([f'<li class="list-group-item">{app}</li>' for apps in apps]) + '</ul>')]
+            # [html.Ul(children=['<li class="list-group-item">{app}</li>' for apps in apps])]
+            [html.Div(id='apps', className="list-group")]
+                            )]
         +
         [html.Div(children=f'Mean value of the RMS (for all channels) for each plane', className='h1')]
         +
@@ -241,24 +264,27 @@ def create_overview_display(name):
         +
         [html.Div(dcc.Graph(id=f'{pathname}-graph-{0}-run-comparison'), className='col-8')]
         +
-        [dpd.Pipe(id=f'pipe-partition-{pathname}-{i}',
-                    value={},
-                    label=f'time_evol_{i}',
-                    channel_name=f'time_evol_{i}')
-                    for i in range(3)]
-        +
-        [dpd.Pipe(id=f'pipe-rmsm-{pathname}-{i}',
-                    value={},
-                    label=f'{source}-std{i}',
-                    channel_name=f'{source}-std{i}')
-                    for i in range(3)]
-        +
+        # [dpd.Pipe(id=f'pipe-partition-{pathname}-{i}',
+        #             value={},
+        #             label=f'time_evol_{i}',
+        #             channel_name=f'time_evol_{i}')
+        #             for i in range(3)]
+        # +
+        # [dpd.Pipe(id=f'pipe-rmsm-{pathname}-{i}',
+        #             value={},
+        #             label=f'{source}-std{i}',
+        #             channel_name=f'{source}-std{i}')
+        #             for i in range(3)]
+        # +
         [html.Div(id=f'interm-{pathname}-{i}') for i in range(3)]
+        +
+        [dpd.Pipe(id=f'pipe-run',
+                    value={},
+                    label=f'{partition}-pipe-run',
+                    channel_name=f'{partition}-pipe-run')]
 
         )
 
     layout_dic[pathname] = layout
-
     app.layout = layout
-
     return app
