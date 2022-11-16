@@ -37,7 +37,11 @@ def get_ordered_runs(partition, results=False):
         DATABASE = DATABASE_PATH_RESULTS
     else:
         DATABASE = DATABASE_PATH
-    apps = os.listdir(f'{DATABASE}/{partition}')
+    try:
+        apps = os.listdir(f'{DATABASE}/{partition}')
+    except FileNotFoundError:
+        print(f'Directory {DATABASE}/{partition} was not found')
+        return []
     runs = {}
     for app in apps:
         for run in os.listdir(f'{DATABASE}/{partition}/{app}'):
@@ -141,7 +145,7 @@ def get_apps_for_partition(partition):
     """
     Get a list of all the app names that have sent data
     """
-    return os.listdir(f'{DATABASE_PATH}/{partition}')
+    return sorted(os.listdir(f'{DATABASE_PATH}/{partition}'))
 
 def get_last_result(partition, app_name, stream_name, max_files=10, max_rows=5000):
     ord_runs = get_ordered_runs(partition, True)

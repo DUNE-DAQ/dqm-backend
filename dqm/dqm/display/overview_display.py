@@ -6,10 +6,8 @@ import plotly.graph_objects as go
 import plotly.subplots as subplots
 from dash import Dash
 from dash.dependencies import Input, State, Output
-import dash_core_components as dcc
-import dash_html_components as html
+from dash import dcc, html
 from django_plotly_dash import DjangoDash
-from django_plotly_dash.consumers import send_to_pipe_channel
 import dpd_components as dpd
 from django.core.cache import cache
 
@@ -32,7 +30,6 @@ def create_overview_display(name):
     if not pathname:
         return html.Div()
     if pathname in layout_dic:
-        print(f'{pathname} in layout_dic')
         return layout_dic[pathname]
 
     display = OverviewDisplay.objects.filter(name=pathname)[0]
