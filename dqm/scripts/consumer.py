@@ -165,7 +165,7 @@ def main():
             print('std', len(ls))
             x = np.array(msgpack.unpackb(ls[1][1:]))
             y = np.array(msgpack.unpackb(ls[2][1:]))
-            if 'df' in header['app_name']:
+            # if 'df' in header['app_name']:
 
             write_database({'channels': x, 'value': y}, header, 'std')
 
