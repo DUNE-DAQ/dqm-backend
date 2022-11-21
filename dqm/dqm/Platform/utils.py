@@ -131,6 +131,77 @@ class DataStream:
             print('No data available')
             return
 
+class ProductStream:
+    def __init__(self, name, partition, app_name):
+        self.name = name
+        self.partition = partition
+        self.app_name = app_name
+
+    def get_products(self, run_number='last'):
+
+        plane_number = self.name[-1]
+        if run_number == 'last':
+            folders = os.listdir(f'{DATABASE_PATH_RESULTS}/{self.partition}/{self.app_name}')
+            times = [os.path.getmtime(f'{DATABASE_PATH_RESULTS}/{self.partition}/{self.app_name}/{x}') for x in folders]
+            run_number = max(zip(times, folders))[1]
+
+        print(f'Calling get_products, {DATABASE_PATH_RESULTS}/{self.partition}/{self.app_name}/{run_number}')
+        print(self.name[:-1] + f'-{plane_number}')
+
+        files = [f for f in os.listdir(f'{DATABASE_PATH_RESULTS}/{self.partition}/{self.app_name}/{run_number}') if self.name[:-1] + f'-{plane_number}' in f]
+        last_file = max(files)
+        index = last_file.find('.hdf5')
+        # Date has 13 digits, YYMMDD-HHMMSS
+        date = last_file[index-13:index]
+
+        if last_file:
+            path = f'{DATABASE_PATH_RESULTS}/{self.partition}/{self.app_name}/{run_number}/{last_file}'
+            print(f'Reading file {path}')
+            try:
+                return (pd.read_hdf(path), date)
+            except:
+                print('Unable to read monitoring products')
+                print((pd.read_hdf(path)))
+                return None
+        else:
+            print('No monitoring products available')
+            return None
+
+    def get_all_streams(self, stream_name, run_number='last'):
+        if run_number == 'last':
+            folders = os.listdir(f'{DATABASE_PATH_RESULTS}/{self.partition}/{self.app_name}')
+            times = [os.path.getmtime(f'{DATABASE_PATH_RESULTS}/{self.partition}/{self.app_name}/{x}') for x in folders]
+            run_number = max(zip(times, folders))[1]
+
+        # files = [f for f in  if self.name[:-1] in f]
+        all_files = os.listdir(f'{DATABASE_PATH_RESULTS}/{self.partition}/{self.app_name}/{run_number}')
+        last_files = [max([f for f in all_files if f'{stream_name}-{i}' in f]) for i in range(3)]
+        index = last_files[0].find('.hdf5')
+        # Date has 13 digits, YYMMDD-HHMMSS
+        date = last_files[0][index-13:index]
+
+        if last_files:
+            dfs = []
+            for f in last_files:
+                path = f'{DATABASE_PATH_RESULTS}/{self.partition}/{self.app_name}/{run_number}/{f}'
+                print(f'Reading file {path}')
+                try:
+                    dfs.append(pd.read_hdf(path))
+                except:
+                    print('Unable to read monitoring products')
+                    print((pd.read_hdf(path)))
+                    return
+            try:
+                return (pd.concat(dfs, axis=1), date)
+            except:
+                print('Unable to read monitoring products')
+                print(dfs)
+                return
+        else:
+            print('No monitoring products available')
+            return
+
+
 def get_partitions():
     """
     Get a list with all the partitions that have sent data

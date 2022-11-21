@@ -26,7 +26,7 @@ from django_plotly_dash.views import add_to_session
 from home.views import index
 from sources.views import sources
 from test.views import PersonView
-from display.views import system_display_index, overview_display_index, create_display, show_display, show_overview_display, delete_overview_display, edit_overview_display, show_channel_display
+from display.views import system_display_index, overview_display_index, create_display, show_display, show_overview_display, delete_overview_display, edit_overview_display, show_channel_display, show_alarm_display, piptest
 from templates.views import show_templates, edit_overview_template, edit_system_template
 # from files.views import show_files_display
 
@@ -92,6 +92,8 @@ urlpatterns = [
     path('templates-system/<name>/edit', edit_system_template, name='edit_system_template'),
     path('test', render_test, name='test'),
     path('get_json', get_json, name='get_json'),
+    #path('alarm/<overview_name>/<displayname>', show_alarm_display, name='test_alarm'),
+    path('alarm/<display_name>', show_alarm_display, name='test_alarm'),
     # path('file-explorer', show_files_display, name='file explorer'),
 ]
 

@@ -4,6 +4,7 @@ from Platform import utils
 from .system_display import create_display as new_display
 from .overview_display import create_overview_display
 from .channels_display import create_channel_display
+from .alarm_display_4 import create_alarm_display
 
 import django_tables2 as tables
 
@@ -222,6 +223,35 @@ def show_channel_display(request, overview_name, displayname, channel):
         app = channel_displays[name]
     return render(request, 'channel.html', context={'displayname': name})
 
+#alarm_displays = {}
+#def show_alarm_display(request, overview_name, displayname):
+#    partition = OverviewDisplay.objects.filter(name=overview_name)[0].partition
+#    app_name = displayname
+#    name = f'alarm-channel-{partition}-{displayname}'
+#    if name not in alarm_displays:
+#      #app = create_alarm_display(partition, displayname)
+#      app = create_alarm_display(overview_name, displayname)
+#      alarm_displays[name] = app
+#    else:
+#      app = alarm_displays[name]
+#    return render(request, 'alarm.html', context={'displayname': name})
+
+#alarm_displays = {}
+#def show_alarm_display(request, overview_name, displayname):
+#    if (overview_name, displayname) not in alarm_displays:
+#        #app = new_alarm_display(overview_name, displayname)
+#        app = create_alarm_display(overview_name, displayname)
+#        alarm_displays[(overview_name, displayname)] = app
+#    app_name = overview_name + displayname
+#    return render(request, 'alarm.html', context={'app_name': app_name, 'displayname': displayname})
+
+alarm_displays = {}
+def show_alarm_display(request, display_name):
+    if display_name not in alarm_displays:
+        app = create_alarm_display(display_name)
+        alarm_displays[display_name] = app
+    return render(request, 'alarm.html', context={'displayname': display_name})
+
 
 def create_display(request):
 
@@ -351,3 +381,8 @@ def create_display(request):
     else:
         form = Form()
     return render(request, 'create_display.html', context={'form': form})
+
+def piptest(request):
+
+    return render(request, 'pip_test.html')
+
