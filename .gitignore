@@ -5,4 +5,7 @@ static/dist/css/
 db.sqlite3
 *.ipynb
 .env
+*.swp
+*.pyo
+*.pyc
 set_env

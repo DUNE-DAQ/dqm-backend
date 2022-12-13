@@ -4,10 +4,10 @@ for Data Quality Assessment
 
 # Web display installation
 ## Prerequisites
-### Docker
-A docker container running `redis` is needed, for that install docker and then run
+### Redis
+A `redis` instance is needed, for that you can install docker and then run
 ```
-docker pull redis:4
+docker pull redis
 docker run -p 6379:6379 -d redis
 ```
 ### Python version
