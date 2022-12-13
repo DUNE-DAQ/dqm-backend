@@ -31,6 +31,9 @@ When using the `prepare_dqm` script, it is possible to change the port by changi
 ```
 ## Running
 After it has been installed for the first time it's not necessary to run `make_env` and `prepare_dqm` again.
+
+This application consists of two components: the web display and consumer.py.  Both must be running for it to function.
+
 One should remember to set up the workarea if the web display has been installed from one. The first step is to activate the virtual environment that was set up when running the previous two scripts. Run:
 ```
 source env/bin/activate
