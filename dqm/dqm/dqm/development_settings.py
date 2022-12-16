@@ -20,17 +20,18 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'va-ndhg=u^uti9x^9^9npg=+a4p%j(=50oiee+@zklb5qcnup4'
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'va-ndhg=u^uti9x^9^9npg=+a4p%j(=50oiee+@zklb5qcnup4')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = os.environ['ALLOWED_HOSTS'].split()
-PATH_DATABASE = os.environ['PATH_DATABASE']
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split()
+PATH_DATABASE = os.getenv('PATH_DATABASE', os.path.expanduser('~/dqm_db_path'))
 # PATH_DATABASE = '/home/juanmi/Dune/Newp/Database/'
-PATH_DATABASE_RESULTS = os.environ['PATH_DATABASE_RESULTS']
-REDIS_HOST = os.environ['REDIS_HOST']
-REDIS_LOCATION = "redis://" + REDIS_HOST + ":6379/1",
+PATH_DATABASE_RESULTS = os.getenv('PATH_DATABASE_RESULTS', os.path.expanduser('~/dqm_results_path'))
+REDIS_HOST = os.getenv('REDIS_HOST', 'localhost')
+REDIS_PORT = os.getenv('REDIS_HOST', '6379')
+REDIS_LOCATION = "redis://" + REDIS_HOST + ":" + REDIS_PORT + "/1",
 KAFKA_HOST = os.environ.get('KAFKA_HOST', 'monkafka')
 KAFKA_PORT = os.environ.get('KAFKA_PORT', 30092)
 KAFKA_LOCATION = f'{KAFKA_HOST}:{KAFKA_PORT}'
