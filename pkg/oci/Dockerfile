@@ -1,4 +1,4 @@
-FROM registry.access.redhat.com/ubi9/ubi-minimal
+FROM docker.io/library/almalinux:9
 
 LABEL "com.example.vendor"="ACME Incorporated"
 LABEL com.example.label-with-value="foo"
@@ -11,8 +11,7 @@ EXPOSE 8000
 
 USER root
 
-# installing deps (ubi-minimal has microdnf only)
-RUN microdnf clean expire-cache ; microdnf -y install git python3-pip python3-wheel; microdnf clean all
+RUN dnf clean expire-cache ; dnf -y install git python3-pip python3-pip-wheel; dnf clean all
 
 WORKDIR /src
 RUN git clone https://github.com/DUNE-DAQ/dqm-backend.git
