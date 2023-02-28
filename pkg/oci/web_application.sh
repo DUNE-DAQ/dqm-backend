@@ -1,5 +1,6 @@
 #!/bin/bash
 
+cd /src/dqm-backend/dqm
 /src/dqm-backend/dqm/./prepare_dqm
 
 cd /src/dqm-backend/dqm/dqm/
