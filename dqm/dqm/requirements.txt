@@ -15,7 +15,7 @@ werkzeug
 
 # django
 django-bootstrap4
-django-crispy-forms
+django-crispy-forms==1.14.0
 django-environ
 django_extensions
 django_plotly_dash

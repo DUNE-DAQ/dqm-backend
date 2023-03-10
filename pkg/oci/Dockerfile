@@ -14,7 +14,7 @@ USER root
 RUN dnf clean expire-cache ; dnf -y install git python3-pip python3-pip-wheel; dnf clean all
 
 WORKDIR /src
-RUN git clone https://github.com/DUNE-DAQ/dqm-backend.git
+RUN git clone https://github.com/DUNE-DAQ/dqm-backend.git -b pahamilt/timezone-fix-2
 
 RUN pip3 install -r /src/dqm-backend/dqm/dqm/requirements.txt
 
