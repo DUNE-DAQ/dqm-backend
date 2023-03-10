@@ -5,7 +5,7 @@ tables
 msgpack
 channels<3.0
 Django<4.0.0
-Flask
+Flask==2.2.2
 channels-redis
 plotly
 dash
@@ -14,13 +14,13 @@ whitenoise
 werkzeug
 
 # django
-django-bootstrap4
+django-bootstrap4==22.2
 django-crispy-forms==1.14.0
-django-environ
+django-environ==0.9.0
 django_extensions
-django_plotly_dash
+django_plotly_dash==2.1.3
 django_redis
-django_tables2
+django_tables2==2.4.1
 
 # Others
 django_plotly_dash
