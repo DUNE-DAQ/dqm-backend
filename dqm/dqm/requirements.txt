@@ -3,7 +3,7 @@ kafka-python
 pandas
 tables
 msgpack
-channels<3.0
+channels
 Django
 Flask
 channels-redis
