@@ -29,3 +29,5 @@ dash-renderer
 dpd-components
 dpd_static_support
 crispy-bootstrap5
+
+daphne
