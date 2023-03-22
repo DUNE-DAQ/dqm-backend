@@ -5,7 +5,7 @@ tables
 msgpack
 channels<3.0
 Django
-Flaski==2.2.2
+Flask==2.2.2
 channels-redis
 plotly
 dash
