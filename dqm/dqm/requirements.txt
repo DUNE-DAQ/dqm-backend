@@ -5,10 +5,10 @@ tables
 msgpack
 channels<3.0
 Django
-Flask
+Flaski==2.2.2
 channels-redis
 plotly
-dash==2.7.0
+dash
 bootstrap4
 whitenoise
 werkzeug
