@@ -3,7 +3,7 @@ kafka-python
 pandas
 tables
 msgpack
-channels
+channels==3.0.5
 Django
 Flask
 channels-redis
@@ -31,5 +31,3 @@ dash-renderer
 dpd-components
 dpd_static_support
 crispy-bootstrap5
-
-daphne
