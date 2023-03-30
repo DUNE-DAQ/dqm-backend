@@ -72,7 +72,7 @@ def create_display(overview_name, name):
                     ],
                     [State(f'{pathname}-graph-{i}', 'relayoutData')]
                 )
-                def plot_scatter(data=None, reference_run=None, rewind_run=None, relayout_data=None, source=source, stream=key):
+                def plot_scatter(data=dict(), reference_run=None, rewind_run=None, relayout_data=None, source=source, stream=key):
                     print('PLOT SCATTER', reference_run)
                     dic, date = data
                     if dic is None:
@@ -118,7 +118,7 @@ def create_display(overview_name, name):
                         Input('rewind-dropdown', 'value')],
                     [State(f'{pathname}-graph-{i}', 'relayoutData')]
                 )
-                def plot_heatmap(data=None, rewind_run=None, relayout_data=None, source=source, stream=key):
+                def plot_heatmap(data=dict(), rewind_run=None, relayout_data=None, source=source, stream=key):
                     print('PLOT HEATMAP')
                     dic, date = data
                     if dic is None:
@@ -158,7 +158,7 @@ def create_display(overview_name, name):
                         Input('rewind-dropdown', 'value')],
                     [State(f'{pathname}-graph-{i}', 'relayoutData')]
                 )
-                def plot_line(data=None, reference_run=None, rewind_run=None, relayout_data=None, source=source, stream=key):
+                def plot_line(data=dict(), reference_run=None, rewind_run=None, relayout_data=None, source=source, stream=key):
                     dic, date = data
                     if dic is None:
                         print('NONE')
