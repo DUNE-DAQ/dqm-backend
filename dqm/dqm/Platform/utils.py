@@ -83,6 +83,8 @@ class DataStream:
         print(self.name[:-1] + f'-{plane_number}')
 
         files = [f for f in os.listdir(f'{DATABASE_PATH}/{self.partition}/{self.app_name}/{run_number}') if self.name[:-1] + f'-{plane_number}' in f]
+        print(files)
+        print(len(files))
         last_file = max(files)
         index = last_file.find('.hdf5')
         # Date has 13 digits, YYMMDD-HHMMSS
