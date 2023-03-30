@@ -165,7 +165,7 @@ def create_display(overview_name, name):
                         return px.scatter()
                     print('Calling plot_scatter')
                     ndf = pd.DataFrame(dic['data'])
-                    fig = px.line(x=np.array(ndf.columns, dtype=np.float), y=np.array(ndf.values, dtype=np.float)[0],
+                    fig = px.line(x=np.array(ndf.columns, dtype=float), y=np.array(ndf.values, dtype=float)[0],
                                     labels={'x': 'Frequency [Hz]', 'y': 'abs(fft(ADC))'}, log_y=True)
 
                     if int(stream[-1]) < 2:
