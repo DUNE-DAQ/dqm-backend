@@ -72,15 +72,19 @@ def create_display(overview_name, name):
                     ],
                     [State(f'{pathname}-graph-{i}', 'relayoutData')]
                 )
-                def plot_scatter(data=dict(), reference_run=None, rewind_run=None, relayout_data=None, source=source, stream=key):
+                def plot_scatter(data={}, reference_run=None, rewind_run=None, relayout_data=None, source=source, stream=key):
                     print('PLOT SCATTER', reference_run)
-                    dic, date = data
+                    #dic, date = data
+                    dic={}
+                    date={}
+                    dic=data
+                    date=data
                     if dic is None:
                         print('Calling PLOT SCATTER returned no data')
                         return px.scatter()
                     print('Calling plot_scatter')
                     ndf = pd.DataFrame(dic['data'])
-                    fig = px.scatter(x=np.array(ndf.columns, dtype=np.float), y=np.array(ndf.values, dtype=np.float)[0],
+                    fig = px.scatter(x=np.array(ndf.columns, dtype=float), y=np.array(ndf.values, dtype=float)[0],
                                     labels={'x': 'Channel number', 'y': 'RMS'})
 
                     fig.update_layout({'xaxis_title': 'Channel number', 'yaxis_title': 'RMS',
@@ -98,8 +102,8 @@ def create_display(overview_name, name):
                         print('reference_run', reference_run, stream, partition, app_name)
                         ds = utils.DataStream(stream, partition, app_name)
                         ndf = pd.DataFrame(ds.get_data(reference_run)[0])
-                        fig.add_trace(go.Scatter(x=np.array(ndf.columns, dtype=np.float),
-                                                    y=np.array(ndf.values, dtype=np.float)[0],
+                        fig.add_trace(go.Scatter(x=np.array(ndf.columns, dtype=float),
+                                                    y=np.array(ndf.values, dtype=float)[0],
                                                     mode='markers',
                                                     name=f'Run {reference_run}'))
 
@@ -118,9 +122,13 @@ def create_display(overview_name, name):
                         Input('rewind-dropdown', 'value')],
                     [State(f'{pathname}-graph-{i}', 'relayoutData')]
                 )
-                def plot_heatmap(data=dict(), rewind_run=None, relayout_data=None, source=source, stream=key):
+                def plot_heatmap(data={}, rewind_run=None, relayout_data=None, source=source, stream=key):
                     print('PLOT HEATMAP')
-                    dic, date = data
+                    #dic, date = data
+                    dic={}
+                    date={}
+                    dic=data
+                    date=data
                     if dic is None:
                         print('HEATMAP NONE')
                         return px.scatter()
@@ -158,8 +166,12 @@ def create_display(overview_name, name):
                         Input('rewind-dropdown', 'value')],
                     [State(f'{pathname}-graph-{i}', 'relayoutData')]
                 )
-                def plot_line(data=dict(), reference_run=None, rewind_run=None, relayout_data=None, source=source, stream=key):
-                    dic, date = data
+                def plot_line(data={}, reference_run=None, rewind_run=None, relayout_data=None, source=source, stream=key):
+                    #dic, date = data
+                    dic={}
+                    date={}
+                    dic=data
+                    date=data
                     if dic is None:
                         print('NONE')
                         return px.scatter()
@@ -189,8 +201,8 @@ def create_display(overview_name, name):
                     if reference_run is not None:
                         ds = utils.DataStream(stream, partition, app_name)
                         ndf = pd.DataFrame(ds.get_data(reference_run)[0])
-                        fig.add_trace(go.Scatter(x=np.array(ndf.columns, dtype=np.float),
-                                                    y=np.array(ndf.values, dtype=np.float)[0],
+                        fig.add_trace(go.Scatter(x=np.array(ndf.columns, dtype=float),
+                                                    y=np.array(ndf.values, dtype=float)[0],
                                                     mode='lines',
                                                     name=f'Run {reference_run}'))
 
