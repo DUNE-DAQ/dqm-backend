@@ -75,10 +75,11 @@ def create_display(overview_name, name):
                 def plot_scatter(data={}, reference_run=None, rewind_run=None, relayout_data=None, source=source, stream=key):
                     print('PLOT SCATTER', reference_run)
                     #dic, date = data
-                    dic={}
-                    date={}
+                    dic=dict()
+                    date=dict()
                     dic=data
                     date=data
+                    print('PLOT_SCATTER')
                     if dic is None:
                         print('Calling PLOT SCATTER returned no data')
                         return px.scatter()
@@ -125,8 +126,8 @@ def create_display(overview_name, name):
                 def plot_heatmap(data={}, rewind_run=None, relayout_data=None, source=source, stream=key):
                     print('PLOT HEATMAP')
                     #dic, date = data
-                    dic={}
-                    date={}
+                    dic=dict()
+                    date=dict()
                     dic=data
                     date=data
                     if dic is None:
@@ -168,14 +169,21 @@ def create_display(overview_name, name):
                 )
                 def plot_line(data={}, reference_run=None, rewind_run=None, relayout_data=None, source=source, stream=key):
                     #dic, date = data
-                    dic={}
-                    date={}
+                    print('Data:')
+                    print(data)
+                    print('Data contents:')
+                    print(data.__dict__)
+                    print('Data type:')
+                    print(type(data))
+                    dic=dict()
+                    date=dict()
                     dic=data
                     date=data
+                    print('PLOT_LINE')
                     if dic is None:
                         print('NONE')
                         return px.scatter()
-                    print('Calling plot_scatter')
+                    print('Calling plot_line')
                     ndf = pd.DataFrame(dic['data'])
                     fig = px.line(x=np.array(ndf.columns, dtype=float), y=np.array(ndf.values, dtype=float)[0],
                                     labels={'x': 'Frequency [Hz]', 'y': 'abs(fft(ADC))'}, log_y=True)
