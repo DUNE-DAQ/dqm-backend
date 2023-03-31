@@ -43,7 +43,7 @@ def create_channel_display(partition, app_name):
         Input(f'url', 'pathname')],
         [State(f'channel-graph', 'relayoutData')]
     )
-    def plot_line(data={}, pathname=None, relayout_data=None):
+    def plot_line(data=dict(), pathname=None, relayout_data=None):
         _, _, overview_name, app_name, channel = pathname.split('/')
         dic, date = data
         if dic is None:

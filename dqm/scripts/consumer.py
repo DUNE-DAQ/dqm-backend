@@ -120,7 +120,7 @@ def write_database(data, header, stream_name):
     df = pd.DataFrame(values)
     if 'channels' in data:
         df.columns = data['channels']
-    now = datetime.now().strftime('%y%m%d-%H%M%S')
+    now = datetime.now(timezone).strftime('%y%m%d-%H%M%S')
     filename = f'{stream_name}-{plane}-{now}'
     os.makedirs(f'{PATH_DATABASE}/{partition}/{app_name}/{run_number}', exist_ok=True)
     df.to_hdf(f'{PATH_DATABASE}/{partition}/{app_name}/{run_number}/{filename}.hdf5', 'data')
@@ -130,7 +130,7 @@ def write_result_to_database(data, partition, app_name, stream_name, run_number,
     Write DQM results like the time evolution
     """
     df = pd.DataFrame(data)
-    now = datetime.now().strftime('%y%m%d-%H%M%S')
+    now = datetime.now(timezone).strftime('%y%m%d-%H%M%S')
     filename = f'{stream_name}-{plane}-{now}'
     os.makedirs(f'{PATH_DATABASE_RESULTS}/{partition}/{app_name}/{run_number}', exist_ok=True) 
     df.to_hdf(f'{PATH_DATABASE_RESULTS}/{partition}/{app_name}/{run_number}/{filename}.hdf5', 'data')
@@ -138,7 +138,7 @@ def write_result_to_database(data, partition, app_name, stream_name, run_number,
 
 def main():
     time_map = {}
-    time_last_data = datetime.now()
+    time_last_data = datetime.now(timezone)
     for message in consumer:
         # print(str(message))
 
@@ -169,7 +169,7 @@ def main():
 
             write_database({'channels': x, 'value': y}, header, 'std')
 
-            timestamp = datetime.now().strftime('%Y/%m/%d %H:%M:%S')
+            timestamp = datetime.now(timezone).strftime('%Y/%m/%d %H:%M:%S')
             send_to_pipe_channel(channel_name=f'{header["partition"]}-std{header["plane"]}',
                                 label=f'{header["partition"]}-std{header["plane"]}',
                                 value=timestamp)
@@ -182,7 +182,7 @@ def main():
 
             write_database({'channels': x, 'value': y}, header, 'rms')
 
-            timestamp = datetime.now().strftime('%Y/%m/%d %H:%M:%S')
+            timestamp = datetime.now(timezone).strftime('%Y/%m/%d %H:%M:%S')
             send_to_pipe_channel(channel_name=f'{header["partition"]}-rms{header["plane"]}',
                                 label=f'{header["partition"]}-rms{header["plane"]}',
                                 value=timestamp)
@@ -195,7 +195,7 @@ def main():
 
             write_database({'channels': x[1:], 'value': y[1:]}, header, 'fourier_plane')
 
-            timestamp = datetime.now().strftime('%Y/%m/%d %H:%M:%S')
+            timestamp = datetime.now(timezone).strftime('%Y/%m/%d %H:%M:%S')
             send_to_pipe_channel(channel_name=f'{header["partition"]}-fourier_plane{header["plane"]}',
                                 label=f'{header["partition"]}-fourier_plane{header["plane"]}',
                                 value=timestamp)
@@ -214,15 +214,15 @@ def main():
             write_database({'value': y, 'channels': x, 'timestamps': timestamps},
                            header, 'raw')
 
-            timestamp = datetime.now().strftime('%Y/%m/%d %H:%M:%S')
+            timestamp = datetime.now(timezone).strftime('%Y/%m/%d %H:%M:%S')
             send_to_pipe_channel(channel_name=f'{header["partition"]}-raw{header["plane"]}',
                                 label=f'{header["partition"]}-raw{header["plane"]}',
                                 value=timestamp)
             data_found = True
         if data_found and header['partition'] not in time_map:
             time_map[header['partition']] = time_last_data
-        if data_found and (datetime.now() - time_map[header['partition']]).total_seconds() > 10:
-            time_last_data = datetime.now()
+        if data_found and (datetime.now(timezone) - time_map[header['partition']]).total_seconds() > 10:
+            time_last_data = datetime.now(timezone)
             time_map[header['partition']] = time_last_data
             send_to_pipe_channel(channel_name=f'{header["partition"]}-pipe-run',
                                  label=f'{header["partition"]}-pipe-run',
@@ -236,7 +236,7 @@ def main():
             dindex = (source, plane_index)
             if dindex not in time_series:
                 time_series[dindex] = TimeSeries(partition, app_name, 'std', plane, run_number)
-            time_series[dindex].add(int(datetime.now().timestamp()), val[0], run_number)
+            time_series[dindex].add(int(datetime.now(timezone).timestamp()), val[0], run_number)
             send_to_pipe_channel(channel_name=f'time_evol_{plane_index}',
                                 label=f'time_evol_{plane_index}',
                                 value={'values': time_series[dindex].data[:time_series[dindex].max_index],
