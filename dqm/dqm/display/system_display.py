@@ -179,8 +179,8 @@ def create_display(overview_name, name):
                     print(type(data))
                     dic=dict()
                     date=dict()
-                    dic=data
-                    date=data
+                    dic=data[0]
+                    date=data[1]
                     print('PLOT_LINE')
                     if dic is None:
                         print('NONE')
