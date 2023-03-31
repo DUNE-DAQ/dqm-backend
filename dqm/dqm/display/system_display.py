@@ -72,13 +72,15 @@ def create_display(overview_name, name):
                     ],
                     [State(f'{pathname}-graph-{i}', 'relayoutData')]
                 )
-                def plot_scatter(data={}, reference_run=None, rewind_run=None, relayout_data=None, source=source, stream=key):
+                def plot_scatter(data=None, reference_run=None, rewind_run=None, relayout_data=None, source=source, stream=key):
                     print('PLOT SCATTER', reference_run)
+                    if data is None:
+                        data={}
                     #dic, date = data
                     dic=dict()
                     date=dict()
-                    dic=data
-                    date=data
+                    dic=data[0]
+                    date=data[1]
                     print('PLOT_SCATTER')
                     if dic is None:
                         print('Calling PLOT SCATTER returned no data')
@@ -123,13 +125,15 @@ def create_display(overview_name, name):
                         Input('rewind-dropdown', 'value')],
                     [State(f'{pathname}-graph-{i}', 'relayoutData')]
                 )
-                def plot_heatmap(data={}, rewind_run=None, relayout_data=None, source=source, stream=key):
+                def plot_heatmap(data=None, rewind_run=None, relayout_data=None, source=source, stream=key):
+                    if data is None:
+                        data={}
                     print('PLOT HEATMAP')
                     #dic, date = data
                     dic=dict()
                     date=dict()
-                    dic=data
-                    date=data
+                    dic=data[0]
+                    date=data[1]
                     if dic is None:
                         print('HEATMAP NONE')
                         return px.scatter()
@@ -171,12 +175,12 @@ def create_display(overview_name, name):
                     if data is None:
                         data={}
                     #dic, date = data
-                    print('Data:')
-                    print(data)
-                    print('Data contents:')
-                    print(data.__dict__)
-                    print('Data type:')
-                    print(type(data))
+                    #print('Data:')
+                    #print(data)
+                    #print('Data contents:')
+                    #print(data.__dict__)
+                    #print('Data type:')
+                    #print(type(data))
                     dic=dict()
                     date=dict()
                     dic=data[0]
