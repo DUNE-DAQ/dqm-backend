@@ -168,7 +168,7 @@ def create_display(overview_name, name):
                     [State(f'{pathname}-graph-{i}', 'relayoutData')]
                 )
                 def plot_line(data=None, reference_run=None, rewind_run=None, relayout_data=None, source=source, stream=key):
-                    if data=None:
+                    if data is None:
                         data={}
                     #dic, date = data
                     print('Data:')
