@@ -81,7 +81,7 @@ def create_display(overview_name, name):
                     date=dict()
                     dic=data[0]
                     date=data[1]
-                    print('PLOT_SCATTER')
+                    #print('PLOT_SCATTER')
                     if dic is None:
                         print('Calling PLOT SCATTER returned no data')
                         return px.scatter()
@@ -129,8 +129,8 @@ def create_display(overview_name, name):
                     if data is None:
                         data={}
                     print('PLOT HEATMAP')
-                    print('Data:')
-                    print(data)
+                    #print('Data:')
+                    #print(data)
                     dic, date = data
                     if dic is None:
                         print('HEATMAP NONE')
