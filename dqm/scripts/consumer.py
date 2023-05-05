@@ -208,8 +208,9 @@ def main():
             y = y.reshape((x.shape[0], -1)).T
             timestamps = np.arange(x.shape[0])
             print(x.shape, y.shape)
-            if y.shape[0] > 100:
-                y = y[:100]
+            
+            #if y.shape[0] > 100:
+            #    y = y[:100]
 
             write_database({'value': y, 'channels': x, 'timestamps': timestamps},
                            header, 'raw')
