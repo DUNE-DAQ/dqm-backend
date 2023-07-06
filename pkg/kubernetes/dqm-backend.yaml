@@ -31,6 +31,7 @@ spec:
     matchLabels:
       app.kubernetes.io/app: dqm
       app.kubernetes.io/component: dqm-backend
+  serviceName: dqm-backend
   replicas: 1
   template:
     metadata:
@@ -184,7 +185,7 @@ spec:
   ports:
     - name: http
       port: 8000
-      protocol: TPC
+      protocol: TCP
       targetPort: http
   selector:
     app.kubernetes.io/app: dqm
