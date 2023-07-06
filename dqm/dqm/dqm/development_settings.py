@@ -224,3 +224,5 @@ PLOTLY_COMPONENTS = [
     'dpd_components',
     'dpd_static_support',
 ]
+
+DATA_UPLOAD_MAX_MEMORY_SIZE = 262144000
