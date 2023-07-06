@@ -103,10 +103,11 @@ spec:
             memory: 8Mi
         securityContext:
           allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: false
           capabilities:
             drop:
             - ALL
-          runAsGroup: 11000
+          runAsGroup: 0
           runAsNonRoot: true
           runAsUser: 11000
           seccompProfile:
@@ -156,10 +157,11 @@ spec:
             memory: 8Mi
         securityContext:
           allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: false
           capabilities:
             drop:
             - ALL
-          runAsGroup: 11000
+          runAsGroup: 0
           runAsNonRoot: true
           runAsUser: 11000
           seccompProfile:
