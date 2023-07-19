@@ -17,6 +17,7 @@ from crispy_forms.layout import Submit
 from crispy_forms.layout import Layout, Fieldset
 
 from django.utils.html import format_html
+from django.utils import timezone
 
 import datetime
 
@@ -53,7 +54,7 @@ def create_default_system_template():
             'raw1':      {'plot_type': 'heatmap', 'pos': 8, 'size': 4},
             'raw2':      {'plot_type': 'heatmap', 'pos': 9, 'size': 4}
             },
-        creation_date=datetime.datetime.now())
+        creation_date=timezone.make_aware(datetime.datetime.now()))
     return template
 
 def system_display_index(request):
@@ -94,7 +95,7 @@ def overview_display_index(request):
                                            data={p : default_system_template.display},
                                            partition=p,
                                                  default=True,
-                                                 creation_date=datetime.datetime.now())
+                                                 creation_date=timezone.make_aware(datetime.datetime.now()))
             displays.append(obj)
 
 
@@ -123,7 +124,7 @@ def edit_overview_display(request, name):
             OverviewTemplate.objects.create(name='TPC Charge Template',
                                             description='test',
                                             display={},
-                                            creation_date=datetime.datetime.now())
+                                            creation_date=timezone.make_aware(datetime.datetime.now()))
 
         if not SystemTemplate.objects.all():
             SystemTemplate.objects.create(name='TPC Charge Template',
@@ -134,7 +135,7 @@ def edit_overview_display(request, name):
                                                     'raw1':  {'plot_type': 'heatmap', 'pos': 4},
                                                     'raw2':  {'plot_type': 'heatmap', 'pos': 5}
                                                     },
-                                          creation_date=datetime.datetime.now())
+                                          creation_date=timezone.make_aware(datetime.datetime.now()))
 
         partitions = utils.get_partitions()
         possible_names = utils.get_streams()
@@ -265,7 +266,7 @@ def create_display(request):
             OverviewTemplate.objects.create(name='TPC Charge Template',
                                             description='test',
                                             display={},
-                                            creation_date=datetime.datetime.now())
+                                            creation_date=timezone.make_aware(datetime.datetime.now()))
 
         if not SystemTemplate.objects.filter(name='TPC Charge Template'):
             SystemTemplate.objects.create(name='TPC Charge Template',
@@ -281,7 +282,7 @@ def create_display(request):
                                                     'raw1':      {'plot_type': 'heatmap', 'pos': 8, 'size': 4},
                                                     'raw2':      {'plot_type': 'heatmap', 'pos': 9, 'size': 4}
                                                    },
-                                          creation_date=datetime.datetime.now())
+                                          creation_date=timezone.make_aware(datetime.datetime.now()))
 
         if not SystemTemplate.objects.filter(name='TPC Charge Template (WIB2)'):
             SystemTemplate.objects.create(name='TPC Charge Template (WIB2)',
@@ -300,7 +301,7 @@ def create_display(request):
                                                     'channel_mask_display1':      {'plot_type': 'scatter', 'pos': 11, 'size': 4},
                                                     'channel_mask_display2':      {'plot_type': 'scatter', 'pos': 12, 'size': 4},
                                                    },
-                                          creation_date=datetime.datetime.now())
+                                          creation_date=timezone.make_aware(datetime.datetime.now()))
 
         partitions = utils.get_partitions()
         possible_names = utils.get_streams()

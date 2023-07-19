@@ -11,7 +11,7 @@ EXPOSE 8000
 
 USER root
 
-RUN dnf clean expire-cache ; dnf -y install git python3-pip python3-pip-wheel; dnf clean all ; python3 -m pip install wheel
+RUN dnf clean expire-cache ; dnf -y install git python3-pip python3-pip-wheel tzdata; dnf clean all ; python3 -m pip install wheel
 
 WORKDIR /src
 RUN git clone https://github.com/DUNE-DAQ/dqm-backend.git
@@ -22,4 +22,5 @@ RUN chmod +x /src/dqm-backend/pkg/oci/consumer.sh /src/dqm-backend/pkg/oci/web_a
     && ln -s /src/dqm-backend/pkg/oci/consumer.sh /src/dqm-backend/pkg/oci/web_application.sh /
 
 WORKDIR /src/dqm-backend/dqm
+ENV TZ=UTC
 ENTRYPOINT /web_application.sh
