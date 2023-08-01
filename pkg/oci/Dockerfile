@@ -27,4 +27,5 @@ RUN mkdir -p /src/dqm-backend/dqm/dqm/staticfiles && chmod 1770 /src/dqm-backend
 # preserve root GID following common practices for dynamic container IDs
 USER nobody:root
 WORKDIR /src/dqm-backend/dqm
+ENV TZ=UTC
 ENTRYPOINT /web_application.sh
