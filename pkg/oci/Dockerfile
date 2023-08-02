@@ -16,7 +16,6 @@ WORKDIR /src
 RUN git clone https://github.com/DUNE-DAQ/dqm-backend.git
 
 RUN python3 -m pip install -r /src/dqm-backend/dqm/dqm/requirements.txt ; python3 -m pip cache remove '*'
-RUN chmod 1770 /src/dqm-backend/dqm/dqm
 
 RUN chmod +x /src/dqm-backend/pkg/oci/consumer.sh /src/dqm-backend/pkg/oci/web_application.sh \
     && ln -s /src/dqm-backend/pkg/oci/consumer.sh /src/dqm-backend/pkg/oci/web_application.sh /

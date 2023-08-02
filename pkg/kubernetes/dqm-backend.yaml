@@ -103,7 +103,7 @@ spec:
             memory: 8Mi
         securityContext:
           allowPrivilegeEscalation: false
-          readOnlyRootFilesystem: false
+          readOnlyRootFilesystem: true
           capabilities:
             drop:
             - ALL
@@ -157,7 +157,7 @@ spec:
             memory: 8Mi
         securityContext:
           allowPrivilegeEscalation: false
-          readOnlyRootFilesystem: false
+          readOnlyRootFilesystem: true
           capabilities:
             drop:
             - ALL
