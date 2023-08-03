@@ -91,6 +91,10 @@ spec:
           mountPath: /mnt/data/Database
         - name: dqm-results-dir
           mountPath: /mnt/data/Database-results
+        - name: migrations
+          mountPath: /src/dqm-backend/dqm/dqm/display/migrations
+        - name: staticfiles
+          mountPath: /src/dqm-backend/dqm/dqm/staticfiles
         command:
         - sh
         - /web_application.sh
@@ -145,6 +149,10 @@ spec:
           mountPath: /mnt/data/Database
         - name: dqm-results-dir
           mountPath: /mnt/data/Database-results
+        - name: migrations
+          mountPath: /src/dqm-backend/dqm/dqm/display/migrations
+        - name: staticfiles
+          mountPath: /src/dqm-backend/dqm/dqm/staticfiles
         command:
         - sh
         - /consumer.sh
@@ -169,6 +177,11 @@ spec:
       securityContext:
         fsGroup: 11000
         fsGroupChangePolicy: OnRootMismatch
+      volumes:
+      - name: migrations
+        emptyDir: {}
+      - name: staticfiles
+        emptyDir: {}
   volumeClaimTemplates:
   - apiVersion: v1
     kind: PersistentVolumeClaim
