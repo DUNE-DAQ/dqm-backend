@@ -39,7 +39,7 @@ logger.addHandler(handler)
 
 # Add another logger for the exception errors and messages
 exc_logger = logging.getLogger('exception_logger')
-exc_logger_handler = logging.FileHandler('consumer.log')
+exc_logger_handler = logging.FileHandler('{PATH_DATABASE_RESULTS}/consumer.log')
 err_handler = logging.StreamHandler(stream=sys.stderr)
 exc_logger_handler.setFormatter(formatter)
 err_handler.setFormatter(formatter)
