@@ -25,7 +25,7 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'va-ndhg=u^uti9x^9^9npg=+a4p%j(=50oi
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split()
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split()
 PATH_DATABASE = os.getenv('PATH_DATABASE', os.path.expanduser('~/dqm_db_path'))
 # PATH_DATABASE = '/home/juanmi/Dune/Newp/Database/'
 PATH_DATABASE_RESULTS = os.getenv('PATH_DATABASE_RESULTS', os.path.expanduser('~/dqm_results_path'))
