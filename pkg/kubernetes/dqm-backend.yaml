@@ -15,7 +15,7 @@
 # A secret called dqm-backend-django-svcbind with attributes:
 # username
 # password
-# allowed_hosts
+# django_secret_key
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -81,10 +81,10 @@ spec:
             secretKeyRef:
               key: password
               name: dqm-backend-django-svcinfo
-        - name: ALLOWED_HOSTS
+        - name: DJANGO_SECRET_KEY
           valueFrom:
             secretKeyRef:
-              key: allowed_hosts
+              key: django_secret_key
               name: dqm-backend-django-svcinfo
         volumeMounts:
         - name: dqm-db-dir
