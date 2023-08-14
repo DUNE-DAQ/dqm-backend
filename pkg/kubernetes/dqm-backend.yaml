@@ -91,8 +91,10 @@ spec:
           mountPath: /mnt/data/Database
         - name: dqm-results-dir
           mountPath: /mnt/data/Database-results
-        - name: migrations
+        - name: display-migrations
           mountPath: /src/dqm-backend/dqm/dqm/display/migrations
+        - name: template-migrations
+          mountPath: /src/dqm-backend/dqm/dqm/templates/migrations
         - name: staticfiles
           mountPath: /src/dqm-backend/dqm/dqm/staticfiles
         command:
@@ -178,7 +180,9 @@ spec:
         fsGroup: 11000
         fsGroupChangePolicy: OnRootMismatch
       volumes:
-      - name: migrations
+      - name: display-migrations
+        emptyDir: {}
+      - name: template-migrations
         emptyDir: {}
       - name: staticfiles
         emptyDir: {}

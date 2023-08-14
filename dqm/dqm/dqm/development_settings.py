@@ -15,7 +15,6 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
@@ -26,13 +25,17 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'va-ndhg=u^uti9x^9^9npg=+a4p%j(=50oi
 DEBUG = True
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split()
+ALLOWED_HOSTS.extend(['127.0.0.1', '::1', 'localhost', 'localhost.localdomain'])
+
 PATH_DATABASE = os.getenv('PATH_DATABASE', os.path.expanduser('~/dqm_db_path'))
-# PATH_DATABASE = '/home/juanmi/Dune/Newp/Database/'
 PATH_DATABASE_RESULTS = os.getenv('PATH_DATABASE_RESULTS', os.path.expanduser('~/dqm_results_path'))
+
 REDIS_HOST = os.getenv('REDIS_HOST', 'localhost')
 REDIS_PORT = os.getenv('REDIS_PORT', '6379')
-REDIS_LOCATION = "redis://" + REDIS_HOST + ":" + REDIS_PORT + "/1",
-KAFKA_HOST = os.environ.get('KAFKA_HOST', 'monkafka')
+REDIS_DATABASE = os.getenv('REDIS_DATABASE', '1')
+REDIS_LOCATION = "redis://" + REDIS_HOST + ":" + REDIS_PORT + "/" + REDIS_DATABASE
+
+KAFKA_HOST = os.environ.get('KAFKA_HOST', 'monkafka.cern.ch')
 KAFKA_PORT = os.environ.get('KAFKA_PORT', 30092)
 KAFKA_LOCATION = f'{KAFKA_HOST}:{KAFKA_PORT}'
 
