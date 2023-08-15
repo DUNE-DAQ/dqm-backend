@@ -151,7 +151,7 @@ spec:
           mountPath: /mnt/data/Database
         - name: dqm-results-dir
           mountPath: /mnt/data/Database-results
-        - name: migrations
+        - name: display-migrations
           mountPath: /src/dqm-backend/dqm/dqm/display/migrations
         - name: staticfiles
           mountPath: /src/dqm-backend/dqm/dqm/staticfiles
